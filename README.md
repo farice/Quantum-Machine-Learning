@@ -1,5 +1,5 @@
-# Quantum Learning Theory
+# Quantum Algorithms and Learning Theory
 
-Independent Study with a focus on quantum algorithms for solving linear systems and quantum learning theory.
+Research independent Study with a focus on quantum algorithms for solving linear systems and quantum learning theory.
 
 See `syllabus.md`
