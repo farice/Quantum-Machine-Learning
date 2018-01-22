@@ -32,12 +32,12 @@ Focus on chapters 2 and 4 of Nielsen and Chuang.
 4. Density Matrix Exponentiation algorithm
   - https://www.nature.com/articles/nphys3029
 
-5. Review of Q. Machine Learning
+5. **Review of Q. Machine Learning**
   - https://www.nature.com/articles/nature23474
 
 ## Further Topics
 
-6. Learnability of Quantum States
+6. **Learnability of Quantum States**
   - https://arxiv.org/abs/quant-ph/0608142
   - https://arxiv.org/abs/1711.01053
 
@@ -49,4 +49,4 @@ Focus on chapters 2 and 4 of Nielsen and Chuang.
 8. Quantum Learning Theory
   - https://arxiv.org/abs/1701.06806
 
-9. Shor's algorithm for Factoring
+9. **Shor's algorithm for Factoring**
