@@ -1,0 +1,331 @@
+\documentclass[11pt]{article}
+\oddsidemargin=17pt \evensidemargin=17pt
+\headheight=9pt     \topmargin=26pt
+\textheight=564pt   \textwidth=433.8pt
+
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage{amsfonts,amssymb,amsthm,cite,float,graphicx}
+\usepackage{physics}
+\usepackage{graphicx}
+\usepackage{mathtools}
+
+%new math symbols taking no arguments
+\newcommand\0{\mathbf{0}}
+\newcommand\CC{\mathbb{C}}
+\newcommand\FF{\mathbb{F}}
+\newcommand\NN{\mathbb{N}}
+\newcommand\QQ{\mathbb{Q}}
+\newcommand\RR{\mathbb{R}}
+\newcommand\ZZ{\mathbb{Z}}
+\newcommand\bb{\mathbf{b}}
+\newcommand\kk{\Bbbk}
+\newcommand\mm{\mathfrak{m}}
+\newcommand\pp{\mathfrak{p}}
+\newcommand\xx{\mathbf{x}}
+\newcommand\yy{\mathbf{y}}
+\newcommand\GL{\mathit{GL}}
+\newcommand\into{\hookrightarrow}
+\newcommand\nsub{\trianglelefteq}
+\newcommand\onto{\twoheadrightarrow}
+\newcommand\minus{\smallsetminus}
+\newcommand\goesto{\rightsquigarrow}
+\newcommand\nsubneq{\vartriangleleft}
+
+%redefined math symbols taking no arguments
+\newcommand\<{\langle}
+\renewcommand\>{\rangle}
+\renewcommand\iff{\Leftrightarrow}
+\renewcommand\phi{\varphi}
+\renewcommand\implies{\Rightarrow}
+
+%new math symbols taking arguments
+\newcommand\ol[1]{{\overline{#1}}}
+
+%redefined math symbols taking arguments
+\renewcommand\mod[1]{\ (\mathrm{mod}\ #1)}
+
+%roman font math operators
+\DeclareMathOperator\aut{Aut}
+
+%for easy 2 x 2 matrices
+\newcommand\twobytwo[1]{\left[\begin{array}{@{}cc@{}}#1\end{array}\right]}
+
+%for easy column vectors of size 2
+\newcommand\tworow[1]{\left[\begin{array}{@{}c@{}}#1\end{array}\right]}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{exercise}[theorem]{Exercise}
+
+\title{Quantum Algorithms and Learning Theory\\\textit{Notes and Exercises}}
+\author{Faris Sbahi}
+
+\begin{document}
+\maketitle
+
+\section{Nielsen \& Chuang: Chapter 2}
+
+\subsection{Postulates of Quantum Mechanics}
+
+First, we cover the fundamental postulates of quantum mechanics. 
+
+\subsubsection{State Space and State Vector}
+
+Associated with an isolated physical system is a Hilbert space, $H$. A Hilbert space is a complete inner-product vector space. Note that completeness holds trivially in a finite-dimensional vector space because we have closure with respect to all sequences (and hence any Cauchy sequence in the vector space must converge to a vector in the same space). Nevertheless, the state space of a physical system may be infinite-dimensional. 
+
+A system is completely described by a unit vector $u \in H$ called the state vector.
+
+For example, consider a system given by a single qubit, which has a two-dimensional state space. Let $\ket{0}$ and $\ket{1}$ be an orthonormal basis for this space. Hence, a state vector in this space is given by 
+
+\begin{align*}
+\ket{\psi} = a\ket{0} + b\ket{1}	
+\end{align*}
+
+
+where $a, b \in \CC$ and $|a|^2 + |b|^2 = 1$. 
+
+\subsubsection{Evolution}\label{post-discrete-evol}
+
+The evolution of a closed quantum system is described by a unitary transformation. Recall that an operator $U$ is unitary iff $U^\dagger U = I = UU^\dagger$ (and hence preserves inner products\footnote{and furthermore has a spectral decomposition because it is normal}).
+
+So, let the state of a system at time $t_1$ be given by $\ket{\psi}$ and $\ket{\psi'}$ at $t_2$. Hence,
+
+\begin{align*}
+\ket{\psi'} = U\ket{\psi}	
+\end{align*}
+
+\subsubsection{Evolution in Continuous Time}\label{post-cts-evol}
+
+Schrodinger's equation provides the time evolution of the state of a quantum system
+
+\begin{align}\label{schro-cts}
+i\hbar \frac{d\ket{\psi}}{dt} = H\ket{\psi}	
+\end{align}
+
+where $H$ is the (Hermitian) Hamiltonian of the closed system. Because the Hamiltonian is Hermitian it has spectral decomposition 
+
+\begin{align*}
+H = \sum_{E} E \ket{E}\bra{E}	
+\end{align*}
+
+where $E$ is the energy eigenvalue corresponding to energy eigenstate $\ket{E}$. 
+
+For example, consider the Hamiltonian $H = \hbar \omega X$  (recall that $X = \sigma_X = \begin{pmatrix} 0 & 1 \\ 1 & 0\end{pmatrix}$). Hence, we solve for its eigenvalues and eigenvectors
+
+\begin{align*}
+	\det{ \hbar\omega\begin{pmatrix} -\lambda & 1 \\ 1 & -\lambda\end{pmatrix}} &= 0 \\
+	\lambda^2 - 1^2 &= 0 \\
+	\lambda &= \pm 1 \\
+	\implies E_{\pm} &= \pm \hbar \omega \\
+	\hbar\omega\begin{pmatrix} -1 & 1 \\ 1 & -1\end{pmatrix}\ket{E_+} &= 0 \\
+	\ket{E_+} &= \frac{1}{\sqrt{2}}\begin{pmatrix}
+		1 \\ 1
+	\end{pmatrix} := \ket{+} \\
+	\ket{E_-} &= \ket{-}
+\end{align*}
+
+Now, notice that we can solve Schrodinger's equation (\ref{schro-cts}) and have
+
+\begin{align*}
+	\ket{\psi(t_2)} &= \exp[\frac{-iH(t_2 - t_1)}{\hbar}] \ket{\psi(t_1)}
+\end{align*}
+
+and equivalently from \ref{post-discrete-evol} we can represent this transformation with unitary operator $U = \exp[\frac{-iH(t_2 - t_1)}{\hbar}]$. This holds in general and so we can consider the two descriptions from \ref{post-discrete-evol} and \ref{post-cts-evol} interchangeably (the authors prefer the latter). 
+
+\subsubsection{Quantum Measurement}\label{qmeas}
+
+Quantum measurements are described by a collection of measurements operators $\{ M_m \}$ (where $m$ refers to the potential measurement outcomes of the experiment) which act on the state space of the system being observed. 
+
+Hence, if the pre-measurement state is $\ket{\psi}$, then 
+
+\begin{align*}
+	p(m) = \bra{\psi} M_m^\dagger M_m \ket{\psi}
+\end{align*}
+
+and the post-measurement state is 
+
+\begin{align*}
+	\frac{M_m \ket{\psi}}{\sqrt{p(m)}}
+\end{align*}
+
+Furthermore, $\{ M_m \}$ satisfy the completeness equation
+
+\begin{align*}
+\sum_m M_m^\dagger M_m = I
+\end{align*}
+
+Now, we see an interesting implication. If we seek to distinguish our physical system from a set of orthogonal states, then we can reliably do so by simply defining each measurement operator to be the outer product of our states of interest. We add a final operator defined to be the remaining complement of the identity in order to satisfy the completeness equation. 
+
+On the flipside, two non-orthogonal states $\ket{\psi_1}$ and $\ket{\psi_2}$ necessarily share a parallel component in their orthogonal decomposition. Hence, any observable that corresponds to the pre-measurement state being $\ket{\psi_1}$ with probability $p > 0$ has a probability $p'>0$ of having been in state $\ket{\psi_2}$. 
+
+\subsubsection{Projective Measurements}
+
+There exists a special class of quantum measurements known as projective measurements. These measurements can be described by an observable $M$, a hermitian operator on the state space being observed. $M$ has spectral decomposition
+
+\begin{align*}
+M = \sum_m m P_m	
+\end{align*}
+
+where $P_m$ is the projector onto the eigenspace of $M$ with eigenvalues $m$. 
+
+Furthermore, if the pre-measurement state is $\ket{\psi}$, then 
+
+\begin{align*}
+p(m) = 	\bra{\psi} P_m \ket{\psi}
+\end{align*}
+
+and the post-measurement state is 
+
+\begin{align*}
+	\frac{P_m \ket{\psi}}{\sqrt{p(m)}}
+\end{align*}
+
+This simplifies the formula for the expected value of a measurement
+
+\begin{align*}
+\langle M \rangle &= \sum_m m p(m) \\
+&= \bra{\psi} (\sum_m m P_m)  \ket{\psi} \\
+&= 	\bra{\psi} M \ket{\psi}
+\end{align*}
+
+For example, consider the system given by single qubits with observable Pauli matrix $Z$. Hence, $Z$ has eigenvalues $+1$ and $-1$ and eigenstates $\ket{0}$ and $\ket{1}$, respectively. So, consider state $\ket{\psi} = \ket{+}$ $\implies$ $p(+1) = \bra{+}\ket{0}\bra{0}\ket{+} = \frac{1}{2}$. Similarly, $p(-1) = \frac{1}{2}$. 
+
+\subsubsection{POVM measurements}
+
+POVMs are best viewed as a special case of the general measurement formalism, providing the simplest means to study post-measurement statistics without knowledge of the post measurement state.
+
+From above, $p(m) = \bra{\psi} M_m^\dagger M_m \ket{\psi}$ so if we define $E_m := M_m^\dagger M_m$ then these $E_m$'sd are sufficient for the purpose of computing probabilities. We denote $\{ E_m \}$ as a POVM. 
+
+Note that projective operators are the special case of being equivalent to their respective POVM element because $E_m = P_m^\dag P_m = P_m$. 
+
+Nevertheless, the POVM formalism is a useful guide in for our intuition in quantum information. Consider if Alice prepares some state for Bob that is either $\ket{\psi_1} = \ket{0}$ or $\ket{\psi_2} = \frac{\ket{0} + \ket{1}}{\sqrt{2}}$. Recall from \ref{qmeas}, Bob can't determine which state was prepared with full certainty (because of the shared orthogonal component $\ket{0}$). Still, we can define a POVM\footnote{verify that completeness and these being positive operators holds}
+
+\begin{align*}
+E_1 &= \frac{\sqrt{2}}{1+\sqrt{2}}\ket{1}\bra{1}	\\
+E_2 &= \frac{\sqrt{2}}{1+\sqrt{2}}\frac{(\ket{0} - \ket{1})(\bra{0} - \bra{1})}{2} \\
+E_3 &= I - E_1 - E_2
+\end{align*}
+
+Now, notice what happens. 
+
+\begin{align*}
+\bra{\psi_1} E_1 \ket{\psi_1} &= \bra{0} \frac{\sqrt{2}}{1+\sqrt{2}}\ket{1}\bra{1}\ket{0} \\
+	&= 0 \\
+\bra{\psi_2} E_1 \ket{\psi_2} &= \frac{\bra{0} + \bra{1}}{\sqrt{2}}\frac{\sqrt{2}}{1+\sqrt{2}}\ket{1}\bra{1}\frac{\ket{0} + \ket{1}}{\sqrt{2}} \\
+	&= \frac{\sqrt{2}}{2\sqrt{2} + 2} > 0 
+\end{align*}
+
+Hence, if we observe $E_1$ after the measurement described by $\{ E_1, E_2, E_3 \}$, then Alice must've prepared $\ket{\psi_2}$. Similarly,
+
+\begin{align*}
+\bra{\psi_1} E_2 \ket{\psi_1} &= \bra{0} \frac{\sqrt{2}}{1+\sqrt{2}}\frac{(\ket{0} - \ket{1})(\bra{0} - \bra{1})}{2}\ket{0} \\
+	&= \frac{\sqrt{2}}{2\sqrt{2} + 2} > 0 \\
+\bra{\psi_2} E_2 \ket{\psi_2} &= \frac{\bra{0} + \bra{1}}{\sqrt{2}}\frac{\sqrt{2}}{1+\sqrt{2}}\frac{(\ket{0} - \ket{1})(\bra{0} - \bra{1})}{2}\frac{\ket{0} + \ket{1}}{\sqrt{2}} \\
+	&= 0
+\end{align*}
+
+so if we observe $E_2$, then Bob concludes that Alice prepared $\ket{\psi_1}$. Our routine is imperfect because we may observe $E_3$ and hence would infer nothing of the original state. Still, we would never $\textit{incorrectly}$ guess given that we allow ourselves to abstain when we see $E_3$. 
+
+\begin{exercise} (2.64) Suppose Bob is given a quantum state chosen from a set $S = \ket{\psi_1} , \cdots , \ket{\psi_m}$ of linearly independent states. Construct a POVM $\{ E_1 , \cdots , E_{m+1} \}$ such that if outcome $E_i$ occurs, $1 \leq i \leq m$, then Bob knows with certainty that he was given state $\ket{\psi_i}$.
+\end{exercise}
+
+To distinguish the states we require $\bra{\psi_i} E_j \ket{\psi_i} = p_i \delta_{ij}$ where $p_i > 0$ and $1 \leq i,j \leq m$. 
+
+So, we can use the Gram-Schmidt process using $S$ as our linearly independent set. This will give us an orthonormal set $U = \ket{\phi_1} , \cdots , \ket{\phi_m}$ that spans the same subspace as $S$. Next, we can represent each $\ket{\psi_i}$ in this orthonormal basis, $U$. Finally, for each $i$ we can find a vector $\ket{\psi'_i}$ in the span of $U$ that is orthogonal to all $\ket{\psi_j}, j \neq i$. Hence, we can define $E_i = \ket{\psi_i'} \bra{\psi_i'}, 1 \leq i \leq m$. Finally, take $E_{m+1} = I - \sum_m E_i$. 
+
+Creating an optimal POVM is much trickier (in the sense of minimizing the probability $p_{m+1}$).
+
+From this exercise, we see that POVMs present a reliable way to distinguish non-orthogonal states given that we allow for the slack of an "inconclusive" measurement ($E_{m+1}$). 
+
+\subsubsection{Composite Systems}
+
+The state space of a composite physical system is the tensor product of the state spaces of the component physical systems. 
+
+\begin{exercise} (2.66)
+	Show that the average value of the observable $X_1Z_2$ ($X$ acting on the first qubit and $Z$ on the second) for a two qubit system measured in the state $\frac{\ket{00} + \ket{11}}{\sqrt{2}}$ is zero.
+\end{exercise}
+
+\begin{proof}
+	Let observable $M = X_1Z_2$. Hence, 
+	
+	\begin{align*}
+	\langle M \rangle &= \frac{\bra{00} + \bra{11}}{\sqrt{2}} M \frac{\ket{00} + \ket{11}}{\sqrt{2}}\\	
+	&= \frac{\bra{00} + \bra{11}}{\sqrt{2}}\frac{X_1\ket{0}Z_2\ket{0} + X_1\ket{1}Z_2\ket{1}}{\sqrt{2}} \\
+	&= \frac{\bra{00} + \bra{11}}{\sqrt{2}}\frac{\ket{1}\ket{0} - \ket{0}\ket{1}}{\sqrt{2}} \\
+	&= 0
+	\end{align*}
+\end{proof}
+ 
+Interestingly, we can show that a general quantum measurement (as described in \ref{qmeas}) can be implemented as a projective measurement coupled with unitary dynamics.
+
+Consider a quantum system with state space $Q$ and measurements $M_m$ on this system. We can introduce an \textit{ancilla} system $M$ with orthonormal basis $\ket{m}$ which is in one-to-one correspondence with the possible outcomes of the measurement we wish to implement. 
+
+So, let $\ket{0}$ be a fixed state of $M$ and define an operator $U$ on $\ket{\psi}\ket{0}$ (with $\ket{\psi}$ as a state of $Q$) by
+
+\begin{align*}
+U\ket{\psi}\ket{0} := \sum_m M_m \ket{\psi}\ket{m}
+\end{align*}
+
+Hence,
+
+\begin{align*}
+\bra{\phi}\bra{0}U^\dag U \ket{\psi}	 \ket{0} &= \sum_m \sum_{m'} \bra{\phi} M_m^\dag M_{m'} \ket{\psi}\bra{m}\ket{m'} \\
+\intertext{So, because the states $\ket{m}$ are orthonormal}
+&= \sum_m\bra{\phi} M_m^\dag M_{m} \ket{\psi} \\
+\intertext{and finally by the completeness of $M_m$}
+&= \bra{\phi}\ket{\psi}
+\end{align*}
+
+We can show that $U$ can be extended to a unitary operator on $Q \otimes M$ (exercise).
+
+Furthermore, consider the two systems given by projectors $P_m := I_Q \otimes \ket{m}\bra{m}$.
+
+\subsection{Superdense Coding}
+
+\subsection{The Density Operator}
+
+\subsection{EPR and the Bell Inequality}  
+
+\section{Nielsen \& Chuang: Chapter 4}
+
+\section{Nielsen \& Chuang: Chapter 5}
+
+\begin{enumerate}
+\item Quantum Fourier Transform
+\item Quantum Phase Estimation Algorithm
+\item Shor's algorithm for Factoring
+\end{enumerate}
+
+\section{Nielsen \& Chuang: Chapter 6}
+
+Quantum Search algorithms
+
+\section{Algorithms for solving linear systems of equations}
+\url{https://arxiv.org/abs/0811.3171}
+
+\section{Density Matrix Exponentiation Algorithms}
+\url{https://www.nature.com/articles/nphys3029}
+
+\section{Review of Quantum Machine Learning}
+\url{https://www.nature.com/articles/nature23474}
+
+\section{Learnability of Quantum States}
+\begin{enumerate}
+\item \url{https://arxiv.org/abs/quant-ph/0608142}
+\item \url{https://arxiv.org/abs/1711.01053}
+\item \url{https://arxiv.org/abs/1801.05721}
+\end{enumerate}
+
+
+\section{Appendix}
+
+\subsection{Pauli Matrices}
+\begin{align*}
+X &= \begin{pmatrix} 0 & 1 \\ 1 & 0\end{pmatrix} \\
+Y &= \begin{pmatrix} 0 & -i \\ i & 0\end{pmatrix}\\
+Z &= \begin{pmatrix} 1 & 0 \\ 0 & -1\end{pmatrix}
+\end{align*}
+
+\end{document}
