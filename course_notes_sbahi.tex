@@ -159,7 +159,7 @@ Furthermore, $\{ M_m \}$ satisfy the completeness equation
 
 Now, we see an interesting implication. If we seek to distinguish our physical system from a set of orthogonal states, then we can reliably do so by simply defining each measurement operator to be the outer product of our states of interest. We add a final operator defined to be the remaining complement of the identity in order to satisfy the completeness equation. 
 
-On the flipside, two non-orthogonal states $\ket{\psi_1}$ and $\ket{\psi_2}$ necessarily share a parallel component in their orthogonal decomposition. Hence, any observable that corresponds to the pre-measurement state being $\ket{\psi_1}$ with probability $p > 0$ has a probability $p'>0$ of having been in state $\ket{\psi_2}$. 
+On the flipside, two non-orthogonal states $\ket{\psi_1}$ and $\ket{\psi_2}$ necessarily share a parallel component in their orthogonal decomposition. Hence, a measurement outcome that corresponds to the pre-measurement state being $\ket{\psi_1}$ with probability $p > 0$ has a probability $p'>0$ of having been in state $\ket{\psi_2}$. 
 
 \subsubsection{Projective Measurements}
 
@@ -353,6 +353,58 @@ Observe that these are the Bell states. Furthermore, Bell states form an orthono
 
 \subsection{The Density Operator}
 
+An alternative formulation of quantum mechanics is possible using a tool known as the density operator. 
+
+Suppose a quantum system is one of a number of states $\ket{\psi}$ with probability $p_i$. We call $\{p_i, \ket{\psi_i} \}$ an ensemble of pure states. The density operator is defined
+
+\begin{align*}
+\rho := \sum_i p_i \ket{\psi_i}\bra{\psi_i}	
+\end{align*}
+
+Evolution of the density operator (under a unitary transformation) can be derived readily
+
+\begin{align*}
+\sum_i p_i U\ket{\psi_i}\bra{\psi_i}U^\dag = U\rho U^\dag	
+\end{align*}
+
+If we perform a measurement with operator $M_m$ with initial state $\ket{\psi_i}$ then
+
+\begin{align*}
+p(m\mid i) &= \bra{\psi_i} M_m^\dag M_m \ket{\psi_i} \\
+&= tr(M_m^\dag M_m \ket{\psi_i}\bra{\psi_i})
+\end{align*}
+
+using \ref{trop}. 
+
+Hence, summing this conditional probability across all initial states we have
+
+\begin{align*}
+	p(m) &= \sum_i p_i tr(M_m^\dag M_m \ket{\psi_i}\bra{\psi_i}) \\
+	&= tr(M_m^\dag M_m \rho)
+\end{align*}
+
+The state after obtaining measurement result $m$ on initial state $\ket{\psi_i}$ is
+
+\begin{align*}
+\ket{\psi_i^m} = \frac{M_m \ket{\psi_i}}{\sqrt{\bra{\psi_i}M_m^\dag M_m\ket{\psi_i}}}	
+\end{align*}
+
+and so the density operator after result $m$ is given by
+
+\begin{align*}
+	\rho_m &= \sum_i p(i \mid m ) \ket{\psi_i^m} \bra{\psi_i^m} \\
+	&= \sum_i p(i \mid m )\frac{M_m \ket{\psi_i}\bra{\psi_i}M_m^\dag}{\bra{\psi_i}M_m^\dag M_m\ket{\psi_i}}
+\end{align*}
+
+Furthermore, from Baye's rule we have that $p(i \mid m) = \frac{p(m \mid i)p(i)}{p(m)}$ so we can simplify
+
+\begin{align*}
+	\rho_m &= \sum_i \frac{p(m \mid i)p(i)}{p(m)}\frac{M_m \ket{\psi_i}\bra{\psi_i}M_m^\dag}{\bra{\psi_i}M_m^\dag M_m\ket{\psi_i}} \\
+	&= \sum_i \frac{p(i)\bra{\psi_i} M_m^\dag M_m \ket{\psi_i}}{tr(M_m^\dag M_m \rho)}\frac{M_m \ket{\psi_i}\bra{\psi_i}M_m^\dag}{\bra{\psi_i}M_m^\dag M_m\ket{\psi_i}} \\
+	&= \sum_i \frac{p(i)M_m \ket{\psi_i}\bra{\psi_i}M_m^\dag}{tr(M_m^\dag M_m \rho)} \\
+	&= \frac{M_m\rho M_m^\dag}{tr(M_m^\dag M_m \rho)}
+\end{align*}
+
 \subsection{EPR and the Bell Inequality}  
 
 \section{Nielsen \& Chuang: Chapter 4}
@@ -393,6 +445,21 @@ Quantum Search algorithms
 X &= \begin{pmatrix} 0 & 1 \\ 1 & 0\end{pmatrix} \\
 Y &= \begin{pmatrix} 0 & -i \\ i & 0\end{pmatrix}\\
 Z &= \begin{pmatrix} 1 & 0 \\ 0 & -1\end{pmatrix}
+\end{align*}
+
+\subsection{Trace of an Operator}\label{trop}
+
+Let $\ket{i}$ be an orthonormal basis for $A$ and so
+\begin{align*}
+tr(A) &= \sum_i A_{ii} \\
+&= \sum_i \bra{i} A \ket{i}	
+\end{align*}
+
+Hence, if we extend $\ket{\psi}$ to the orthonormal basis $\ket{i}$ which includes $\ket{\psi}$ as the first element (for example via the Gram-Schmidt procedure) then
+
+\begin{align*}
+	tr(A\ket{\psi}\bra{\psi}) &= \sum_i \bra{i} A\ket{\psi}\bra{\psi}\ket{i}	 \\
+	&= \bra{\psi} A\ket{\psi}
 \end{align*}
 
 \end{document}
