@@ -137,7 +137,7 @@ and equivalently from \ref{post-discrete-evol} we can represent this transformat
 
 \subsubsection{Quantum Measurement}\label{qmeas}
 
-Quantum measurements are described by a collection of measurements operators $\{ M_m \}$ (where $m$ refers to the potential measurement outcomes of the experiment) which act on the state space of the system being observed. 
+Quantum measurements are described by a collection of measurements operators $\{ M_m \}$ (where the index $m$ refers to the potential measurement outcomes of the experiment) which act on the state space of the system being observed. 
 
 Hence, if the pre-measurement state is $\ket{\psi}$, then 
 
@@ -156,6 +156,8 @@ Furthermore, $\{ M_m \}$ satisfy the completeness equation
 \begin{align*}
 \sum_m M_m^\dagger M_m = I
 \end{align*}
+
+An important example of a measurement is the measurement of a qubit in the computational basis. This is a measurement of a qubit with two outcomes defined by the measurement operators $M_0 = \ket{0}\bra{0}$ and $M_1 = \ket{1}\bra{1}$.
 
 Now, we see an interesting implication. If we seek to distinguish our physical system from a set of orthogonal states, then we can reliably do so by simply defining each measurement operator to be the outer product of our states of interest. We add a final operator defined to be the remaining complement of the identity in order to satisfy the completeness equation. 
 
@@ -599,7 +601,27 @@ Furthermore, note that each of the possible states of Bob's qubits after Alice's
 
 So that's what the notation in the circuit above means, we apply $X$ or $Z$ to Bob's qubits to recover $\ket{\psi}$ depending on the outcome of Alice's measurement.
 
-Pretty cool, right? Let's look at this a level deeper using the density operator formalism we've developed. 
+Pretty cool, right? Let's look at this a level deeper using the density operator formalism we've developed. Each of the 4 cases have probability $\frac{1}{4}$ of occurring after the measurement. Hence, the density operator is given by
+
+\begin{align*}
+	\rho =& \frac{1}{4}\Big[ \ket{00}\bra{00} (\alpha\ket{0} + \beta\ket{1})(\alpha^*\bra{0} + \beta^*\bra{1}) + \ket{01}\bra{01}(\alpha\ket{1} + \beta \ket{0})(\alpha^*\bra{1} + \beta^* \bra{0}) \\
+	&+ \ket{10}\bra{10}(\alpha\ket{0} - \beta\ket{1})(\alpha^*\bra{0} - \beta^*\bra{1}) + \ket{11}\bra{11}(\alpha\ket{1} - \beta\ket{0})(\alpha^*\bra{1} - \beta^*\bra{0}) \Big]
+\end{align*}
+
+So, the reduced density operator of Bob's system is
+
+\begin{align*}
+	\rho^B =& \frac{1}{4}\Big[ \bra{00}\ket{00} (\alpha\ket{0} + \beta\ket{1})(\alpha^*\bra{0} + \beta^*\bra{1}) + \bra{01}\ket{01}(\alpha\ket{1} + \beta \ket{0})(\alpha^*\bra{1} + \beta^* \bra{0}) \\
+	&+ \bra{10}\ket{10}(\alpha\ket{0} - \beta\ket{1})(\alpha^*\bra{0} - \beta^*\bra{1}) + \bra{11}\ket{11}(\alpha\ket{1} - \beta\ket{0})(\alpha^*\bra{1} - \beta^*\bra{0}) \Big] \\
+	=& \frac{1}{4}\Big[(\alpha\ket{0} + \beta\ket{1})(\alpha^*\bra{0} + \beta^*\bra{1}) + (\alpha\ket{1} + \beta \ket{0})(\alpha^*\bra{1} + \beta^* \bra{0}) \\
+	&+ (\alpha\ket{0} - \beta\ket{1})(\alpha^*\bra{0} - \beta^*\bra{1}) + (\alpha\ket{1} - \beta\ket{0})(\alpha^*\bra{1} - \beta^*\bra{0}) \Big] \\
+	=& \frac{1}{4}\Big[2(\alpha^*\alpha + \beta^*\beta)\ket{0}\bra{0} + 2(\alpha^*\alpha + \beta^*\beta)\ket{1}\bra{1}] \\
+	=& \frac{I}{2}
+\end{align*}
+by $|\alpha|^2 + |\beta|^2 = 1$ and completeness.
+
+Hence, the state of Bob's system after Alice has performed the measurement (but before Bob has learned the measurement result) is $I/2$ which has no dependence upon the state $\ket{\psi}$ being teleported. Therefore, any measurements performed by Bob will contain no information about $\ket{\psi}$, so information being communicated is dependent on the classical communication channel, implying that the speed of light limit is obeyed.
+
 \subsection{EPR and the Bell Inequality}  
 
 \subsection{No-cloning Theorem}
