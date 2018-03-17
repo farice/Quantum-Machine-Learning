@@ -123,7 +123,7 @@ For example, consider the Hamiltonian $H = \hbar \omega X$  (recall that $X = \s
 	\hbar\omega\begin{pmatrix} -1 & 1 \\ 1 & -1\end{pmatrix}\ket{E_+} &= 0 \\
 	\ket{E_+} &= \frac{1}{\sqrt{2}}\begin{pmatrix}
 		1 \\ 1
-	\end{pmatrix} := \ket{+} \\
+	\end{pmatrix} \coloneqq \ket{+} \\
 	\ket{E_-} &= \ket{-}
 \end{align*}
 
@@ -197,7 +197,7 @@ For example, consider projective measurements on the system given by single qubi
 
 POVMs are best viewed as a special case of the general measurement formalism, providing the simplest means to study post-measurement statistics without knowledge of the post measurement state.
 
-From above, $p(m) = \bra{\psi} M_m^\dagger M_m \ket{\psi}$ so if we define $E_m := M_m^\dagger M_m$ (which is hence positive from \ref{posop}) then these $E_m$'s are sufficient for the purpose of computing probabilities. We denote $\{ E_m \}$ as a POVM. 
+From above, $p(m) = \bra{\psi} M_m^\dagger M_m \ket{\psi}$ so if we define $E_m \coloneqq M_m^\dagger M_m$ (which is hence positive from \ref{posop}) then these $E_m$'s are sufficient for the purpose of computing probabilities. We denote $\{ E_m \}$ as a POVM. 
 
 Note that projective operators are the special case of being equivalent to their respective POVM element because $E_m = P_m^\dag P_m = P_m$. 
 
@@ -266,7 +266,7 @@ Consider a quantum system with state space $Q$ and measurements $M_m$ on this sy
 So, let $\ket{0}$ be a fixed state of $M$ and define an operator $U$ on $\ket{\psi}\ket{0}$ (with $\ket{\psi}$ as a state of $Q$) by
 
 \begin{align*}
-U\ket{\psi}\ket{0} := \sum_m M_m \ket{\psi}\ket{m}
+U\ket{\psi}\ket{0} \coloneqq \sum_m M_m \ket{\psi}\ket{m}
 \end{align*}
 
 Hence,
@@ -281,7 +281,7 @@ Hence,
 
 This tells us that $U$ preserves inner products between states of the form $\ket{\psi}\ket{0}$. Furthermore, we can show that $U$ can be extended to a unitary operator on $Q \otimes M$ (exercise).
 
-Hence, consider a projective measurement on the two systems ($U\ket{\psi}\ket{0}$) given by projectors $P_m := I_Q \otimes \ket{m}\bra{m}$. So,
+Hence, consider a projective measurement on the two systems ($U\ket{\psi}\ket{0}$) given by projectors $P_m \coloneqq I_Q \otimes \ket{m}\bra{m}$. So,
 
 \begin{align*}
 p(m) &= \bra{\psi} \bra{0} U^\dag P_m U \ket{\psi} \ket{0} \\
@@ -333,7 +333,7 @@ Suppose Alice is in possession of two classical bits of information she wishes t
  \end{center}
  \end{table}
 
-Observe that these are the Bell states. Furthermore, Bell states form an orthonormal basis and hence can be distinguished (as we've discussed in \ref{povm}). Hence, Alice needs only to interact with the single qubit to transmit two classical bits of information to Bob.
+Observe that these are the Bell states (see \ref{bellstates}). Furthermore, Bell states form an orthonormal basis and hence can be distinguished (as we've discussed in \ref{povm}). Hence, Alice needs only to interact with the single qubit to transmit two classical bits of information to Bob.
 
 \begin{exercise} 
 (2.70) Suppose $E$ is any positive operator acting on Alice’s qubit. Show that $\bra{\psi} E \otimes I \ket{\psi}$ takes the same value when $\ket{\psi}$ is any of the four Bell states. Suppose some malevolent third party ('Eve') intercepts Alice’s qubit on the way to Bob in the superdense coding protocol. Can Eve infer anything about which of the four possible bit strings 00, 01, 10, 11 Alice is trying to send? If so, how, or if not, why not?	
@@ -358,7 +358,7 @@ An alternative formulation of quantum mechanics is possible using a tool known a
 Suppose a quantum system is one of a number of states $\ket{\psi}$ with probability $p_i$. We call $\{p_i, \ket{\psi_i} \}$ an ensemble of pure states. The density operator is defined
 
 \begin{align*}
-\rho := \sum_i p_i \ket{\psi_i}\bra{\psi_i}	
+\rho \coloneqq \sum_i p_i \ket{\psi_i}\bra{\psi_i}	
 \end{align*}
 
 Evolution of the density operator (under a unitary transformation) can be derived readily
@@ -371,7 +371,7 @@ If we perform a measurement with operator $M_m$ with initial state $\ket{\psi_i}
 
 \begin{align*}
 p(m\mid i) &= \bra{\psi_i} M_m^\dag M_m \ket{\psi_i} \\
-&= tr(M_m^\dag M_m \ket{\psi_i}\bra{\psi_i})
+&= \tr(M_m^\dag M_m \ket{\psi_i}\bra{\psi_i})
 \end{align*}
 
 using \ref{trop}. 
@@ -379,8 +379,8 @@ using \ref{trop}.
 Hence, summing this conditional probability across all initial states we have
 
 \begin{align*}
-	p(m) &= \sum_i p_i tr(M_m^\dag M_m \ket{\psi_i}\bra{\psi_i}) \\
-	&= tr(M_m^\dag M_m \rho)
+	p(m) &= \sum_i p_i \tr(M_m^\dag M_m \ket{\psi_i}\bra{\psi_i}) \\
+	&= \tr(M_m^\dag M_m \rho)
 \end{align*}
 
 The state after obtaining measurement result $m$ on initial state $\ket{\psi_i}$ is
@@ -400,14 +400,14 @@ Furthermore, from Baye's rule we have that $p(i \mid m) = \frac{p(m \mid i)p(i)}
 
 \begin{align*}
 	\rho_m &= \sum_i \frac{p(m \mid i)p(i)}{p(m)}\frac{M_m \ket{\psi_i}\bra{\psi_i}M_m^\dag}{\bra{\psi_i}M_m^\dag M_m\ket{\psi_i}} \\
-	&= \sum_i \frac{p(i)\bra{\psi_i} M_m^\dag M_m \ket{\psi_i}}{tr(M_m^\dag M_m \rho)}\frac{M_m \ket{\psi_i}\bra{\psi_i}M_m^\dag}{\bra{\psi_i}M_m^\dag M_m\ket{\psi_i}} \\
-	&= \sum_i \frac{p(i)M_m \ket{\psi_i}\bra{\psi_i}M_m^\dag}{tr(M_m^\dag M_m \rho)} \\
-	&= \frac{M_m\rho M_m^\dag}{tr(M_m^\dag M_m \rho)}
+	&= \sum_i \frac{p(i)\bra{\psi_i} M_m^\dag M_m \ket{\psi_i}}{\tr(M_m^\dag M_m \rho)}\frac{M_m \ket{\psi_i}\bra{\psi_i}M_m^\dag}{\bra{\psi_i}M_m^\dag M_m\ket{\psi_i}} \\
+	&= \sum_i \frac{p(i)M_m \ket{\psi_i}\bra{\psi_i}M_m^\dag}{\tr(M_m^\dag M_m \rho)} \\
+	&= \frac{M_m\rho M_m^\dag}{\tr(M_m^\dag M_m \rho)}
 \end{align*}
 
 A quantum state whose state $\ket{\psi}$ is known exactly is said to be in a pure state. In this case the density operator is simply $\rho = \ket{\psi}\bra{\psi}$. Otherwise, $\rho$ is in a mixed state.
 
-A pure state satisfies $tr(\rho^2) = 1$ and a mixed state $tr(\rho^2) < 1$.
+A pure state satisfies $\tr(\rho^2) = 1$ and a mixed state $\tr(\rho^2) < 1$.
 
 Imagine that our record of the result $m$ of a measurement was lost. We would have a quantum system in the state $\rho_m$ with probability $p(m)$ without knowing the actual value of $m$. Hence, the system would be described as
 
@@ -430,11 +430,11 @@ An operator $\rho$ is a density operator associated to some ensemble $\{p_i, \ke
 	We show one direction (see the text for the other). Let $\rho$ be a density operator. Hence,
 	
 	\begin{align*}
-	tr(\rho) &= \sum_i p_i tr(\ket{\psi_i}\bra{\psi_i}) \\
+	\tr(\rho) &= \sum_i p_i \tr(\ket{\psi_i}\bra{\psi_i}) \\
 	&= 	\sum_i p_i =1
 	\end{align*}
 
-because $tr(\ket{\psi_i}\bra{\psi_i}) = \psi_{i1}^2 + \psi_{i2}^2 + \cdots \psi_{in}^2 = 1$ by normalization. 
+because $\tr(\ket{\psi_i}\bra{\psi_i}) = \psi_{i1}^2 + \psi_{i2}^2 + \cdots \psi_{in}^2 = 1$ by normalization. 
 
 Furthermore, suppose $\ket{\phi}$ resides in the vector space
 
@@ -451,7 +451,7 @@ The use of this theorem is that we can define a density operator to be a positiv
 This reformulation shines when describing quantum systems whose state is not known and when describing subsystems a composite quantum system.
 
 \begin{exercise}
-(2.71) Let $\rho$ be a density operator. Show that $tr(\rho^2) \leq 1$ with equality iff $\rho$ is a pure state.
+(2.71) Let $\rho$ be a density operator. Show that $\tr(\rho^2) \leq 1$ with equality iff $\rho$ is a pure state.
 \begin{proof}
 % TODO (2.71)	
 \end{proof}	
@@ -459,7 +459,7 @@ This reformulation shines when describing quantum systems whose state is not kno
 
 Remember that different ensembles of quantum states can give rise to a specific density matrix and hence one must avoid assuming that the eigenvectors and eigenvalues have special significance with regard to the represented ensemble of quantum states.
 
-Nevertheless, there is value in discussing which ensembles give rise to the same density matrix (notably in quantum noise and error correction). Let $\ket{\tilde{\psi_i}}$ generate $\rho$ i.e. $\rho:=\sum_i\ket{\tilde{\psi_i}}\bra{\tilde{\psi_i}}$. Note that $\ket{\tilde{\psi_i}} = \sqrt{p_i}\ket{\psi_i}$ is clearly not necessarily normalized. Now, we have the following theorem.
+Nevertheless, there is value in discussing which ensembles give rise to the same density matrix (notably in quantum noise and error correction). Let $\ket{\tilde{\psi_i}}$ generate $\rho$ i.e. $\rho\coloneqq\sum_i\ket{\tilde{\psi_i}}\bra{\tilde{\psi_i}}$. Note that $\ket{\tilde{\psi_i}} = \sqrt{p_i}\ket{\psi_i}$ is clearly not necessarily normalized. Now, we have the following theorem.
 
 \begin{theorem}
 The sets $\ket{\tilde{\psi_i}}$ and $\ket{\tilde{\phi_j}}$ generate the same $\rho$ if and only if
@@ -472,7 +472,8 @@ where the matrix with matrix elements $u_{ij}$ is unitary.
 \begin{proof}
 	See the text.
 \end{proof}
-	
+\end{theorem}
+
 \begin{exercise}
 (2.72) Bloch Sphere for mixed states.
 \begin{proof}
@@ -480,11 +481,128 @@ where the matrix with matrix elements $u_{ij}$ is unitary.
 \end{proof}	
 \end{exercise}
 
-\end{theorem}
+As mentioned above, density operators are powerful tools for describing subsystems of composite systems. 
  
+Suppose we have physical systems $A$ and $B$, whose state is described by $\rho^{AB}$. The reduced density operator for system $A$ is defined by
 
+\begin{align*}
+\rho^A \coloneqq \tr_B(\rho^{AB})
+\end{align*}
+
+where $\tr_B$ is a map of operators known as the partial trace over system $B$ which is defined by
+
+\begin{align*}
+\tr_B(\ket{a_1}\bra{a_2} \otimes \ket{b_1}\bra{b_2}) &= \ket{a_1}\bra{a_2} \tr( \ket{b_1}\bra{b_2}) \\
+&= \ket{a_1}\bra{a_2} \bra{b_2}\ket{b_1}
+\end{align*}
+
+Hence, consider the Bell state $\frac{\ket{00} + \ket{11}}{\sqrt{2}}$ and the reduced density operator of its first qubit
+
+\begin{align*}
+\rho &= \frac{\ket{00} + \ket{11}}{\sqrt{2}}\frac{\bra{00} + \bra{11}}{\sqrt{2}} \\
+\rho^1 &= \frac{\ket{0}\bra{0}\bra{0}\ket{0}+\ket{1}\bra{0}\bra{0}\ket{1}+ \ket{0}\bra{1}\bra{1}\ket{0}+ \ket{1}\bra{1}\bra{1}\ket{1}}{2} \\
+&= \frac{\ket{0}\bra{0} + \ket{1}\bra{1}}{2} \\
+&= \frac{I}{2}
+\end{align*}
+
+Oddly, $\tr(\frac{I^2}{4}) = 1/2 < 1$ so the first qubit is in a mixed state despite the system as a whole being in a pure state. This is another hallmark of quantum entanglement. 
+
+\begin{exercise}
+(2.74) Suppose a composite of systems $A$ and $B$ is in state $\ket{a}\ket{b}$, where $\ket{a}$ is a pure state of system $A$ and $\ket{b}$ is a pure state of system $B$. Show that the reduced density operator of system $A$ alone is a pure state.
+\begin{proof}
+\begin{align*}
+\rho &= \ket{a}\ket{b}\bra{a}\bra{b} \\
+\rho^A &= \ket{a}\bra{a}\bra{b}\ket{b} = \ket{a}\bra{a}
+\end{align*}
+
+where we were given that $\ket{a}$ is a pure state.
+\end{proof}	
+\end{exercise}
+
+\begin{exercise}
+(2.75) For each of the four Bell states, find the reduced density operator for each qubit
+\begin{proof}
+
+First, $\frac{\ket{00} + \ket{11}}{\sqrt{2}}$
+
+\begin{align*}
+\rho &= \frac{\ket{00} + \ket{11}}{\sqrt{2}}\frac{\bra{00} + \bra{11}}{\sqrt{2}} \\
+\rho^1 &= \frac{\ket{0}\bra{0}\bra{0}\ket{0}+\ket{1}\bra{0}\bra{0}\ket{1}+ \ket{0}\bra{1}\bra{1}\ket{0}+ \ket{1}\bra{1}\bra{1}\ket{1}}{2} \\
+&= \frac{\ket{0}\bra{0} + \ket{1}\bra{1}}{2} = \frac{I}{2} \\
+\rho^2 &= \frac{\ket{0}\bra{0}\bra{0}\ket{0}+\ket{1}\bra{0}\bra{0}\ket{1}+ \ket{0}\bra{1}\bra{1}\ket{0}+ \ket{1}\bra{1}\bra{1}\ket{1}}{2} \\
+&= \frac{\ket{0}\bra{0} + \ket{1}\bra{1}}{2} = \frac{I}{2}
+\end{align*}
+
+Next, $\frac{\ket{00} - \ket{11} }{\sqrt{2}}$	
+
+\begin{align*}
+\rho &= \frac{\ket{00} - \ket{11}}{\sqrt{2}}\frac{\bra{00} - \bra{11}}{\sqrt{2}} \\
+\rho^1 &= \frac{\ket{0}\bra{0}\bra{0}\ket{0}-\ket{1}\bra{0}\bra{0}\ket{1}- \ket{0}\bra{1}\bra{1}\ket{0}+ \ket{1}\bra{1}\bra{1}\ket{1}}{2} \\
+&= \frac{\ket{0}\bra{0} + \ket{1}\bra{1}}{2} = \frac{I}{2} \\
+\rho^2 &= \frac{\ket{0}\bra{0}\bra{0}\ket{0}-\ket{1}\bra{0}\bra{0}\ket{1}- \ket{0}\bra{1}\bra{1}\ket{0}+ \ket{1}\bra{1}\bra{1}\ket{1}}{2} \\
+&= \frac{\ket{0}\bra{0} + \ket{1}\bra{1}}{2} = \frac{I}{2}
+\end{align*}
+
+The remaining two are similar.
+%$\frac{\ket{10} + \ket{01} }{\sqrt{2}}$
+%$\frac{\ket{01} - \ket{10} }{\sqrt{2}}$
+\end{proof}	
+\end{exercise}
+
+\subsection{Quantum Teleportation}
+Quantum teleportation is a procedure for sending quantum information from Alice to Bob, given that Alice and Bob share an EPR pair, and have a classic communications channel. Recall that the need for Alice to communicate her result to Bob prevents faster than light communication.
+
+The state to be teleported is $\ket{\psi} = \alpha\ket{0} + \beta\ket{1}$. We can use the circuit shown in the figure below to perform this telerportation, with inputs $\ket{\psi} \ket{\beta_{00}}$ where $\ket{\beta_{00}}$ is the Bell state $\frac{\ket{00} + \ket{11} }{\sqrt{2}}$. Hence,
+
+\begin{align*}
+	\ket{\psi} \ket{\beta_{00}} &= \frac{1}{\sqrt{2}}\Big[\alpha\ket{0}(\ket{00} + \ket{11}) + \beta\ket{1}(\ket{00} + \ket{11})\Big]
+\end{align*}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{teleportation_circuit.png}	
+\caption{Two top lines are Alice's system and bottom is Bob's}
+\end{figure}
+
+Recall the controlled-\texttt{NOT} (\texttt{CNOT}) takes $\ket{a}\ket{b}$ to $\ket{a}\ket{b \oplus a}$. The other gates in the circuit are summarized in the diagram below.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\linewidth]{basic_gates.png}	
+\caption{Basic gates}
+\end{figure}
+
+So, the first two qubits belong to Alice and the third to Bob. Alice sends her qubits through a \texttt{CNOT} obtaining
+
+\begin{align*}
+\ket{\psi_1} &= \frac{1}{\sqrt{2}}\Big[\alpha\ket{0}(\ket{00} + \ket{11}) + \beta\ket{1}(\ket{10} + \ket{01})\Big]
+\end{align*}
+
+Then, Alice's first qubit is sent through a Hadamard gate which gives
+
+\begin{align*}
+\ket{\psi_2} &= \frac{1}{2}\Big[\alpha(\ket{0}+\ket{1})(\ket{00} + \ket{11}) + \beta(\ket{0}-\ket{1})(\ket{10} + \ket{01})\Big] \\
+&= \frac{1}{2}\Big[ \ket{00} (\alpha\ket{0} + \beta\ket{1}) + \ket{01}(\alpha\ket{1} + \beta \ket{0}) + \ket{10}(\alpha\ket{0} - \beta\ket{1}) + \ket{11}(\alpha\ket{1} - \beta\ket{0}) \Big]
+\end{align*}
+
+Now, observe that each grouping in this expression has Alice's bits in a different state ($\ket{00},\ket{01},\ket{10},\ket{11}$), each of which Alice may observe after a measurement. Curiously, each of these groupings has a unique corresponding state for Bob's qubits. Hence, we know the state of Bob's qubits given knowledge of the outcome of Alice's measurement.
+
+Furthermore, note that each of the possible states of Bob's qubits after Alice's measurements can be readily transformed to $\ket{\psi}$. Consider the four cases
+
+\begin{enumerate}
+\item Alice measures $00$. Hence, Bob's state is already $\ket{\psi}$. 
+\item Alice measures $01$. Hence, Bob's state is $\alpha\ket{1} + \beta \ket{0}$. So, just apply the $X$ gate. 
+\item Alice measures $10$. Hence, Bob's state is $\alpha\ket{0} - \beta\ket{1}$. So, just apply the $Z$ gate to flip the second sign. 
+\item Alice measures $11$. Hence, Bob's state is $\alpha\ket{1} - \beta\ket{0}$. So, apply the $X$ gate to flip the bits, then the $Z$ gate to flip the second sign. 
+\end{enumerate}
+
+So that's what the notation in the circuit above means, we apply $X$ or $Z$ to Bob's qubits to recover $\ket{\psi}$ depending on the outcome of Alice's measurement.
+
+Pretty cool, right? Let's look at this a level deeper using the density operator formalism we've developed. 
 \subsection{EPR and the Bell Inequality}  
 
+\subsection{No-cloning Theorem}
 \section{Nielsen \& Chuang: Chapter 4}
 
 \section{Nielsen \& Chuang: Chapter 5}
@@ -525,6 +643,14 @@ Y &= \begin{pmatrix} 0 & -i \\ i & 0\end{pmatrix}\\
 Z &= \begin{pmatrix} 1 & 0 \\ 0 & -1\end{pmatrix}
 \end{align*}
 
+\subsection{Bell States}\label{bellstates}
+\begin{align*}
+\frac{\ket{00} + \ket{11} }{\sqrt{2}} \\	
+\frac{\ket{00} - \ket{11} }{\sqrt{2}} \\	
+\frac{\ket{10} + \ket{01} }{\sqrt{2}} \\	
+\frac{\ket{01} - \ket{10} }{\sqrt{2}}
+\end{align*}
+
 \subsection{Positive Operators}\label{posop}
 Let $A$ be a bounded\footnote{$\Vert Av \Vert \leq M\Vert v \Vert$ for some $M>0$ and all $v \in \mathcal{H}$} linear operator on complex Hilbert space $\mathcal{H}$. The following conditions are equivalent to $A$ being positive
 
@@ -538,14 +664,14 @@ Let $A$ be a bounded\footnote{$\Vert Av \Vert \leq M\Vert v \Vert$ for some $M>0
 
 Let $\{\ket{i}\}$ be an orthonormal basis for $A$ and so
 \begin{align*}
-tr(A) &= \sum_i A_{ii} \\
+\tr(A) &= \sum_i A_{ii} \\
 &= \sum_i \bra{i} A \ket{i}	
 \end{align*}
 
 Hence, if we extend $\ket{\psi}$ to the orthonormal basis $\{\ket{i}\}$ which includes $\ket{\psi}$ as the first element (for example via the Gram-Schmidt procedure) then
 
 \begin{align*}
-	tr(A\ket{\psi}\bra{\psi}) &= \sum_i \bra{i} A\ket{\psi}\bra{\psi}\ket{i}	 \\
+	\tr(A\ket{\psi}\bra{\psi}) &= \sum_i \bra{i} A\ket{\psi}\bra{\psi}\ket{i}	 \\
 	&= \bra{\psi} A\ket{\psi}
 \end{align*}
 
