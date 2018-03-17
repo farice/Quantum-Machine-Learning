@@ -113,7 +113,7 @@ H = \sum_{E} E \ket{E}\bra{E}
 
 where $E$ is the energy eigenvalue corresponding to energy eigenstate $\ket{E}$. 
 
-For example, consider the Hamiltonian $H = \hbar \omega X$  (recall that $X = \sigma_X = \begin{pmatrix} 0 & 1 \\ 1 & 0\end{pmatrix}$). Hence, we solve for its eigenvalues and eigenvectors
+For example, consider the Hamiltonian $H = \hbar \omega X$  (recall that $X = \sigma_X = \begin{pmatrix} 0 & 1 \\ 1 & 0\end{pmatrix}$ from \ref{pauli}). Hence, we solve for its eigenvalues and eigenvectors
 
 \begin{align*}
 	\det{ \hbar\omega\begin{pmatrix} -\lambda & 1 \\ 1 & -\lambda\end{pmatrix}} &= 0 \\
@@ -127,7 +127,7 @@ For example, consider the Hamiltonian $H = \hbar \omega X$  (recall that $X = \s
 	\ket{E_-} &= \ket{-}
 \end{align*}
 
-Now, notice that we can solve Schrodinger's equation (\ref{schro-cts}) and have
+Onwards, notice that we can solve Schrodinger's equation (\ref{schro-cts}) and have
 
 \begin{align*}
 	\ket{\psi(t_2)} &= \exp[\frac{-iH(t_2 - t_1)}{\hbar}] \ket{\psi(t_1)}
@@ -191,13 +191,13 @@ This simplifies the formula for the expected value of a measurement
 &= 	\bra{\psi} M \ket{\psi}
 \end{align*}
 
-For example, consider the system given by single qubits with observable Pauli matrix $Z$. Hence, $Z$ has eigenvalues $+1$ and $-1$ and eigenstates $\ket{0}$ and $\ket{1}$, respectively. So, consider state $\ket{\psi} = \ket{+}$ $\implies$ $p(+1) = \bra{+}\ket{0}\bra{0}\ket{+} = \frac{1}{2}$. Similarly, $p(-1) = \frac{1}{2}$. 
+For example, consider projective measurements on the system given by single qubits with observable Pauli matrix $Z$. Hence, $Z$ has eigenvalues $+1$ and $-1$ and eigenstates $\ket{0}$ and $\ket{1}$, respectively. So, consider state $\ket{\psi} = \frac{\ket{0} + \ket{1}}{\sqrt{2}}= \ket{+}$ $\implies$ $p(+1) = \bra{+}\ket{0}\bra{0}\ket{+} = \frac{1}{2}$. Similarly, $p(-1) = \frac{1}{2}$. 
 
 \subsubsection{POVM measurements}\label{povm}
 
 POVMs are best viewed as a special case of the general measurement formalism, providing the simplest means to study post-measurement statistics without knowledge of the post measurement state.
 
-From above, $p(m) = \bra{\psi} M_m^\dagger M_m \ket{\psi}$ so if we define $E_m := M_m^\dagger M_m$ then these $E_m$'s are sufficient for the purpose of computing probabilities. We denote $\{ E_m \}$ as a POVM. 
+From above, $p(m) = \bra{\psi} M_m^\dagger M_m \ket{\psi}$ so if we define $E_m := M_m^\dagger M_m$ (which is hence positive from \ref{posop}) then these $E_m$'s are sufficient for the purpose of computing probabilities. We denote $\{ E_m \}$ as a POVM. 
 
 Note that projective operators are the special case of being equivalent to their respective POVM element because $E_m = P_m^\dag P_m = P_m$. 
 
@@ -405,6 +405,84 @@ Furthermore, from Baye's rule we have that $p(i \mid m) = \frac{p(m \mid i)p(i)}
 	&= \frac{M_m\rho M_m^\dag}{tr(M_m^\dag M_m \rho)}
 \end{align*}
 
+A quantum state whose state $\ket{\psi}$ is known exactly is said to be in a pure state. In this case the density operator is simply $\rho = \ket{\psi}\bra{\psi}$. Otherwise, $\rho$ is in a mixed state.
+
+A pure state satisfies $tr(\rho^2) = 1$ and a mixed state $tr(\rho^2) < 1$.
+
+Imagine that our record of the result $m$ of a measurement was lost. We would have a quantum system in the state $\rho_m$ with probability $p(m)$ without knowing the actual value of $m$. Hence, the system would be described as
+
+\begin{align*}
+\rho &= \sum_m p(m) \rho_m	\\
+&= \sum_m M_m \rho M_m^\dag 
+\end{align*}
+
+We may wish to move away from the interpretation of the density operator as a means of describing ensembles of quantum states.
+
+\begin{theorem}
+An operator $\rho$ is a density operator associated to some ensemble $\{p_i, \ket{\psi_i}\}$ if and only if it satisfies the conditions
+
+\begin{enumerate}
+\item $\rho$ has trace equal to one
+\item $\rho$ is a positive operator	
+\end{enumerate}
+
+\begin{proof}
+	We show one direction (see the text for the other). Let $\rho$ be a density operator. Hence,
+	
+	\begin{align*}
+	tr(\rho) &= \sum_i p_i tr(\ket{\psi_i}\bra{\psi_i}) \\
+	&= 	\sum_i p_i =1
+	\end{align*}
+
+because $tr(\ket{\psi_i}\bra{\psi_i}) = \psi_{i1}^2 + \psi_{i2}^2 + \cdots \psi_{in}^2 = 1$ by normalization. 
+
+Furthermore, suppose $\ket{\phi}$ resides in the vector space
+
+\begin{align*}
+\bra{\phi} \rho \ket{\phi} &= \sum_i p_i \bra{\phi}\ket{\psi_i}\bra{\psi_i}\ket{\phi} \\
+&= \sum_i p_i |\bra{\phi}\ket{\psi_i}|^2 \geq 0
+\end{align*}
+so we have positivity.
+\end{proof}	
+\end{theorem}
+
+The use of this theorem is that we can define a density operator to be a positive operator with trace one and hence reformulate the postulates of quantum mechanics without speaking of ensembles.
+
+This reformulation shines when describing quantum systems whose state is not known and when describing subsystems a composite quantum system.
+
+\begin{exercise}
+(2.71) Let $\rho$ be a density operator. Show that $tr(\rho^2) \leq 1$ with equality iff $\rho$ is a pure state.
+\begin{proof}
+% TODO (2.71)	
+\end{proof}	
+\end{exercise}
+
+Remember that different ensembles of quantum states can give rise to a specific density matrix and hence one must avoid assuming that the eigenvectors and eigenvalues have special significance with regard to the represented ensemble of quantum states.
+
+Nevertheless, there is value in discussing which ensembles give rise to the same density matrix (notably in quantum noise and error correction). Let $\ket{\tilde{\psi_i}}$ generate $\rho$ i.e. $\rho:=\sum_i\ket{\tilde{\psi_i}}\bra{\tilde{\psi_i}}$. Note that $\ket{\tilde{\psi_i}} = \sqrt{p_i}\ket{\psi_i}$ is clearly not necessarily normalized. Now, we have the following theorem.
+
+\begin{theorem}
+The sets $\ket{\tilde{\psi_i}}$ and $\ket{\tilde{\phi_j}}$ generate the same $\rho$ if and only if
+
+\begin{align*}
+	\ket{\tilde{\psi_i}} = \sum_j u_{ij}\ket{\tilde{\phi_j}}
+\end{align*}
+
+where the matrix with matrix elements $u_{ij}$ is unitary.
+\begin{proof}
+	See the text.
+\end{proof}
+	
+\begin{exercise}
+(2.72) Bloch Sphere for mixed states.
+\begin{proof}
+% TODO (2.72)	
+\end{proof}	
+\end{exercise}
+
+\end{theorem}
+ 
+
 \subsection{EPR and the Bell Inequality}  
 
 \section{Nielsen \& Chuang: Chapter 4}
@@ -440,26 +518,40 @@ Quantum Search algorithms
 
 \section{Appendix}
 
-\subsection{Pauli Matrices}
+\subsection{Pauli Matrices}\label{pauli}
 \begin{align*}
 X &= \begin{pmatrix} 0 & 1 \\ 1 & 0\end{pmatrix} \\
 Y &= \begin{pmatrix} 0 & -i \\ i & 0\end{pmatrix}\\
 Z &= \begin{pmatrix} 1 & 0 \\ 0 & -1\end{pmatrix}
 \end{align*}
 
+\subsection{Positive Operators}\label{posop}
+Let $A$ be a bounded\footnote{$\Vert Av \Vert \leq M\Vert v \Vert$ for some $M>0$ and all $v \in \mathcal{H}$} linear operator on complex Hilbert space $\mathcal{H}$. The following conditions are equivalent to $A$ being positive
+
+\begin{enumerate}
+\item $A=S^\dag S$ for some bounded operator $S$ on $\mathcal{H}$
+\item $A$ is hermitian and $\bra{x} A \ket{x} \geq 0$ for every $\ket{x} \in \mathcal{H}$
+\item the spectrum of $A$ is non-negative
+\end{enumerate}
+
 \subsection{Trace of an Operator}\label{trop}
 
-Let $\ket{i}$ be an orthonormal basis for $A$ and so
+Let $\{\ket{i}\}$ be an orthonormal basis for $A$ and so
 \begin{align*}
 tr(A) &= \sum_i A_{ii} \\
 &= \sum_i \bra{i} A \ket{i}	
 \end{align*}
 
-Hence, if we extend $\ket{\psi}$ to the orthonormal basis $\ket{i}$ which includes $\ket{\psi}$ as the first element (for example via the Gram-Schmidt procedure) then
+Hence, if we extend $\ket{\psi}$ to the orthonormal basis $\{\ket{i}\}$ which includes $\ket{\psi}$ as the first element (for example via the Gram-Schmidt procedure) then
 
 \begin{align*}
 	tr(A\ket{\psi}\bra{\psi}) &= \sum_i \bra{i} A\ket{\psi}\bra{\psi}\ket{i}	 \\
 	&= \bra{\psi} A\ket{\psi}
 \end{align*}
+
+by orthonormality.
+
+\subsection{Spectral Theorem}
+Suppose $A$ is a compact\footnote{the image under $A$ acting on any bounded subset of $\mathcal{H}$ is a compact subset of $\mathcal{H}$} hermitian operator (compactness ensures $A$ has eigenvectors) on complex Hilbert space $\mathcal{H}$. Hence, there is an orthonormal basis of $\mathcal{H}$ consisting of eigenvectors of $A$. Each eigenvalue is in $\RR$.
 
 \end{document}
