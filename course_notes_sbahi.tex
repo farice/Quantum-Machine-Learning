@@ -649,7 +649,7 @@ Imagine we perform the following measurement. Charlie prepares a quantum system 
 \ket{\psi} = \frac{\ket{01} - \ket{10}}{\sqrt{2}}	
 \end{align*}
 
-He passes the first bit to Alice and second to Bob. They perform measurements of the following observable
+He passes the first bit to Alice and second to Bob. They perform measurements of the following observables
 
 \begin{align*}
 Q &= Z_1 \\
@@ -658,7 +658,9 @@ S &= \frac{-Z_2-X_2}{\sqrt{2}} \\
 T &= \frac{Z_2 - X_2}{\sqrt{2}}	
 \end{align*}
 
-We can calculate and show that 
+Alice decides randomly to measure either $Q$ or $R$ once she receives the qubit and similarly Bob decides randomly whether to measure $S$ or $T$. They perform these measurements at the same time.
+
+Hence, there are 4 combinations of Alice-Bob measurements. We can calculate and show that 
 
 \begin{align*}
 \langle QS \rangle &= \frac{1}{\sqrt{2}}\\	
@@ -671,9 +673,9 @@ We can calculate and show that
 % TODO fill in bell's calculations	
 \end{proof}
 
-and so $\langle QS \rangle + \langle RS \rangle + \langle RT \rangle - \langle QT \rangle = 2\sqrt{2}$. This violates Bell's inequality, derived in the text, which says that this value should never exceed 2. 
+And so $\langle QS \rangle + \langle RS \rangle + \langle RT \rangle - \langle QT \rangle = 2\sqrt{2}$. This violates Bell's inequality, derived in the text, which says that this value should never exceed 2. 
 
-Bell's inequality requires assuming that $Q,R,S,T$ have definite values beforehand (realism). Additionally, we assumed that Alice performing the measurement does not influence the result of Bob's measurement (locality). Hence, at least one of these assumptions must be incorrect (since experimentation confirms this quantum picture).
+Bell's inequality requires assuming that $Q,R,S,T$ have definite values before the Alice-Bob measurements (realism). Additionally, we assumed that Alice performing the measurement does not influence the result of Bob's measurement (locality). Hence, at least one of these assumptions must be incorrect, since experimentation confirms this quantum picture.
 
 
 \subsection{No-cloning Theorem}
