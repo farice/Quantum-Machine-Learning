@@ -195,6 +195,12 @@ This simplifies the formula for the expected value of a measurement
 
 For example, consider projective measurements on the system given by single qubits with observable Pauli matrix $Z$. Hence, $Z$ has eigenvalues $+1$ and $-1$ and eigenstates $\ket{0}$ and $\ket{1}$, respectively. So, consider state $\ket{\psi} = \frac{\ket{0} + \ket{1}}{\sqrt{2}}= \ket{+}$ $\implies$ $p(+1) = \bra{+}\ket{0}\bra{0}\ket{+} = \frac{1}{2}$. Similarly, $p(-1) = \frac{1}{2}$. 
 
+More generally, suppose $v$ is an arbitrary 3-d vector. We can define an observable
+
+\begin{align*}
+v \cdot \sigma = v_1\sigma_x + v_2 \sigma_y + v_3\sigma_z
+\end{align*} 
+
 \subsubsection{POVM measurements}\label{povm}
 
 POVMs are best viewed as a special case of the general measurement formalism, providing the simplest means to study post-measurement statistics without knowledge of the post measurement state.
@@ -622,9 +628,86 @@ by $|\alpha|^2 + |\beta|^2 = 1$ and completeness.
 
 Hence, the state of Bob's system after Alice has performed the measurement (but before Bob has learned the measurement result) is $I/2$ which has no dependence upon the state $\ket{\psi}$ being teleported. Therefore, any measurements performed by Bob will contain no information about $\ket{\psi}$, so information being communicated is dependent on the classical communication channel, implying that the speed of light limit is obeyed.
 
+\subsection{The Schmidt Decomposition and purifications}
+
+Schmidt Decomposition theorem says given a pure state $\ket{\psi}$ in a composite system $AB$, then there are orthonormal states $\ket{i_A}$ and $\ket{i_B}$ in $A$ and $B$, respectively, such that
+
+\begin{align*}
+\ket{\psi} = \sum_i \lambda_i \ket{i_A}\ket{i_B}	
+\end{align*}
+
+where $\lambda_i$ is nonnegative real and $\sum_i \lambda_i^2 = 1$.
+
+One readily seen implication is that the spectra of $\rho^A$ and $\rho^B$ are the same, given a pure state in composite system $AB$. 
+
+A second technique is purification. Suppose we are given a state $\rho^A$ of system $A$. We can then introduce another system $R$ and define a pure state $\ket{AR}$ for the joint system $AR$ such that $\rho^A = \tr_R (\ket{AR}\bra{AR})$. $R$ is simply a reference and has no physical significance, the point is that we can associate pure states with mixed states.
 \subsection{EPR and the Bell Inequality}  
 
+Imagine we perform the following measurement. Charlie prepares a quantum system of two qubits in the state
+
+\begin{align*}
+\ket{\psi} = \frac{\ket{01} - \ket{10}}{\sqrt{2}}	
+\end{align*}
+
+He passes the first bit to Alice and second to Bob. They perform measurements of the following observable
+
+\begin{align*}
+Q &= Z_1 \\
+R &= X_1 \\
+S &= \frac{-Z_2-X_2}{\sqrt{2}} \\
+T &= \frac{Z_2 - X_2}{\sqrt{2}}	
+\end{align*}
+
+We can calculate and show that 
+
+\begin{align*}
+\langle QS \rangle &= \frac{1}{\sqrt{2}}\\	
+\langle RS \rangle &= \frac{1}{\sqrt{2}}\\	
+\langle RT \rangle &= \frac{1}{\sqrt{2}}\\	
+\langle QT \rangle &= \frac{1}{\sqrt{2}}\\	
+\end{align*}
+
+\begin{proof}
+% TODO fill in bell's calculations	
+\end{proof}
+
+and so $\langle QS \rangle + \langle RS \rangle + \langle RT \rangle - \langle QT \rangle = 2\sqrt{2}$. This violates Bell's inequality, derived in the text, which says that this value should never exceed 2. 
+
+Bell's inequality requires assuming that $Q,R,S,T$ have definite values beforehand (realism). Additionally, we assumed that Alice performing the measurement does not influence the result of Bob's measurement (locality). Hence, at least one of these assumptions must be incorrect (since experimentation confirms this quantum picture).
+
+
 \subsection{No-cloning Theorem}
+
+It is impossible to copy an unknown quantum state.
+
+\begin{proof}
+Suppose we have a quantum machine with two slots labelled $A$ and $B$. Slot $A$ starts out with unknown state $\ket{\psi}$ which is two be copied to $B$. Assume that $B$ starts out with some pure state $\ket{s}$.
+
+Hence, the initial state of the machine is $\ket{\psi}\ket{s}$. So, some unitary evolution $U$ now effects the copying procedure
+
+\begin{align*}
+	U(\ket{\psi}\ket{s}) = \ket{\psi}\ket{\psi}
+\end{align*}
+	
+	Suppose this works for two particular states $\ket{\psi}$ and $\ket{\phi}$. Hence,
+	
+	\begin{align*}
+		U(\ket{\psi}\ket{s}) = \ket{\psi}\ket{\psi} \\
+		U(\ket{\phi}\ket{s}) = \ket{\phi}\ket{\phi}
+	\end{align*}
+	
+	Hence, take the inner product of the two equations and 
+	
+	\begin{align*}
+		(\bra{\phi}\ket{\psi}\bra{s}\ket{s})U^\dag U &= \bra{\phi}\ket{\psi} \\
+		\bra{\psi}\ket{\phi}\bra{\psi}\ket{\phi} &= |\bra{\phi}\ket{\psi}|^2
+	\end{align*}
+	
+	Hence, either $\bra{\phi}\ket{\psi}$ is 0 or 1. Thus, either $\ket{\psi} = \ket{\phi}$ (a contradiction to assuming they're distinct) or the two states are orthogonal.
+	
+	Therefore, a cloning device can only clone states which are orthogonal to one another and so a general quantum cloning device is impossible.  
+\end{proof}
+
 \section{Nielsen \& Chuang: Chapter 4}
 
 \section{Nielsen \& Chuang: Chapter 5}
@@ -660,9 +743,9 @@ Quantum Search algorithms
 
 \subsection{Pauli Matrices}\label{pauli}
 \begin{align*}
-X &= \begin{pmatrix} 0 & 1 \\ 1 & 0\end{pmatrix} \\
-Y &= \begin{pmatrix} 0 & -i \\ i & 0\end{pmatrix}\\
-Z &= \begin{pmatrix} 1 & 0 \\ 0 & -1\end{pmatrix}
+\sigma_x &= X = \begin{pmatrix} 0 & 1 \\ 1 & 0\end{pmatrix} \\
+\sigma_y &= Y = \begin{pmatrix} 0 & -i \\ i & 0\end{pmatrix}\\
+\sigma_z &= Z = \begin{pmatrix} 1 & 0 \\ 0 & -1\end{pmatrix}
 \end{align*}
 
 \subsection{Bell States}\label{bellstates}
