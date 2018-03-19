@@ -97,6 +97,47 @@ So, let the state of a system at time $t_1$ be given by $\ket{\psi}$ and $\ket{\
 \ket{\psi'} = U\ket{\psi}	
 \end{align*}
 
+\begin{exercise}
+(2.51) Verify that $H$ is unitary 
+
+\begin{align*}
+HH^\dag &= 1/2\begin{pmatrix} 1 & 1 \\ 1 & -1\end{pmatrix}\begin{pmatrix} 1 & 1 \\ 1 & -1\end{pmatrix} \\
+&= 1/2\begin{pmatrix} 2 & 0 \\ 0 & 2 \end{pmatrix} \\
+&= I = H^\dag H
+\end{align*}
+\end{exercise}
+
+\begin{exercise}
+(2.52) Verify that $H^2 = I$
+
+Because $H$ is hermitian we have that 
+
+\begin{align*}
+H^2 &= HH^\dag \\
+&= I
+\end{align*}
+
+from $H$ being unitary.
+\end{exercise}
+
+\begin{exercise}
+(2.53) What are the eigenvalues and eigenvectors of $H$?
+
+\begin{align*}
+\det \frac{1}{\sqrt{2}}\begin{pmatrix} 1 - \lambda & 1 \\ 1 & -1 - \lambda\end{pmatrix}
+&= -(1-\sqrt{2}\lambda)(1+\sqrt{2}\lambda) - 1 = 0 \\
+&= -1 + 2\lambda^2 -1 \\
+\lambda &= \pm 1 \\
+\frac{1}{\sqrt{2}}\begin{pmatrix} 1-\sqrt{2} & 1 \\ 1 & -1 +\sqrt{2}\end{pmatrix}v_1 &= 0 \\
+(1-\sqrt{2})v_{11} + v_{12} &= 0 \\
+v_{11} -(1-\sqrt{2})v_{12} &= 0 \\
+v_1 &= \begin{pmatrix} 1 + \sqrt{2} \\ 1\end{pmatrix} \\
+\frac{1}{\sqrt{2}}\begin{pmatrix} 1+\sqrt{2} & 1 \\ 1 & -1 -\sqrt{2}\end{pmatrix}v_2 &= 0 \\ 
+v_2 &= \begin{pmatrix} 1 - \sqrt{2} \\ 1\end{pmatrix}
+\end{align*}
+	
+\end{exercise}
+
 \subsubsection{Evolution in Continuous Time}\label{post-cts-evol}
 
 Schrodinger's equation provides the time evolution of the state of a quantum system
@@ -135,6 +176,58 @@ Onwards, notice that we can solve Schrodinger's equation (\ref{schro-cts}) and h
 
 and equivalently from \ref{post-discrete-evol} we can represent this transformation with unitary operator $U = \exp[\frac{-iH(t_2 - t_1)}{\hbar}]$. This holds in general and so we can consider the two descriptions from \ref{post-discrete-evol} and \ref{post-cts-evol} interchangeably (the authors prefer the latter). 
 
+\begin{exercise}
+(2.54) Suppose $[A, B] = 0$ and $A, B$ are Hermitian. Prove that $\exp(A)\exp(B) = \exp(A + B)$
+
+\begin{proof}
+	From Theorem 2.2, $A$ and $B$ are simultaneously diagonalizable. Hence, there is a common set of orthonormal eigenvectors $\{ \ket{i} \}$. Hence,
+	
+	$A = \sum_i a_i \ket{i}\bra{i}, B = \sum_i b_i \ket{i}\bra{i}$. So, 
+	
+	\begin{align*}
+	\exp(A)\exp(B) &= \sum_{k'=0}^\infty\sum_{i'} \frac{(b_{i'} \ket{i'}\bra{i'})^{k'}}{k'!}\sum_{k=0}^\infty\sum_{i} \frac{(a_i \ket{i}\bra{i})^k}{k!} \\
+	\intertext{By orthonormality,}
+	&= \sum_{i}\Big[\sum_{k'=0}^\infty \frac{b_i^{k'} \ket{i}\bra{i}}{k'!}\sum_{k=0}^\infty \frac{a_i^k \ket{i}\bra{i}}{k!}\Big] \\
+	&= \sum_{i}\sum_{k'=0}^\infty\sum_{k=0}^\infty \frac{a_i^k b_i^{k'} \ket{i}\bra{i}}{k!k'!}\\
+	&= \sum_{i}\sum_{l=0}^\infty\sum_{k=0}^l \frac{a_i^k b_i^{l-k} \ket{i}\bra{i}}{k!(l-k)!}\\
+	&= \sum_{i}\sum_{l=0}^\infty \frac{1}{l!}\sum_{k=0}^l \binom{k}{l} a_i^k b_i^{l-k} \ket{i}\bra{i} \\
+	&= \sum_{i}\sum_{l=0}^\infty \frac{(a_i +b_i)^l}{l!} \ket{i}\bra{i} \\
+	&= \exp(A + B)
+	\end{align*}
+\end{proof}
+\end{exercise}
+
+\begin{exercise}
+(2.55) Prove that $U(t_1, t_2)$ is unitary	
+\begin{proof}
+
+Using the result of 2.54, 
+	\begin{align*}
+	UU^\dag = U^\dag U &= \exp[\frac{-iH(t_2 - t_1)}{\hbar}]\exp[\frac{iH(t_2 - t_1)}{\hbar}] \\
+	&= 	\exp(\hat{0}) \\
+	&= 	I
+	\end{align*}
+\end{proof}
+\end{exercise}
+
+\begin{exercise}
+(2.56) Use the spectral decomposition to show that $K \coloneqq -i\log U$ is Hermitian for any unitary $U$ and thus $U = \exp(iK)$ for some Hermitian $K$
+\begin{proof}
+	The eigenvalues of $U$ can be given as $\exp(i\theta)$ by unitary. Furthermore, from spectral theorem, $U$ is diagonalizable as $U = V \Lambda V^\dag$ where $V$ is unitary\footnote{Quick proof: $U$ can be written as $U=VTV^\dag$ where $V$ is unitary and $T$ is upper triangular by Schur Decomposition. However, $UU^\dag = U^\dag U, VV^\dag = I = V^\dag V$ $\implies$ $T$ is normal $\implies$ $T$ is diagonal.}. Hence, $U = V \Lambda V^\dag$ where diagonal matrix $\Lambda$ has element of the form $\exp(i\theta)$ across the diagonal. 
+	
+	Furthermore, $V$ is unitary $\implies$ $\exp(V \Lambda V^\dag) = V \exp(\Lambda) V^\dag$. Therefore, let $\Lambda' = \log(\Lambda)$ which therefore has elements of the form $i\theta$. Hence, $U = \exp(V \Lambda' V^\dag)$ 
+	
+	\begin{align*}
+		K &= -i\log U \\
+		&= -i\log (\exp(V \Lambda' V^\dag)) \\
+		&= -iV \Lambda' V^\dag \\
+		&= V\Theta V^\dag
+	\end{align*}
+
+where $\Theta = -i\Lambda'$ has elements of the form $\theta$ (and hence the elements are real along the diagonal and zero elsewhere $\implies$ $\Theta^\dag = \Theta$). Therefore, $K^\dag = V^\dag\Theta^\dag V = V\Theta V^\dag = K$.
+\end{proof}
+\end{exercise}
+
 \subsubsection{Quantum Measurement}\label{qmeas}
 
 Quantum measurements are described by a collection of measurements operators $\{ M_m \}$ (where the index $m$ refers to the potential measurement outcomes of the experiment) which act on the state space of the system being observed. 
@@ -162,6 +255,25 @@ An important example of a measurement is the measurement of a qubit in the compu
 Now, we see an interesting implication. If we seek to distinguish our physical system from a set of orthogonal states, then we can reliably do so by simply defining each measurement operator to be the outer product of our states of interest. We add a final operator defined to be the remaining complement of the identity in order to satisfy the completeness equation. 
 
 On the flipside, two non-orthogonal states $\ket{\psi_1}$ and $\ket{\psi_2}$ necessarily share a parallel component in their orthogonal decomposition. Hence, a measurement outcome that corresponds to the pre-measurement state being $\ket{\psi_1}$ with probability $p = 1$ has a probability $p'>0$ of having been in state $\ket{\psi_2}$. 
+
+\begin{exercise}
+(2.57) Suppose $\{L_l\}$ and $\{M_m\}$ are two sets of measurement operators. Show that a measurement defined by the measurement operators $\{L_l \}$ followed by a measurement defined by the measurement operators $\{ M_m \}$ is physically equivalent to a single measurement defined by measurement operators $\{N_{lm}\}$ with the representation $N_{lm} = M_mL_l$.
+\begin{proof}
+Let $\ket{\phi}$ be our initial state and recall that if $l$ is measured then the post-measurement state is given by $\frac{L_l \ket{\psi}}{\sqrt{p(l)}}$. Furthermore, if we then measure $m$ we have 	$\frac{M_m(L_l \ket{\psi})}{\sqrt{p(m)p(l)}} = \frac{N_{lm} \ket{\psi})}{\sqrt{p(m)p(l)}}$. 
+
+Now, 
+
+\begin{align*}
+p(m)p(l) &= \bra{\psi} L_l^\dagger L_l \ket{\psi}\frac{\bra{\psi} L_l^\dagger}{\sqrt{p(m)}}M_m^\dag M_m \frac{L_l \ket{\psi}}{\sqrt{p(m)}} \\
+&= p(l) \frac{\bra{\psi} L_l^\dagger M_m^\dag M_m L_l \ket{\psi}}{p(l)}\\
+&= \bra{\psi} N_{lm}^\dagger N_{lm} \ket{\psi}\\
+&= p(ml)
+\end{align*}
+
+Hence, $\frac{N_{lm} \ket{\psi}}{\sqrt{p(m)p(l)}}=\frac{N_{lm} \ket{\psi}}{\sqrt{p(lm)}}$. Therefore, the representation is physically equivalent.
+\end{proof}
+
+\end{exercise}
 
 \subsubsection{Projective Measurements}
 
@@ -199,7 +311,13 @@ More generally, suppose $v$ is an arbitrary 3-d vector. We can define an observa
 
 \begin{align*}
 v \cdot \sigma = v_1\sigma_x + v_2 \sigma_y + v_3\sigma_z
-\end{align*} 
+\end{align*}
+
+\begin{exercise}
+	(2.58) Suppose we prepare a quantum system in an eigenstate $\ket{\psi}$ of some observable $M$, with corresponding eigenvalue $m$. What is the average observed value of $m$ and the standard deviation?
+	
+	
+\end{exercise} 
 
 \subsubsection{POVM measurements}\label{povm}
 
