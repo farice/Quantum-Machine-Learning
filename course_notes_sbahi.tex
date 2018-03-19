@@ -660,28 +660,6 @@ A quantum state whose state $\ket{\psi}$ is known exactly is said to be in a pur
 
 A pure state satisfies $\tr(\rho^2) = 1$ and a mixed state $\tr(\rho^2) < 1$.
 
-\begin{exercise}
-(2.71) Let $\rho$ be a density operator. Show that $\tr(\rho^2) \leq 1$ with equality iff $\rho$ is a pure state. 
-
-\begin{proof}
-\begin{align*}
-\rho^2 &= \sum_i p_i \ket{\psi_i}\bra{\psi_i}	\sum_{i'} p_{i'} \ket{\psi_{i'}}\bra{\psi_{i'}}	\\
-&= 	\sum_i p_i^2 \ket{\psi_i}\bra{\psi_i}
-\end{align*}
-
-by orthonormality. Hence,
-
-\begin{align*}
-\tr \rho^2 &= \sum_i \sum_j p_i^2 \psi_{i,jj}^2 \\
-\intertext{And $\sum_j \psi_{i,jj}^2$ by normalization}
-&= \sum_i p_i^2
-\end{align*}
-
-Now, we have that $\sum_i p_i = 1 \implies \sum_i p_i^2 = 1 \iff p_i = 1$. If $p_i = 1$, then there is only one index and hence we have a pure state. Otherwise, $\sum_i p_i^2 < 1$ and we have a mixed state.
-\end{proof}
-\end{exercise}
-
-
 Imagine that our record of the result $m$ of a measurement was lost. We would have a quantum system in the state $\rho_m$ with probability $p(m)$ without knowing the actual value of $m$. Hence, the system would be described as
 
 \begin{align*}
@@ -726,7 +704,20 @@ This reformulation shines when describing quantum systems whose state is not kno
 \begin{exercise}
 (2.71) Let $\rho$ be a density operator. Show that $\tr(\rho^2) \leq 1$ with equality iff $\rho$ is a pure state.
 \begin{proof}
-% TODO (2.71)	
+\begin{align*}
+\rho^2 &= \sum_i p_i \ket{\psi_i}\bra{\psi_i}	\sum_{i'} p_{i'} \ket{\psi_{i'}}\bra{\psi_{i'}}	\\
+&= 	\sum_i p_i^2 \ket{\psi_i}\bra{\psi_i}
+\end{align*}
+
+by orthonormality. Hence,
+
+\begin{align*}
+\tr \rho^2 &= \sum_i \sum_j p_i^2 \psi_{i,jj}^2 \\
+\intertext{And $\sum_j \psi_{i,jj}^2=1$ by normalization}
+&= \sum_i p_i^2
+\end{align*}
+
+Now, we have that $\sum_i p_i = 1 \implies \sum_i p_i^2 = 1 \iff p_i = 1$. If $p_i = 1$, then there is only one index and hence we have a pure state. Otherwise, $\sum_i p_i^2 < 1$ and we have a mixed state.
 \end{proof}	
 \end{exercise}
 
@@ -751,6 +742,13 @@ where the matrix with matrix elements $u_{ij}$ is unitary.
 (2.72) Bloch Sphere for mixed states.
 \begin{proof}
 % TODO (2.72)	
+\end{proof}	
+\end{exercise}
+
+\begin{exercise}
+(2.73)
+\begin{proof}
+% TODO (2.73)	
 \end{proof}	
 \end{exercise}
 
