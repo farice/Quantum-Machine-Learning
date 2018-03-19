@@ -213,9 +213,9 @@ Using the result of 2.54,
 \begin{exercise}
 (2.56) Use the spectral decomposition to show that $K \coloneqq -i\log U$ is Hermitian for any unitary $U$ and thus $U = \exp(iK)$ for some Hermitian $K$
 \begin{proof}
-	The eigenvalues of $U$ can be given as $\exp(i\theta)$ by unitary. Furthermore, from spectral theorem, $U$ is diagonalizable as $U = V \Lambda V^\dag$ where $V$ is unitary\footnote{Quick proof: $U$ can be written as $U=VTV^\dag$ where $V$ is unitary and $T$ is upper triangular by Schur Decomposition. However, $UU^\dag = U^\dag U, VV^\dag = I = V^\dag V$ $\implies$ $T$ is normal $\implies$ $T$ is diagonal.}. Hence, $U = V \Lambda V^\dag$ where diagonal matrix $\Lambda$ has element of the form $\exp(i\theta)$ across the diagonal. 
+	The eigenvalues of $U$ can be given as $\exp(i\theta)$ by unitary. Furthermore, from spectral theorem, $U$ is diagonalizable as $U = V \Lambda V^\dag$ where $V$ is unitary\footnote{Quick proof: $U$ can be written as $U=VTV^\dag$ where $V$ is unitary and $T$ is upper triangular by Schur Decomposition. However, $UU^\dag = U^\dag U, VV^\dag = I = V^\dag V$ $\implies$ $T$ is normal $\implies$ $T$ is diagonal.}. Hence, $U = V \Lambda V^\dag$ where diagonal matrix $\Lambda$ has elements of the form $\exp(i\theta)$ across the diagonal. 
 	
-	Furthermore, $V$ is unitary $\implies$ $\exp(V \Lambda V^\dag) = V \exp(\Lambda) V^\dag$. Therefore, let $\Lambda' = \log(\Lambda)$ which therefore has elements of the form $i\theta$. Hence, $U = \exp(V \Lambda' V^\dag)$ 
+	Furthermore, $(V\Lambda V^\dag)^n = V\Lambda V^\dag V\Lambda V^\dag\cdots V\Lambda V^\dag = V\Lambda^n V^\dag$ $\implies$ $\exp(V \Lambda V^\dag) = V \exp(\Lambda) V^\dag$. Therefore, let $\Lambda' = \log(\Lambda)$ which therefore has elements of the form $i\theta$. Hence, $U = \exp(V \Lambda' V^\dag)$ 
 	
 	\begin{align*}
 		K &= -i\log U \\
@@ -259,7 +259,7 @@ On the flipside, two non-orthogonal states $\ket{\psi_1}$ and $\ket{\psi_2}$ nec
 \begin{exercise}
 (2.57) Suppose $\{L_l\}$ and $\{M_m\}$ are two sets of measurement operators. Show that a measurement defined by the measurement operators $\{L_l \}$ followed by a measurement defined by the measurement operators $\{ M_m \}$ is physically equivalent to a single measurement defined by measurement operators $\{N_{lm}\}$ with the representation $N_{lm} = M_mL_l$.
 \begin{proof}
-Let $\ket{\phi}$ be our initial state and recall that if $l$ is measured then the post-measurement state is given by $\frac{L_l \ket{\psi}}{\sqrt{p(l)}}$. Furthermore, if we then measure $m$ we have 	$\frac{M_m(L_l \ket{\psi})}{\sqrt{p(m)p(l)}} = \frac{N_{lm} \ket{\psi})}{\sqrt{p(m)p(l)}}$. 
+Let $\ket{\phi}$ be our initial state and recall that if $l$ is measured then the post-measurement state is given by $\frac{L_l \ket{\psi}}{\sqrt{p(l)}}$. Furthermore, if we then measure $m$ we have 	$\frac{M_m(L_l \ket{\psi})}{\sqrt{p(m)}\sqrt{p(l)}} = \frac{N_{lm} \ket{\psi})}{\sqrt{p(m)p(l)}}$. 
 
 Now, 
 
@@ -267,7 +267,7 @@ Now,
 p(m)p(l) &= \bra{\psi} L_l^\dagger L_l \ket{\psi}\frac{\bra{\psi} L_l^\dagger}{\sqrt{p(m)}}M_m^\dag M_m \frac{L_l \ket{\psi}}{\sqrt{p(m)}} \\
 &= p(l) \frac{\bra{\psi} L_l^\dagger M_m^\dag M_m L_l \ket{\psi}}{p(l)}\\
 &= \bra{\psi} N_{lm}^\dagger N_{lm} \ket{\psi}\\
-&= p(ml)
+&= p(lm)
 \end{align*}
 
 Hence, $\frac{N_{lm} \ket{\psi}}{\sqrt{p(m)p(l)}}=\frac{N_{lm} \ket{\psi}}{\sqrt{p(lm)}}$. Therefore, the representation is physically equivalent.
