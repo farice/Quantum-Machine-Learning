@@ -1,8 +1,9 @@
 \documentclass[11pt]{article}
+
 \oddsidemargin=17pt \evensidemargin=17pt
 \headheight=9pt     \topmargin=26pt
 \textheight=564pt   \textwidth=433.8pt
-
+\date{}
 \usepackage{url}
 \usepackage{amsmath}
 \usepackage{amsfonts,amssymb,amsthm,cite,float,graphicx}
@@ -363,7 +364,18 @@ v \cdot \sigma = v_1\sigma_x + v_2 \sigma_y + v_3\sigma_z
 	(2.60) Show that $v \cdot \sigma$ has eigenvalues $\pm 1$ and that the projectors onto the corresponding eigenspaces are given by $P_{\pm} = (I \pm v \cdot \sigma)/2$.
 
 \begin{proof}
-	% TODO (2.60)
+	First, $v\cdot \sigma$ is Hermitian so it's spectral decomposition is given by $v \cdot \sigma = U \Lambda U^\dag$ for some unitary $U$, diagonal matrix $\Lambda$. Hence, using $(v\cdot \sigma)^2 = I$ we have
+	
+	\begin{align*}
+		I &= (v \cdot \sigma)^2 = (U \Lambda U^\dag)^2 \\
+		&= U \Lambda^2 U^\dag \\
+		\implies U^\dag I U &= \Lambda^2 \\
+		I & = \Lambda^2
+	\end{align*}
+
+Therefore, $\Lambda$ must have diagonal entries $\pm 1$. 
+
+Next, $P_+ P_- = \delta_{+-}$. Furthermore, $P_+ + P_- = (I + v \cdot \sigma)/2 + (I - v \cdot \sigma)/2 = I$. Finally, $(+1)P_+ + (-1)P_- = (I + v \cdot \sigma)/2 - (I - v \cdot \sigma)/2 = v \cdot \sigma$. 
 \end{proof}
 \end{exercise}
 
@@ -454,13 +466,15 @@ where $U_m \coloneqq UV$. Therefore, there exists the unitary transformation of 
 \end{exercise}
 
 \begin{exercise} (2.64) Suppose Bob is given a quantum state chosen from a set $S = \ket{\psi_1} , \cdots , \ket{\psi_m}$ of linearly independent states. Construct a POVM $\{ E_1 , \cdots , E_{m+1} \}$ such that if outcome $E_i$ occurs, $1 \leq i \leq m$, then Bob knows with certainty that he was given state $\ket{\psi_i}$.
-\end{exercise}
 
-To distinguish the states we require $\bra{\psi_i} E_j \ket{\psi_i} = p_i \delta_{ij}$ where $p_i > 0$ and $1 \leq i,j \leq m$. 
+\begin{proof}
+	To distinguish the states we require $\bra{\psi_i} E_j \ket{\psi_i} = p_i \delta_{ij}$ where $p_i > 0$ and $1 \leq i,j \leq m$. 
 
 So, we can use the Gram-Schmidt process using $S$ as our linearly independent set. This will give us an orthonormal set $U = \ket{\phi_1} , \cdots , \ket{\phi_m}$ that spans the same subspace as $S$. Next, we can represent each $\ket{\psi_i}$ in this orthonormal basis, $U$. Finally, for each $i$ we can find a vector $\ket{\psi'_i}$ in the span of $U$ that is orthogonal to all $\ket{\psi_j}, j \neq i$. Hence, we can define $E_i = \ket{\psi_i'} \bra{\psi_i'}, 1 \leq i \leq m$. Finally, take $E_{m+1} = I - \sum_m E_i$. 
 
 Creating an optimal POVM is much trickier (in the sense of minimizing the probability $p_{m+1}$).
+\end{proof}
+\end{exercise}
 
 From this exercise, we see that POVMs present a reliable way to distinguish non-orthogonal (but linearly independent) states given that we allow for the slack of an "inconclusive" measurement ($E_{m+1}$). 
 
@@ -740,15 +754,42 @@ where the matrix with matrix elements $u_{ij}$ is unitary.
 
 \begin{exercise}
 (2.72) Bloch Sphere for mixed states.
-\begin{proof}
+
 % TODO (2.72)	
+(1) Show that an arbitrary density matrix for a mixed state qubit can be written as
+
+\begin{align*}
+	\rho &= \frac{I + r \cdot \sigma}{2}
+\end{align*}
+
+where $r$ is a real 3-D vector such that $\Vert r \Vert \leq 1$. This vector is known as the Bloch vector for the state $\rho$. 
+
+\begin{proof}
+Let $\rho$ be an arbitrary density matrix, and so $\rho = \sum_i p_i \ket{\psi_i}\bra{\psi_i}$. 
 \end{proof}	
+
+(2) What is the Bloch vector representation for the state $\rho = I/2$?
+
+(3) Show that a state $\rho$ is pure iff $\Vert r \Vert = 1$. 
+
+\begin{proof}
+	
+\end{proof}
+
+(4) Show that for pure states the description of the Bloch vector we have given coincides with that in Section 1.2
+
+\begin{proof}
+	
+\end{proof}
+
 \end{exercise}
 
 \begin{exercise}
 (2.73)
+% TODO (2.73)
+Let $\rho$ be a density operator. A minimal ensemble for $\rho$ is an ensemble $\{ p_i, \ket{\psi_i}\}$ containing a number of elements equal to the rank of $\rho$. 
+
 \begin{proof}
-% TODO (2.73)	
 \end{proof}	
 \end{exercise}
 
@@ -903,7 +944,36 @@ where $\lambda_i$ is nonnegative real and $\sum_i \lambda_i^2 = 1$.
 
 One readily seen implication is that the spectra of $\rho^A$ and $\rho^B$ are the same, given a pure state in composite system $AB$. 
 
+\begin{exercise}(2.76)
+% TODO 2.76	
+\end{exercise}
+
+\begin{exercise}(2.77)
+% TODO 2.77	
+\end{exercise}
+
+\begin{exercise}(2.78)
+% TODO 2.78
+\end{exercise}
+
 A second technique is purification. Suppose we are given a state $\rho^A$ of system $A$. We can then introduce another system $R$ and define a pure state $\ket{AR}$ for the joint system $AR$ such that $\rho^A = \tr_R (\ket{AR}\bra{AR})$. $R$ is simply a reference and has no physical significance, the point is that we can associate pure states with mixed states.
+
+\begin{exercise}(2.79)
+% TODO 2.79	
+\end{exercise}
+
+\begin{exercise}(2.80)
+% TODO 2.80	
+\end{exercise}
+
+\begin{exercise}(2.81)
+% TODO 2.81
+\end{exercise}
+
+\begin{exercise}(2.82)
+% TODO 2.82
+\end{exercise}
+
 \subsection{EPR and the Bell Inequality}  
 
 Imagine we perform the following measurement. Charlie prepares a quantum system of two qubits in the state
@@ -974,6 +1044,18 @@ Hence, the initial state of the machine is $\ket{\psi}\ket{s}$. So, some unitary
 \end{proof}
 
 \section{Nielsen \& Chuang: Chapter 4}
+
+\subsection{Universal quantum gates}
+
+A set of gates is said to be universal for quantum computation if any unitary operation may be approximated to arbitrary accuracy by a quantum circuit only involving those gates. We can show
+
+(1) An arbitrary unitary operator may be expressed exactly as a product of unitary operators that each acts non-trivially only on a subspace spanned by two computational basis states
+
+(2) An arbitrary unitary operator may be expressed exactly using single qubit and \texttt{CNOT} gates.
+
+(3) Any unitary operation can be approximated to arbitrary accuracy using Hadamard, phase, \texttt{CNOT}, and $\pi / 8$ gates.
+
+We are showing existence not efficiency.
 
 \section{Nielsen \& Chuang: Chapter 5}
 
