@@ -1137,7 +1137,66 @@ Hence, we can apply the inverse QFT and get the state $\ket{\phi_1 \cdots \phi_t
 
 \section{Nielsen \& Chuang: Chapter 6}
 
-Quantum Search algorithms
+\subsection{The quantum search algorithm}
+
+The Grover iteration may be broken up into four steps.
+
+(1) Apply the oracle $O$
+
+(2) Apply the Hadamard transform $H^{\otimes n}$
+
+(3) Perform the conditional phase shift on the computer, with every computational basis
+state except $\ket{0}$ receiving a phase shift of $-1$,
+
+$$ \ket{x} \rightarrow -(-1)^{\delta x_0} \ket{x} $$
+
+(4) Apply the Hadamard transform $H^{\otimes n}$
+
+\begin{exercise}(6.1) Show that the Unitary operator corresponding to the phase shift in the Grover iteration is $2 \ket{0}\bra{0} - I$.
+	\begin{proof}
+	Consider arbitrary state $\ket{x}$. There are two cases:
+	
+	(1) $\ket{x} = \ket{0}$. Hence, 
+	
+	\begin{align*}
+ 	(2 \ket{0}\bra{0} - I)\ket{0} &= 2\ket{0}\bra{0}\ket{0} - \ket{0} \\
+ 	&= \ket{0}
+ \end{align*}
+
+as expected.
+
+(2) $\ket{x} \neq \ket{0}$. Hence, 
+	
+	\begin{align*}
+ 	(2 \ket{0}\bra{0} - I)\ket{x} &= 2\ket{0}\bra{0}\ket{x \neq 0} - \ket{x} \\
+ 	&= 0 - \ket{x} = -\ket{x}
+ \end{align*}
+
+as expected.
+	\end{proof}
+
+\end{exercise}
+
+\begin{exercise}(6.2) Show that the operation $(2 \ket{\psi}\bra{\psi} - I)$ (where $\ket{\psi}$ is the equally weighted superposition of states) applied to general state $\sum_k \alpha_k \ket{k}$ produces 
+
+\begin{align*}
+\sum_k [ -\alpha_k + 2\langle \alpha \rangle ] \ket{k}	
+\end{align*}
+	
+	where $\langle \alpha \rangle \equiv \sum_k \alpha_k / N$ is the mean value of $\alpha_k$. 
+	
+	\begin{proof}
+		\begin{align*}
+			(2 \ket{\psi}\bra{\psi} - I) \sum_k \alpha_k \ket{k} &= \Big(2\frac{1}{N^{1/2}}\ket{x} \frac{1}{N^{1/2}} \sum_{x'=0}^{N-1} \bra{x'} - I\Big)\sum_k \alpha_k \ket{k} \\
+			&= 2\frac{1}{N} \sum_{x=0}^{N-1} \ket{x}\bra{x'}\sum_k \alpha_k \ket{k} -\sum_k \alpha_k \ket{k} \\
+			&= \frac{2}{N} \sum_k \ket{k}  \alpha_k -\sum_k \alpha_k \ket{k} \\
+			&= \sum_k [ 2\langle \alpha \rangle -\alpha_k ] \ket{k}
+		\end{align*}
+
+	\end{proof}
+
+\end{exercise}
+
 
 \section{Algorithms for solving linear systems of equations}
 
