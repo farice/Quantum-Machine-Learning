@@ -1059,18 +1059,131 @@ We are showing existence not efficiency.
 
 \section{Nielsen \& Chuang: Chapter 5}
 
-\begin{enumerate}
-\item Quantum Fourier Transform
-\item Quantum Phase Estimation Algorithm
-\item Shor's algorithm for Factoring
-\end{enumerate}
+\subsection{Quantum Fourier Transform}
+
+The quantum fourier transform on an orthonormal basis $\ket{0}, \cdots ,\ket{N - 1}$ is defined to be a linear operator with the following action on the basis states,
+
+\begin{align*}
+\ket{j} \rightarrow \frac{1}{\sqrt{N}} \sum_{k=0}^{N-1} e^{2\pi i jk / N} \ket{k}	
+\end{align*}
+
+
+\begin{exercise}(5.2) Explicitly compute the Fourier transform of the $n$ qubit state $\ket{00\cdots 0}$.
+\begin{proof}
+	$\ket{00 \cdots 0 }$ corresponds to state $\ket{0}$ in the size $N = 2^n$ computational basis. Hence, using the formula above we have 
+	
+	\begin{align*}
+	\ket{0} &\rightarrow \frac{1}{\sqrt{N}} \sum_{k=0}^{N-1} \ket{k} \\
+	&= 	\frac{\ket{0} + \ket{1} + \cdots + \ket{N-1}}{\sqrt{N}}
+	\end{align*}
+
+\end{proof}
+	
+\end{exercise}
+
+We can derive an alternative product representation of the quantum fourier transform. First, represent some state $\ket{j}$ using its binary representation $j=j_1j_2 \cdots j_n$, $j_i \in \{0, 1\}$. Then,
+
+\begin{align*}
+\ket{j_1 , \cdots , j_n } \rightarrow \frac{(\ket{0} + e^{2\pi i 0.j_n} \ket{1})(\ket{0} + e^{2\pi i 0.j_{n-1}j_n} \ket{1})\cdots (\ket{0} + e^{2\pi i 0.j_1j_2 \cdots j_n} \ket{1})}{2^{n/2}}
+\end{align*}
+
+So, define the unitary transformation
+
+\begin{align}
+	R_k = \begin{bmatrix}
+ 1 & 0 \\ 0 & e^{2\pi i / 2^k}	
+ \end{bmatrix}
+\end{align}
+
+Then, using the circuit below, we can see that this transformation is correctly implemented.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{qfft.png}	
+\end{figure}
+
+Furthermore, the gate complexity is $O(n^2)$ as opposed to $O(n2^n)$, classically. 
+
+\subsection{Quantum Phase Estimation Algorithm}\label{phase_estimation}
+
+Suppose a unitary operator $U$ has an eigenvector $\ket{u}$ with eigenvalue $e^{2\pi i \phi}$, where the value of $\phi$ is unknown. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{phase_estim.png}	
+\end{figure}
+
+Then, observe that the circuit above gives the state 
+
+\begin{align*}
+\frac{1}{2^t}(\ket{0} + e^{2 \pi i 0.\phi_t}\ket{1})(\ket{0} + e^{2 \pi i 0.\phi_{t-1}\phi_t}\ket{1})	\cdots (\ket{0} + e^{2 \pi i 0.\phi_1\phi_2\cdots\phi_t}\ket{1})	
+\end{align*}
+
+Hence, we can apply the inverse QFT and get the state $\ket{\phi_1 \cdots \phi_t}$, which is an approximation of $\phi$. 
+
+\begin{exercise}(5.7) Additional insight into the circuit above may be obtained by showing, as you should now do, that the effect of the sequence of controlled-$U$ operations like that in the figure is to take the state $\ket{j}\ket{u}$ to $\ket{j} U^j\ket{u}$. (Note that this does not depend on $\ket{u}$ being an eigenstate of $U$.)
+\begin{proof}
+	Consider an arbitrary $j$ in its binary representation $j_0j_1 \cdots j_{t-1}$ where $j_i \in \{ 0, 1\}$. Hence, for each $\ket{j_i}$, the control-$U$ acts on $\ket{j_i}\ket{u}$ such that $\ket{j_i}\ket{u} \mapsto \ket{j_i}U^{j_i 2^i}\ket{u}$. Therefore, the final state is given by
+	
+	\begin{align*}
+	\ket{j_0 } \cdots \ket{j_{t-1}}U^{j_0 2^0} \cdots U^{j_{t-1} 2^{t-1}}\ket{u} &= \ket{j} U^{j_0 2^0} \cdots U^{j_{t-1} 2^{t-1}}\ket{u} \\
+	&= \ket{j} U^{j_0 2^0 + j_{t-1} 2^{t-1}}\ket{u} \\
+	&= \ket{j} U^{j}\ket{u}
+	\end{align*}
+\end{proof}
+\end{exercise}
+
+\subsection{Order-Finding and Factoring}
 
 \section{Nielsen \& Chuang: Chapter 6}
 
 Quantum Search algorithms
 
 \section{Algorithms for solving linear systems of equations}
-\url{https://arxiv.org/abs/0811.3171}
+
+One such application of Phase Estimation (Section \ref{phase_estimation}) is with respect to solving linear systems of equations. This is the so-called HHL algorithm \cite{lloyd2010quantum}.
+
+The general problem statement of a linear system is if we are given matrix $A$ and unit vector $\vec{b}$, then find $\vec{x}$ satisfying, $A\vec{x} = \vec{b}$. 
+
+However, assume that instead of solving for $x$ itself, we instead solve for an expectation value $x^T M x$ for some linear operator $M$. Hence, one can show that our algorithm has a runtime bound of $O(\log(N)\kappa ^{2})$, if we can further assume that the linear system is sparse and has a low condition number $\kappa$.
+
+So, assume that $A$ in our linear system is an $N \times N$ Hermitian matrix. Notice that this is an "unrestrictive" constraint on $A$ because we can always take non-Hermitian matrix $A'$ and linear system $A' \vec{x} = \vec{b}$ and instead solve $\begin{bmatrix}
+	0 && A' \\ A'^\dag && 0
+\end{bmatrix} \begin{bmatrix} 0 \\ x \end{bmatrix} = \begin{bmatrix} b \\ 0 \end{bmatrix}$. Hence, we we will assume that $A$ is Hermitian from here on. 
+
+Recall that because $A$ is hermitian $\implies$ we can perform quantum phase estimation using $e^{-iAt}$ as the unitary transformation. This can be done efficiently if $A$ is sparse.
+
+So, we first prepare $\ket{b}$ (the representation of $\vec{b}$). We assume that this can be done efficiently or that $\ket{b}$ is supplied as an input.
+
+Denote by $\ket{\psi_j}$ the eigenvectors of $A$ with associated eigenvalues $\lambda_j$. Hence, we can express $\ket{b}$ as $\ket{b} = \sum_j \beta_j \ket{\psi_j}$.  So, we initialize a first register to state $\sum_j \beta_j \ket{\psi_j}$ and second register to state $\ket{0}$ . After applying phase estimation, we then have the joint state $\sum_j \beta_j \ket{\psi_j} \ket{\widetilde{\lambda}_j}$, where $\widetilde{\lambda}_j$ is an approximation of $\lambda_j$. We'll assume that this approximation is perfect from here on. 
+
+Next we add an ancilla qubit and perform a rotation conditional on the first register while now holds $\ket{\lambda_j}$. The rotation transforms the system to
+
+\begin{align*}
+\sum_j \beta_j \ket{\psi_j} \ket{\lambda_j} \Big(\sqrt{1-\frac{C^2}{\lambda_j^2}}\ket{0} + \frac{C}{\lambda_j}\ket{1}\Big)
+\end{align*}
+
+for some small constant $C \in \RR$ that is $O(1/\kappa)$.
+
+Hence, we can undo phase estimation to restore the second register to $\ket{0}$.
+
+Now, if we measure the ancillary qubit in the computational basis, we'll evidently collapse the state to $\ket{1}$ with some probability. We'd then have
+
+\begin{align*}
+	\sum_j \frac{C}{\lambda_j} \beta_j \ket{\psi_j} \ket{\lambda_j}\ket{1} = C (A^{-1} \ket{b})
+\end{align*}
+
+In particular, the probability of getting this result is 
+
+\begin{align*} 
+	p(-1) &= \Bigg(\sum_j \beta_j \bra{\psi_j} \bra{\lambda_j} \Big(\sqrt{1-\frac{C^2}{\lambda_j^2}}\bra{0} + \frac{C}{\lambda_j}\bra{1}\Big) \Bigg)\ket{1}\bra{1} \Bigg(\sum_j \beta_j \ket{\psi_j} \ket{\lambda_j} \Big(\sqrt{1-\frac{C^2}{\lambda_j^2}}\ket{0} + \frac{C}{\lambda_j}\ket{1}\Big)\Bigg) \\
+	&= \sum_j \beta_j \bra{\psi_j} \bra{\lambda_j} \Big(\sqrt{1-\frac{C^2}{\lambda_j^2}}\bra{0} + \frac{C}{\lambda_j}\bra{1}\Big) \ket{1}\bra{1} \beta_j \ket{\psi_j} \ket{\lambda_j} \Big(\sqrt{1-\frac{C^2}{\lambda_j^2}}\ket{0} + \frac{C}{\lambda_j}\ket{1}\Big) \\
+	&= \sum_j \beta_j \bra{\psi_j} \bra{\lambda_j} \frac{C}{\lambda_j}\bra{1}\ket{1}\bra{1} \beta_j \ket{\psi_j} \ket{\lambda_j} \frac{C}{\lambda_j}\ket{1} \\
+	&= \sum_j \beta_j^2 \frac{C^2}{\lambda_j^2} \\
+	&= \| A^{-1} \ket{b} \|^2 C^2 = O(1/\kappa^4)
+\end{align*} 
+
+Finally, we can make a measurement $M$ whose expectation value $\bra{x}M\ket{x}$ corresponds to the feature of $x$ we wish to evaluate. 
 
 \section{Density Matrix Exponentiation Algorithms}
 \url{https://www.nature.com/articles/nphys3029}
@@ -1085,6 +1198,34 @@ Quantum Search algorithms
 \item \url{https://arxiv.org/abs/1801.05721}
 \end{enumerate}
 
+\section{Quantum Cryptography}
+
+Quantum cryptography or quantum key distribution (QKD) is a procedure that enables provably secure distribution of private information. 
+
+\subsection{Private key cryptography}
+
+Private key cryptosystems which employ a one-time pad (OTP) are provably secure i.e. as long as the key strings are secret, Alice and Bob can guarantee that Eve's mutual information with their unencoded information can be made as small as desired regardless of Eve's eavesdropping strategy.
+
+The major difficulty of private key cryptosystems is secure distribution of key bits. The above cryptosystem, using a OTP, requires key bits to be as long as the message and for key bits to not be reused. 
+
+\begin{exercise}(12.25)
+Consider a system with $n$ users, any pair of which would like to be able to communicate privately. Using public key cryptography how many keys are required? Using private key cryptography how many keys are required? 
+\begin{proof}
+	We'd need a unique OTP for each pair of users if we used private key cryptography. Hence, we'd need $\binom{n}{2}$ keys. 
+	
+	For public key, we'd need a private-public keypair for each user. Hence, we'd need $2n$ keys. 
+\end{proof}
+\end{exercise}
+
+\subsection{Privacy amplification and information reconciliation}
+
+Suppose Alice and Bob share correlated random classical bit strings $X$ and $Y$. Furthermore, suppose we have an upper bound on Eve's mutual information with $X$ and $Y$. We can use "information reconciliation" and then "privacy amplification" to systematically increase the correlation between their key strings, while reducing Eve's mutual information about the result, to any desired level of security.
+
+Information reconciliation simply entails conducting error-correction over a public channel, fixing errors between $X$ and $Y$, until Alice and Bob obtain a shared string $W$. In the end, Eve will also have a string $Z$ partially correlated to $W$. We can then use privacy amplification to "amplify" from $W$ a subset of bits $S$ whose correlation with $Z$ are below the desired threshold. 
+
+\subsubsection{Privacy Amplification}
+
+\subsection{Quantum key distribution}
 
 \section{Appendix}
 
