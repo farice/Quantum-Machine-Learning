@@ -75,27 +75,97 @@
 
 \section{Introduction}
 
+Machine learning explores the study and construction of algorithms that are capable of finding patterns in data. Hence, this entails studying the ability of learning models to capture these patterns and generalize, as one would in statistical learning theory, in addition to studying model efficiency, enabled by computational complexity theory. In practice, many of the widely used supervised and unsupervised machine learning models can reasonably be described as linear algebraic data analysis techniques. For example, consider that ordinary least squares regression and ridge regression can be given in terms of a closed-form product of matrices and matrix inverses and that principal component analysis is essentially solving for the largest-eigenvalue eigenvectors of a particular covariance matrix. Furthermore, optimization problems, which are common in machine learning, can often be broken down into a set of basic linear algebraic subproblems.
+
+Since its conception, quantum computation and quantum information has taught us to "think physically about computation" \cite{nielsen2010quantum}. Well, if quantum mechanics tells us that physical states are mathematically linear algebraic objects (vectors in a Hilbert space), then perhaps this lesson says that the type of computation best suited for quantum physical reality are linear algebraic problems, such as the machine learning ones noted above. This somewhat naive intuition turns out to have value, as we will show in this review.
+
+Hence, this leads us to the idea of quantum machine learning which uses quantum algorithms as part of a larger implementation to outperform the corresponding classical learning algorithms.
+
+Nevertheless, past linear algebraic analysis techniques, there exist other classes of machine learning algorithms such as deep learning built on artificial neural networks and reinforcement learning which models an environment as a Markov decision process \cite{sutton1998reinforcement}. Successes have been achieved in terms of quantum speedups in these arenas \cite{dong2008quantum}, but we won't explore these alternative machine learning routes further in our review. 
+
+In this review, we will cover the main theoretical results in terms of quantum algorithms relevant to quantum machine learning. Then, we'll describe specific learning problems that have achieved quantum speedups using these results. Finally, we'll discuss important limitations to these results which may pose substantive challenges to the future of quantum learning theory.
+
+Our goal is to provide a birds-eye view of these concepts and refer the reader to appropriate references where they desire greater detail. We assume that the reader is familiar with the fundamentals of quantum information theory e.g. by means of Chapter 2 of \cite{nielsen2010quantum}.
+
+\section{Comparing Machine Learning Performance}
+
+If we are to claim that some machine learning algorithms perform better on a quantum computer, we first must decide on a notion of "outperforming". 
+
+This is currently characterized by the advantage in runtime obtained by a quantum algorithm over the classical methods for the same task. We quantify the runtime with the asymptotic scaling of the number of elementary operations used by the algorithm with respect to the size of the input, as one does in complexity theory. 
+
+The definition of an elementary operation is dependent on the choice of measure of complexity. Query complexity measures the number of queries to the information source for the classical or quantum algorithm. Hence, a quantum speedup results if the number of queries needed to solve a problem is lower for the quantum than for the classical algorithm \cite{biamonte2017quantum}.
+
 \section{Speedup Techniques}
 
-\subsection{HHL Algorithm}
+\subsection{Grover's Algorithm and Amplitude Amplification}
 
-One such application of Phase Estimation is with respect to solving linear systems of equations. This is the so-called HHL algorithm \cite{lloyd2010quantum}.
+Suppose we wish to search a space of elements of size $N$. Clearly this problem is $\Omega(N)$, classically. Rather than searching the elements directly, we can focus on "searching" their indices which are labelled $[ 0, N-1]$ by using an oracle. So, let $x \in [0, N-1]$ and $\ket{q}$ be an ancillary qubit. Define $f(x) = 1$ if the index is the index of the solution and $f(x) = 0$ otherwise. An oracle is a unitary operation, $O$, which acts on the computation basis as
 
-The general problem statement of a linear system is if we are given matrix $A$ and unit vector $\vec{b}$, then find $\vec{x}$ satisfying, $A\vec{x} = \vec{b}$. 
+\begin{align*}
+\ket{x}\ket{q} \rightarrow^O \ket{x}\ket{q \oplus f(x)}
+\end{align*}
 
-However, assume that instead of solving for $x$ itself, we instead solve for an expectation value $x^T M x$ for some linear operator $M$. Hence, one can show that our algorithm has a runtime bound of $O(\log(N)\kappa ^{2})$, if we can further assume that the linear system is sparse and has a low condition number $\kappa$.
+Hence, if we let $\ket{q} = \frac{\ket{0}-\ket{1}}{\sqrt{2}} = \ket{-}$, then we can rewrite this transformation as
+
+\begin{align*}
+\ket{x}\ket{-} \rightarrow^O (-1)^{f(x)}\ket{x}\ket{-}	
+\end{align*}
+
+Grover \cite{grover1996fast} came up with a quantum algorithm that finds a solution with high probability using $O(\sqrt{N})$ oracle queries (which is known to be optimal on a quantum computer \cite{nielsen2010quantum}).
+
+For $N = 2^n$, the grover iteration can be given by the linear transformation $G = (2\ket{\psi}\bra{\psi}-I)O$ where $\ket{\psi}$ is the equally weighted superposition of states. 
+
+So, assuming that the number of solutions $M = 1$, Grover's algorithm essentially prepares $N$ qubits in state $\ket{\psi}\ket{-}$ and then applies $G$ for $\frac{\pi}{4}\sqrt{N}$ iterations. 
+
+However, if the number of solutions $M \geq 1$ is unknown, then a variant, known as amplitude amplification \cite{brassard2002quantum}, can be used to find a solution in the solution subspace with high probability using $O(\sqrt{N/M})$ queries. 
+   
+\subsection{Solving Systems of Linear Equations}
+
+Solving linear systems of equations is a ubiquitous problem in machine learning. As we will discuss, many learning problems, such as least-squares regression and least-squares SVMs, require the inversion of a matrix. Hence, we will describe two common quantum algorithms which lead up to the recent HHL algorithm, named after the algorithm's authors, Harrow, Hassidim, and LLoyd.
+
+\subsubsection{Quantum Fourier Transform}
+
+In the following, we take $N = 2^n$, where $n$ is some integer. Hence, the quantum Fourier transform on the orthonormal computational basis $\{ \ket{0}, \cdots ,\ket{N - 1} \}$ for an $n$ qubit quantum computer is defined to be a linear operator with the following action on the basis states,
+
+\begin{align*}
+\ket{j} \rightarrow \frac{1}{\sqrt{N}} \sum_{k=0}^{N-1} e^{2\pi i jk / N} \ket{k}	
+\end{align*}
+
+The gate complexity on a quantum computer is $O(n^2)$ as opposed to $O(n2^n)$, classically, using the technique in \cite{nielsen2010quantum}. Hence, at first glance, the potential quantum speedup via this subroutine is phenomenal for many machine learning and data analysis tasks. For example, speech recognition preprocessing begins with a Fourier transform of the digitized sound. 
+
+However, there is no way of determining the Fourier transformed amplitudes of the original state. Hence, the applications are more subtle than one may have expected.
+
+\subsubsection{Phase Estimation}
+
+Suppose a unitary operator $U$ has an eigenvector $\ket{u}$ with eigenvalue $e^{2\pi i \phi}$, where the value of $\phi$ is unknown. 
+
+The phase estimation algorithm uses two registers: one of $t$ qubits in the equal superposition state and another which stores $\ket{u}$. Then, after a series of controlled-$U^{2^j}$ operations on the $j$th qubit and an inverse Fourier transform, the first register holds the state $\ket{\phi_1 \cdots \phi_t}$, which is an approximation of $\phi$, whose accuracy is dependent on the size of $t$. 
+
+Hence, the complexity of this algorithm is essentially that of the inverse Fourier transform, $O(t^2)$. This assumes that each controlled-$U^{2^j}$ operation is given by an oracle, which may not hold in practice. Furthermore, we also assume that we can prepare $\ket{u}$ efficiently, which also may not hold in practice. Hence, we often require workarounds to these problems in our applications of Phase Estimation.
+
+\subsubsection{HHL Algorithm}
+
+One such application of Phase Estimation is with respect to solving linear systems of equations. This is the so-called HHL algorithm \cite{lloyd2010quantum}. Here, we will cover the essential details of the algorithm.
+
+The general problem statement of a linear system is if we are given matrix $A$ and unit vector $\vec{b}$, then find $\vec{x}$ satisfying, 
+
+$$A\vec{x} = \vec{b}$$ 
+
+However, assume that instead of solving for $x$ itself, we instead solve for an expectation value $x^T M x$ for some linear operator $M$. The original description of the algorithm provides runtime bound of $\tilde{O}(\log(N)\kappa ^{2} s^2 / \epsilon)$, where $s$ is sparsity measured by the maximum number of non-zero elements in a row and column of $A$, $\kappa$ is the condition number, and $\epsilon$ is the approximation precision. Hence, we can only achieve speedup if the linear system is sparse and has a low condition number $\kappa$. Ambainis \cite{ambainis2012variable} and Childs \cite{childs2015quantum} improved this depency on $\kappa$ and $s$ to linear and $\epsilon$ to poly-logarithmic.
+
+This compares well considering that the best classical algorithm has a runtime of $O(N^{2.373})$ \cite{coppersmith1987matrix}. However, due to the large amount of pre-processing required, the algorithm is not used in practice. Standard methods, for example, based on QR-factorization take $O(N^3)$ steps \cite{golub2012matrix}. 
 
 So, assume that $A$ in our linear system is an $N \times N$ Hermitian matrix. Notice that this is an "unrestrictive" constraint on $A$ because we can always take non-Hermitian matrix $A'$ and linear system $A' \vec{x} = \vec{b}$ and instead solve $\begin{bmatrix}
 	0 && A' \\ A'^\dag && 0
 \end{bmatrix} \begin{bmatrix} 0 \\ x \end{bmatrix} = \begin{bmatrix} b \\ 0 \end{bmatrix}$. Hence, we we will assume that $A$ is Hermitian from here on. 
 
-Recall that because $A$ is hermitian $\implies$ we can perform quantum phase estimation using $e^{-iAt}$ as the unitary transformation. This can be done efficiently if $A$ is sparse.
+Recall that because $A$ is hermitian, then we can perform quantum phase estimation using $e^{-iAt}$ as the unitary transformation. This can be done efficiently if $A$ is sparse.
 
-So, we first prepare $\ket{b}$ (the representation of $\vec{b}$). We assume that this can be done efficiently or that $\ket{b}$ is supplied as an input.
+So, we first prepare $\ket{b} = \sum_i b_i \ket{i}$ (the representation of $\vec{b}$). We assume that this can be done efficiently or that $\ket{b}$ is supplied as an input.
 
-Denote by $\ket{\psi_j}$ the eigenvectors of $A$ with associated eigenvalues $\lambda_j$. Hence, we can express $\ket{b}$ as $\ket{b} = \sum_j \beta_j \ket{\psi_j}$.  So, we initialize a first register to state $\sum_j \beta_j \ket{\psi_j}$ and second register to state $\ket{0}$ . After applying phase estimation, we then have the joint state $\sum_j \beta_j \ket{\psi_j} \ket{\widetilde{\lambda}_j}$, where $\widetilde{\lambda}_j$ is an approximation of $\lambda_j$. We'll assume that this approximation is perfect from here on. 
+Denote by $\ket{\psi_j}$ the eigenvectors of $A$ with associated eigenvalues $\lambda_j$. Hence, we can express $\ket{b}$ as $\ket{b} = \sum_j \beta_j \ket{\psi_j}$.  So, we initialize a first register to state $\sum_j \beta_j \ket{\psi_j}$ and second register to state $\ket{0}$ . After applying phase estimation, we then have the joint state $\sum_j \beta_j \ket{\psi_j} \ket{\widetilde{\lambda}_j}$, where $\widetilde{\lambda}_j$ is an approximation of $\lambda_j$. We'll assume that this approximation is perfect from here on, for the sake of demonstration. 
 
-Next we add an ancilla qubit and perform a rotation conditional on the first register while now holds $\ket{\lambda_j}$. The rotation transforms the system to
+Next we add an ancilla qubit and perform a rotation conditional on the first register which now holds $\ket{\lambda_j}$. The rotation transforms the system to
 
 \begin{align*}
 \sum_j \beta_j \ket{\psi_j} \ket{\lambda_j} \Big(\sqrt{1-\frac{C^2}{\lambda_j^2}}\ket{0} + \frac{C}{\lambda_j}\ket{1}\Big)
@@ -105,11 +175,13 @@ for some small constant $C \in \RR$ that is $O(1/\kappa)$.
 
 Hence, we can undo phase estimation to restore the second register to $\ket{0}$.
 
-Now, if we measure the ancillary qubit in the computational basis, we'll evidently collapse the state to $\ket{1}$ with some probability.
+One sees that if we measure the ancillary qubit in the computational basis, we'll evidently collapse the state to $\ket{1}$ with probability $\Omega(1/\kappa^2)$. However, using amplitude amplification this can be upper-bounded to $O(1/\kappa)$.  
 
 Finally, we can make a measurement $M$ whose expectation value $\bra{x}M\ket{x}$ corresponds to the feature of $x$ we wish to evaluate. 
 
 \subsection{Amplitude Amplification}
+
+
 
 \nocite{*}
 \bibliographystyle{plain}
