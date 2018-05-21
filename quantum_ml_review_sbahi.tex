@@ -179,9 +179,114 @@ One sees that if we measure the ancillary qubit in the computational basis, we'l
 
 Finally, we can make a measurement $M$ whose expectation value $\bra{x}M\ket{x}$ corresponds to the feature of $x$ we wish to evaluate. 
 
-\subsection{Amplitude Amplification}
+The concessions we noted along the way clearly limit the algorithm's applicability to practical problems. We have three essential caveats to achieving exponential speedup: (1) $A$ must be sparse and have a condition number that scales at most sublinearly with $N$, (2) $\ket{b}$ must be loaded in quantum superposition in $\log(N)$ time, and (3) $\ket{x}$ isn't actually be read out, but instead an expectation is computed.
 
 
+Limitation (1) has been partially resolved by the work of \cite{wossnig2018quantum} to achieve a quadratic speedup for dense matrices. 
+
+Limitation (2) may be solved by quantum RAM, which then has its own limitations discussed in the next section. 
+
+Limitation (3) is a general issue with regards to reading out classical information from a quantum state at the conclusion of a quantum algorithm because we would need at least $N$ measurements to retrieve this classical data. Hence, this would eliminate the potential for exponential speed-up.  
+
+Hence, after observing these limitations we may wonder if there can exist a classical algorithm with the same caveats that can achieve the same runtime. Importantly, in the original paper the authors showed that HHL is “universal for quantum computation.” Hence, we can encode any quantum algorithm e.g. Shor's algorithm into a system of roughly $2^n$ linear equations in $2^n$ unknowns, and then use HHL to “solve” the system (i.e., simulate the algorithm) in polynomial time. Thus, provided we believe any quantum algorithm achieves an exponential speedup over the best possible classical algorithm, HHL can in principle achieve such a speedup as well.
+
+To conclude, HHL is a logarithmic time quantum algorithm for matrix inversion, a task arising in many learning problems. However, a number of caveats that include the requirement of a logarithmic access time to the memory and the impossibility of retrieving the solution vector with one measurement lead to the question of whether classical or parallel algorithms that make use of the same assumptions obtain similar, or better, runtimes in practice. Hence, we will need empirical data to further address this question.
+
+\subsection{Quantum Random Access Memory} 
+
+The essence of machine learning is analyzing a vast amount of data. Hence, we must address the question of how classical data is encoded in quantum superposition, a concern brought up in our previous discussion of the matrix inversion algorithm. 
+
+So, assume that we have an classical vectors $\{v_1, \cdots , v_ n : v_1 \in \RR^m \}$ that need to be encoded for use as part of a quantum algorithm. Quantum random access memory (qRAM) can encode these classical vectors in superposition into $\log(nm)$ qubits in $\log(nm)$ time using its "bucket-brigade architecture"\cite{giovannetti2008quantum}. The basic idea is to use a three-level tree structure where the $nm$ qubit "leaves" contain the entries of the $n$ vectors in $\RR^m$.
+
+One of the central limitations of qRAM is that the number of resources scales as $O(nm)$ i.e. exponentially in the binary representation of $n, m$. There have been open questions of the viability of this model of memory, in practice. In particular, if each of the qubits must be error-corrected, then it seems entirely impractical for general use. Some of this concern has been answered by proponents who have showed that, given a certain error model, algorithms that require to query the memory a polynomial number of times (e.g. the HLL algorithm above) might not require fault-tolerant components. Still, the amplitude amplification algorithm above does require this error correction. 
+
+Furthermore, it may be only fair to compare qRAM to a parallel classical architecture, given that we are allowing resources to scale exponentially. 
+
+Considerable, too, is the fact that data must be distribute fairly uniformly over the quantum register or else qRAM is no longer efficient \cite{aaronson2015read}. 
+
+In conclusion, qRAM comes with a significant number of considerations in itself and hence should be subjected to empirical investigation to determine its genuine quantum speed-up in practice. 
+
+%\section{Inner Product Evaluation}
+
+\section{Applications}
+
+\subsection{Principal Component Analysis}
+
+First, we consider the ubiquitous principal component analysis (PCA) algorithm. PCA reduces the dimensionality of data by transforming the features to uncorrelated weightings of the original features ("principal components"). This requires simply finding the eigenvalues and eigenvectors of the data covariance matrix. 
+
+Hence, let $v_j \in V$ where $V$ is a $d$-dimensional vector space such that $d=2^n=N$ and assume that $|v_j| = 1$ for simplicity. Hence, the covariance matrix of the data is given by $C = \sum_j v_jv_j^T$ whose eigenvalues and eigenvectors we seek to discover. So, suppose we can prepare quantum state $v_j \rightarrow \ket{v_j}$, choosing classical data vector $v_j$ uniformly at random. For example, we can use qRAM, discussed above. Then, because of our random selection, the resulting quantum state has density matrix $\rho = \frac{1}{N} \sum_j \ket{v_j}\bra{v_j}$ which we observe to be the covariance matrix, up to an overall factor. 
+
+Then, as Lloyd, Mohseni and Rebentrost describe \cite{lloyd2014quantum}, one way to perform quantum PCA use that given $n$ copies of $\rho$ we have the ability to apply the unitary operator $e^{-i\rho t}$ to any state $\sigma$ with accuracy $O(t^2 / n)$. This can be done by using repeated infinitesmal applications of the SWAP operator on $\rho \otimes \sigma$. 
+
+Hence, using $e^{-i \rho t}$, we can perform phase estimation on $rho$. So, let $\ket{\psi_i}$ be the eigenvectors of $\rho$ with associated eigenvalues $\lambda_i$ and so $\rho = \sum_j \lambda_j \ket{\psi_j}\bra{\psi_j}$. Therefore, phase estimation gives u
+
+\begin{align*}
+\sum_j \lambda_j \ket{\psi_j}\bra{\psi_j} \otimes \ket{\tilde{\lambda_j}} \bra{\tilde{\lambda_j}}
+\end{align*}
+
+where $\tilde{\lambda_j}$ is an approximation of $\lambda_j$. Hence, if we measure the second register and repeat this procedure several times, the most frequent outcome is the first principal component $\ket{\psi_{max}}$, and so on.
+
+The algorithm works best when a small number of principal components have significantly greater eigenvalues than the rest. Hence, $\rho$ is well represented by the subspace spanned by the principal components. In particular, let $m << d$ be the dimension of the subspace of principal components which represent $\rho$ within some bound. Then, the algorithm has runtime $O(m \log n )$. 
+
+Hence, this gives a limitation: if the eigenvalues of the covariance are roughly equal and of size $O(1/d)$, then the algorithm reduces to scaling in time $O(d)$ (as does the classical algorithm). Furthermore, we evidently inherit the limitations of qRAM, if we use it for the state preparation above.  
+
+\subsection{Support Vector Machines}
+
+Support vector machines seek to find an optimal (maximum margin) separating hyperplane between two classes of data in a dataset. Hence, if the training data is linearly separable, each class can be found on only one side of the hyperplane. In particular, let $\{ x_1 , \cdots , x_n \}$ be a set of observations where $x_i$ is a $d$-dimensional vector with associated labels $y_i \in \{ 0 , 1\}$. Hence, we seek a linear function $f(x) = \vec{w} \cdot \vec{x} - \vec{b}$ where $\vec{w}$ is a weight vector and $\vec{b}$ is a bias vector s.t. $y_if(x_i) > 0, \forall i$. Furthermore, we seek to maximize the minimum $y_i f(x_i)$, across all $i$. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\linewidth]{svm.png}	
+\caption{Visualization of a separating hyperplane and its associated margin taken from \cite{rudin}.}
+\end{figure}
+
+Much of the appeal of SVM is in its generalization to nonlinear hypersurfaces by replacing the constituent inner products with a kernel that implicitly maps the observations to another high dimensional space \cite{rudin}.% This mapping can be represented by a kernel ma
+
+Solving SVM generally is performed by optimization of the dual problem which is a quadratic optimization problem. Hence, in \cite{rebentrost2014quantum}, the authors show that quantum evaluation of inner products leads to exponential speed-ups in terms of $d$. 
+
+Full exponential improvements, however, can be achieved (with respect to $d$ and $n$) in the case of least-squares SVMs \cite{rebentrost2014quantum}. In this case, finding a solution requires optimizing a least squares minimization. Hence, this type of minimization reduces to solving a set of linear equations. So, after data has been inputted efficiently (perhaps using qRAM), a modified version of the matrix inversion algorithm above can be used, incorporating methods from the PCA algorithm above to prepare the linear system.
+
+The key point is, all the operations required to construct the maximum-margin separating hyperplane and to test whether a vector's classification can be performed in time that is polynomial in $\log n$.
+
+%\subsection{Generative Adversarial Networks}
+
+\subsection{Gaussian Processes}
+
+In \cite{zhao2018quantum}, the authors demonstrate an application of HHL algorithm with respect to Gaussian process regression (GPR), another supervised learning method. In effect, GPR is a stochastic generalization of ordinary regression. In particular, let $\{ x_1 , \cdots , x_n \}$ be a set of observations where $x_i$ is a $d$-dimensional vector with associated scalar targets $y_i$. In GPR, we consider the distribution over latent functions $f(x)$ which can return the correct labelling, $y$, given an inputted data-point. However, we further assume that this labelling is subject to Gaussian noise i.e. $f(x) = y + \epsilon$. Hence, GPR uses Bayesian inference to return this distribution of latent functions such that they are consistent with the observed data. 
+
+Now, given this distribution and some test input $x'$, we can predict its output by computing (1) a linear predictor known as the predictive mean and (2) the variance of the predictor with respect to $x'$. These values then give the distribution the $y'$ that is consistent with training data. Hence, the quantum speedup comes from the fact that both of these values can be computed using a modification of the HHL algorithm, as described in \cite{zhao2018quantum}. Furthermore, the size of the output is independent from the size of the dataset which the authors use to show that, combined with the efficiency of HHL, can given exponential speedups in terms of $d$. Again, we require that the data can be loaded in efficiently initially e.g. using qRAM.  
+
+\subsection{Optimization}
+
+Unsurprisingly, optimization methods are fundamental to many machine learning algorithms. Again, we can apply our quantum set of tools to several important optimization problems, including semi-definite programs (with potential super-polynomial speedups) and constraint satisfiability programs. Even easier to see, we can directly use our demonstrated results to solve quadratic programming problems which reduce to a linear system. If $N \times N$ matrices that define the linear system are sparse and low rank, we can use HHL and yield a solution in $\log N$ time--an exponential speedup.
+
+Furthermore, iterative optimization, such as by means of gradient descent can be implemented by modifying PCA. In this case, several copies of a quantum state representing the solution are used to iteratively improve the solution. We may expect improvements in this type of optimization to lead to improvement in training neural networks on a quantum computer. 
+
+Interestingly, the quantum optimization algorithm finds approximate solutions for combinatorial optimization by "alternating qubit rotations with the application of the problem's penalty function" \cite{biamonte2017quantum}.
+
+\subsection{Topological Data Analysis}
+
+By now, we've seen that the presented algorithms suffer from a common limitation: the data must be loaded into a quantum superposition efficiently given that the speedups come from performing the computational steps after data is read in. However, this issue can be avoided in cases where the data points can be computed efficiently individually. In terms of machine learning, this can happen when the computation component of the algorithm requires exploring the comparatively small subset of the original dataset. In other words, if we can explore a subset of the input data to determine the distribution and other descriptive features of the overall data, we can then have the quantum algorithm generate the combinatorially larger space in quantum parallel, thereby computing the quantum dataset efficiently. This idea was used in the context of topological data analysis in \cite{lloyd2016quantum}.
+
+Topological features, in particular, seem promising for this goal given that they are independent of the metric of choice and hence capture essential features of the data. In a discrete set, topological features are given by features that persist across spatial resolutions. These persistent features, formalized through persistent homology, are less likely to be artifacts of noise or parameterization. For example, the holes or connected components are examples of such features. The number of these types of features are defined for a closed set of simplexes as "Betti numbers". 
+
+In the paper, the authors show how to generate quantum states to encode the simplexes using logarithmically few qubits. Furthermore, they show that the Betti numbers can be efficiently represented using this representation. Important assumptions were made, in particular such that the quantum state encoding the simplexes can be generated efficiently. One satisfying condition, is if the number of simplexes in the complex are exponentially large. Hence, in at least some cases, we may extract exponential speed-ups in this type of topological analysis.
+
+\section{Challenges}
+
+The first obvious challenge to quantum machine learning is that the execution of quantum algorithms requires quantum hardware that does not exist at present. 
+
+Aside from this, as we've seen by now, many of the quantum algorithms which are used to potentially give quantum speedups come with several caveats and limitations to their use. As noted in \cite{biamonte2017quantum}, implicitly in \cite{aaronson2015read}, and repeatedly elsewhere, we can condense the general caveats into a few fundamental problems: 
+
+(1) The Input State Preparation Problem. The cost of reading in the input can in some cases dominate the cost of quantum algorithms. In many cases, we hoped qRAM would solve this problem. Understanding this factor is an important ongoing challenge.
+
+(2) The Readout problem. Retrieving the solution in terms of classical information after performing quantum algorithms requires learning an exponential number of bits through repeated trials. We've shown that learning an expectation value of a linear operator can be a sound alternative (e.g. in the case of matrix inversion).
+
+(3) The true cost problem. We require empirical study to show the number of gates or elementary operations to carry out a quantum algorithm, in practice. For example, we encountered this issue in the fundamental phase estimation algorithm. Our query complexity bounds seem to advantage great advantages in specific cases, as we've noted.
+
+Throughout this review, we've considered learning classical data which introduces problems (1) and (2), given that we have to interface between classical and quantum states. Hence, we may consider the case of applying quantum algorithms to quantum data. This is covered in detail in \cite{aaronson2007learnability}.
+
+%The road forward seems to have some promise, however. We expect empirical data to address several of the open questions noted throughout this review. 
 
 \nocite{*}
 \bibliographystyle{plain}
