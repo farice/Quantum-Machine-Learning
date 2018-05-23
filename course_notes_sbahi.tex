@@ -69,6 +69,45 @@
 
 \section{Nielsen \& Chuang: Chapter 2}
 
+\begin{exercise} (2.11) Find the eigenvectors and eigenvalues of the Pauli matrices. 
+
+\begin{proof}
+	\begin{align*}
+	X &= \begin{bmatrix}
+ 0 & 1 \\ 1 & 0	
+ \end{bmatrix} \\
+ X - \lambda I &= \begin{bmatrix}
+ -\lambda & 1 \\ 1 & -\lambda	
+ \end{bmatrix} \\
+ \lambda^2 - 1 &= 0 \\
+ \lambda_{\pm} &= \pm 1 \\
+ \begin{bmatrix}
+ -1 & 1 \\ 1 & -1
+ \end{bmatrix} v_+ &= 0 \\
+ \implies v_+ = \frac{1}{\sqrt{2}}\begin{bmatrix}
+ 1 \\ 1
+ \end{bmatrix} \\
+ \begin{bmatrix}
+ 1 & 1 \\ 1 & 1
+ \end{bmatrix} v_- &= 0 \\
+ \implies v_- = \frac{1}{\sqrt{2}}\begin{bmatrix}
+ 1 \\ -1
+ \end{bmatrix}
+	\end{align*}
+
+Similarly, $Y$ has eigenvalues $\pm 1$ with respective eigenvectors $\Big\{ \begin{bmatrix}
+ 1 \\ i
+ \end{bmatrix} , \begin{bmatrix}
+ 1 \\ -i
+ \end{bmatrix} \Big\}$. $Z$ has eigenvalues $\pm 1$ with respective eigenvectors $\Big\{ \begin{bmatrix}
+ 1 \\ 0
+ \end{bmatrix} , \begin{bmatrix}
+ 0 \\ 1
+ \end{bmatrix} \Big\}$
+\end{proof}
+	
+\end{exercise}
+
 \subsection{Postulates of Quantum Mechanics}
 
 First, we cover the fundamental postulates of quantum mechanics. 
@@ -1044,6 +1083,34 @@ Hence, the initial state of the machine is $\ket{\psi}\ket{s}$. So, some unitary
 \end{proof}
 
 \section{Nielsen \& Chuang: Chapter 4}
+
+A single qubit in the state $a \ket{0} + b \ket{1}$ can be visualized as a point $(\theta, \phi)$ on the unit sphere, where $a = \cos(\theta / 2), b = e^{i\phi}sin(\theta / 2)$. This is called the Bloch sphere representation and $(\cos \phi \sin \theta , \sin \phi \sin \theta, \cos \theta)$ is called the Bloch vector. 
+
+\begin{exercise} (4.1) Find the points on the Bloch sphere which correspond to the normalized eigenvectors of the different Paul matrices. 
+\begin{proof}
+	
+	Recall that, from Exercise 2.11, $X$ has eigenvalues $\pm 1$ with respective eigevectors $\Big\{ \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}, \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix} \Big\}$. Similarly, $Y$ has eigenvalues $\pm 1$ with respective eigenvectors $\Big\{ \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ i \end{bmatrix} , \frac{1}{\sqrt{2}} \begin{bmatrix} 1 \\ -i \end{bmatrix} \Big\}$. Finally, $Z$ has eigenvalues $\pm 1$ with respective eigenvectors $\Big\{ \begin{bmatrix} 1 \\ 0 \end{bmatrix} , \begin{bmatrix} 0 \\ 1 \end{bmatrix} \Big\}$.
+	
+	Hence, using above, we solve for (1) $X$, (2) $Y$, and (3) $Z$
+	
+	(1) $\Big\{ \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}, \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix} \Big\} \iff \{ \frac{1}{\sqrt{2}}(\ket{0} + \ket{1}) , \frac{1}{\sqrt{2}}(\ket{0} - \ket{1}) \} $. First, for $\frac{1}{\sqrt{2}}(\ket{0} + \ket{1})$, we have that $\cos(\theta / 2) = \frac{1}{\sqrt{2}}$. Hence, $\theta = \pi / 2$. Now, $e^{i\phi} \sin (\theta / 2) = e^{i \phi} / \sqrt{2} = 1 / \sqrt{2}$. Hence, $\phi = 0$. 
+	
+	Similarly, for the second eigenvector, $\theta = \pi / 2$ but $\phi = - \pi$.
+	
+	Therefore, for the first eigenvector, 
+	
+	\begin{align*}
+	(\cos \phi \sin \theta , \sin \phi \sin \theta, \cos \theta) &= (\cos (0)\sin (\pi / 2) , \sin (0)\sin (\pi / 2) , \cos (\pi / 2) ) \\
+	&= (1, 0, 0) \\
+	\intertext{And for the second we have,}	
+	(\cos (\pi)\sin (\pi / 2) , \sin (\pi)\sin (\pi / 2) , \cos (\pi / 2) ) \\
+	&= (-1, 0, 0)
+	\end{align*}
+
+Similarly, we find the Bloch vectors $(0, \pm 1, 0)$ for $Y$ and $(0, 0, \pm 1)$ for $Z$.
+\end{proof}
+\end{exercise}
+
 
 \subsection{Universal quantum gates}
 
