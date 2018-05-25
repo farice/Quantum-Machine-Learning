@@ -1084,20 +1084,22 @@ Hence, the initial state of the machine is $\ket{\psi}\ket{s}$. So, some unitary
 
 \section{Nielsen \& Chuang: Chapter 4}
 
+\subsection{Single Qubit Operations}
+
 A single qubit in the state $a \ket{0} + b \ket{1}$ can be visualized as a point $(\theta, \phi)$ on the unit sphere, where $a = \cos(\theta / 2), b = e^{i\phi}sin(\theta / 2)$. This is called the Bloch sphere representation and $(\cos \phi \sin \theta , \sin \phi \sin \theta, \cos \theta)$ is called the Bloch vector. 
 
 \begin{exercise} (4.1) Find the points on the Bloch sphere which correspond to the normalized eigenvectors of the different Paul matrices. 
 \begin{proof}
 	
-	Recall that, from Exercise 2.11, $X$ has eigenvalues $\pm 1$ with respective eigevectors $\Big\{ \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}, \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix} \Big\}$. Similarly, $Y$ has eigenvalues $\pm 1$ with respective eigenvectors $\Big\{ \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ i \end{bmatrix} , \frac{1}{\sqrt{2}} \begin{bmatrix} 1 \\ -i \end{bmatrix} \Big\}$. Finally, $Z$ has eigenvalues $\pm 1$ with respective eigenvectors $\Big\{ \begin{bmatrix} 1 \\ 0 \end{bmatrix} , \begin{bmatrix} 0 \\ 1 \end{bmatrix} \Big\}$.
+Recall that, from Exercise 2.11, $X$ has eigenvalues $\pm 1$ with respective eigevectors $\Big\{ \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}, \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix} \Big\}$. Similarly, $Y$ has eigenvalues $\pm 1$ with respective eigenvectors $\Big\{ \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ i \end{bmatrix} , \frac{1}{\sqrt{2}} \begin{bmatrix} 1 \\ -i \end{bmatrix} \Big\}$. Finally, $Z$ has eigenvalues $\pm 1$ with respective eigenvectors $\Big\{ \begin{bmatrix} 1 \\ 0 \end{bmatrix} , \begin{bmatrix} 0 \\ 1 \end{bmatrix} \Big\}$.
 	
-	Hence, using above, we solve for (1) $X$, (2) $Y$, and (3) $Z$
+First, we solve for $X$. 
 	
-	(1) $\Big\{ \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}, \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix} \Big\} \iff \{ \frac{1}{\sqrt{2}}(\ket{0} + \ket{1}) , \frac{1}{\sqrt{2}}(\ket{0} - \ket{1}) \} $. First, for $\frac{1}{\sqrt{2}}(\ket{0} + \ket{1})$, we have that $\cos(\theta / 2) = \frac{1}{\sqrt{2}}$. Hence, $\theta = \pi / 2$. Now, $e^{i\phi} \sin (\theta / 2) = e^{i \phi} / \sqrt{2} = 1 / \sqrt{2}$. Hence, $\phi = 0$. 
+$\Big\{ \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}, \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix} \Big\} \iff \{ \frac{1}{\sqrt{2}}(\ket{0} + \ket{1}) , \frac{1}{\sqrt{2}}(\ket{0} - \ket{1}) \} $. First, for $\frac{1}{\sqrt{2}}(\ket{0} + \ket{1})$, we have that $\cos(\theta / 2) = \frac{1}{\sqrt{2}}$. Hence, $\theta = \pi / 2$. Now, $e^{i\phi} \sin (\theta / 2) = e^{i \phi} / \sqrt{2} = 1 / \sqrt{2}$. Hence, $\phi = 0$. 
 	
-	Similarly, for the second eigenvector, $\theta = \pi / 2$ but $\phi = - \pi$.
+Similarly, for the second eigenvector, $\theta = \pi / 2$ but $\phi = - \pi$.
 	
-	Therefore, for the first eigenvector, 
+Therefore, for the first eigenvector, 
 	
 	\begin{align*}
 	(\cos \phi \sin \theta , \sin \phi \sin \theta, \cos \theta) &= (\cos (0)\sin (\pi / 2) , \sin (0)\sin (\pi / 2) , \cos (\pi / 2) ) \\
@@ -1111,6 +1113,189 @@ Similarly, we find the Bloch vectors $(0, \pm 1, 0)$ for $Y$ and $(0, 0, \pm 1)$
 \end{proof}
 \end{exercise}
 
+\subsubsection{Action by Hadamard on the Bloch Sphere}\label{had:bloch}
+
+Note that the above exercise also shows that, on the Bloch sphere, $\ket{0} = (0, 0, 1), \ket{1} = (0, 0 , -1), \ket{+} = (1, 0, 0), \ket{-} = (-1, 0, 0)$. This can often aid intuition. For example, we know that Hadamard operator $H$ is defined s.t. $\ket{0} \rightarrow^{H} \ket{+}$. 
+
+Hence, on the Bloch sphere, this transformation is equivalent to $(0, 0, 1) \rightarrow^{H} (1, 0, 0)$. So, we can define a series of rotations to emulate the action of $H$, by considering its action on a basis of the Bloch sphere. So we note the additional transformations, $H^2 = I \implies \ket{+} \rightarrow \ket{0} \iff (1, 0, 0) \rightarrow (0, 0, 1)$ and $H \begin{bmatrix} 1 \\ i \end{bmatrix} = \begin{bmatrix} 1 + i \\ 1 - i \end{bmatrix} = \begin{bmatrix} 1 \\ -i \end{bmatrix}$ (up to a global phase) $\iff$ $(0, 1, 0) \rightarrow (0, -1, 0)$.
+
+Geometrically, we can convince ourselves that the following procedure suffices. For example, consider the effect of this procedure on $\ket{0}$:
+
+(1) Begin with state $\ket{0} = (0,0,1)$
+
+(2) Rotate by $- \pi / 2$ about the $\hat{x}$ axis. Hence, we then have $(0, 1,0)$.
+
+(3) Rotate by $- \pi / 2$ about the $\hat{z}$ axis. This gives $(1, 0, 0)$.
+
+(4) Rotate by $- \pi / 2$ about the $\hat{x}$ axis. This keeps us at $(1, 0, 0) = \ket{+}$
+
+Similarly, using the same procedure
+
+(1) $\begin{bmatrix} 1 \\ i \end{bmatrix} = (0, 1, 0)$.
+
+(2) $(0, 0 , -1)$.
+
+(3) $(0, 0, -1)$.
+
+(4) $(0, -1, 0)$.
+
+The reader can verify the above for $\ket{+}$. 
+
+\begin{exercise} (4.2) Let $x \in \RR$ and $A$ be a matrix that satisfies $A^2 = I$. Show that 
+
+\begin{align*}
+\exp(i A x) = \cos(x) I + i \sin(x) A	
+\end{align*}
+ 
+\begin{proof}
+
+From the power series definition of $e^{z}$, we have that
+	
+	\begin{align*}
+		\exp(i A x) &=  \sum_{n=0}^\infty \frac{(iAx)^n}{n!} \\
+		&= \sum_{n=0}^\infty \frac{(iAx)^{2n}}{(2n)!} + \sum_{n=0}^\infty \frac{(iAx)^{2n+1}}{(2n+1)!} \\
+		\sum_{n=0}^\infty \frac{(iAx)^{2n}}{(2n)!} &= \sum_{n=0}^\infty \frac{i^{2n}A^{2n}x^{2n}}{(2n)!} \\
+		&= \sum_{n=0}^\infty \frac{(-1)^{2n} I x^{2n}}{(2n)!} \\
+		&= I \sum_{n=0}^\infty \frac{(-1)^{2n}  x^{2n}}{(2n)!} = \cos(x)I \\
+		\sum_{n=0}^\infty \frac{(iAx)^{2n+1}}{(2n+1)!} &= \sum_{n=0}^\infty \frac{i^{2n+1}A^{2n+1}x^{2n+1}}{(2n+1)!} \\
+		&= \sum_{n=0}^\infty \frac{i(-1)^{2n+1}Ax^{2n+1}}{(2n+1)!} \\
+		&= iA \sum_{n=0}^\infty \frac{(-1)^{2n+1}x^{2n+1}}{(2n+1)!} = i\sin(x) A
+	\end{align*}
+
+\end{proof}
+\end{exercise}
+
+$X, Y, Z$ give rise to three useful classes of unitary matrices when they are exponentiated, the rotation operators about $\hat{x}$, $\hat{y}$, and $\hat{z}$,
+
+\begin{align*}
+R_x(\theta) \equiv e^{-i \theta X / 2} \\
+R_y(\theta) \equiv e^{-i \theta Y / 2} \\
+R_z(\theta) \equiv e^{-i \theta Z / 2} 
+\end{align*}
+
+We can use exercise 4.2 to write the above equations more conveniently.
+
+\begin{exercise} (4.3) Show that, up to a global phase, the $\pi /8$ gate satisfies $T = R_z(\pi /4)$.
+
+\begin{proof}
+
+Note that 
+
+$$
+T = \begin{bmatrix}1 & 0 \\ 0 & \exp(i\pi / 4) \end{bmatrix} = \exp(i\pi / 8)\begin{bmatrix} \exp(-i \pi / 8)  & 0 \\ 0 & \exp(i \pi / 8)  \end{bmatrix} 
+$$
+
+Now, using the definition of $R_z$,
+
+\begin{align*}
+	e^{-i Z \frac{\pi}{8}} &= \cos(-\pi/8) I + i\sin (-\pi / 8)Z \\
+	&=  \cos(\pi/8) I - i\sin (\pi / 8)Z \\
+	&= \begin{bmatrix} \cos(\pi / 8) - i \sin (\pi / 8) & 0 \\ 0 & \cos(\pi/8) + i \sin (\pi / 8) \end{bmatrix} \\
+	&= \begin{bmatrix} \exp(-i \pi / 8)  & 0 \\ 0 & \exp(i \pi / 8)  \end{bmatrix} \\
+\end{align*}
+\end{proof}
+\end{exercise}
+
+\begin{exercise} (4.4) Express the Hadamard gate $H$ as a product of $R_x$ and $R_z$ rotations and $e^{i \phi}$ for some $\phi $.
+\begin{proof}
+
+	In section \ref{had:bloch} we discussed a procedure for expressing $H$ as a product of rotations on the Bloch sphere, by considering its actions on a basis of the Bloch sphere. We showed that $R_x(-\pi / 2)R_z(-\pi / 2)R_x(-\pi / 2)$ suffices. We can verify this result a second way by considering the respective rotation matrices. 
+	 
+	We know that $H = \frac{1}{\sqrt{2}} (X + Z)$. Furthermore, 
+	
+	\begin{align*}
+	R_x(-\pi / 2) &= \begin{bmatrix}
+ \cos(\pi / 4) & i\sin(\pi / 4) \\ i\sin(\pi / 4) & \cos(\pi / 4)	
+ \end{bmatrix} \\
+&= \frac{1}{\sqrt{2}} \begin{bmatrix}
+ 	1 & i \\ i & 1 
+ \end{bmatrix} = \frac{1}{\sqrt{2}}( I + iX) \\
+ R_z(-\pi / 2) &= \begin{bmatrix}
+ \cos(\pi / 4) + i\sin(\pi / 4) & 0 \\ 0 & \cos(\pi / 4)	 - i\sin (\pi / 4)
+ \end{bmatrix} \\
+&= \frac{1}{\sqrt{2}} \begin{bmatrix}
+ 	1 + i & 0 \\ 0 & 1-i
+ \end{bmatrix} = \frac{1}{\sqrt{2}}( I + iZ)
+\end{align*}
+
+We'll use that 
+
+\begin{align*}
+XZ &= \begin{bmatrix}0 & 1 \\ 1 & 0\end{bmatrix}	\begin{bmatrix}1 & 0 \\ 0 & -1\end{bmatrix}	\\
+&= \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix} = iY \\
+ZX &= \begin{bmatrix}1 & 0 \\ 0 & -1\end{bmatrix}\begin{bmatrix}0 & 1 \\ 1 & 0\end{bmatrix} \\
+&= \begin{bmatrix} 0 & 1 \\ -1 & 0 \end{bmatrix} = -iY \\
+\implies XZ + ZX = 0 \\
+\implies XZX + ZX^2 = 0 \\
+\implies XZX = -Z 
+\end{align*}
+
+Note that the above is simply showing that the anti-commutator of $X$ and $Z$, $\{ X , Z\} = 0$. This holds for any pair of distinct Pauli matrices (Exercise 2.41). 
+
+Hence, ignoring the normalization factor
+
+\begin{align*}
+	( I + iX)( I + iZ)( I + iX) &= I + iX + iZ + i^2ZX + iX + i^2X^2 + i^2XZ + i^3XZX \\
+	&= I + iX + iZ - ZX  + iX - I - XZ + i^3 XZX \\
+	&= i (X + Z)  + iX -i XZX \\
+	&= i(X + Z) + iX + iZ \\
+	&= 2i(X + Z)
+\end{align*}
+
+which gives the Hadamard transform up to a global phase. 
+
+\end{proof}
+	
+\end{exercise}
+
+
+\begin{exercise} (4.5) Prove that $(\hat{n} \cdot \hat{\sigma} ) ^2 = I$, and use this to verify the following equation
+
+\begin{align*}
+R_n(\theta) \equiv \exp(-i \theta n \cdot \sigma / 2) = \cos(\theta /2) I - i \sin(\theta / 2) (n_x X + n_y Y + n_z Z) 	
+\end{align*}
+
+\begin{proof}
+
+Evidently, $\hat{n} \cdot \hat{\sigma} = (n_x X + n_y Y + n_z Z)$ so, recalling that distinct Pauli matrices anti-commute,
+
+\begin{align*}
+(n_x X + n_y Y + n_z Z)^2 &= n_x^2X^2 + n_xn_y XY + n_x n_z XZ + n_xn_y YX + n_y^2 Y^2 + n_yn_z YZ + n_x n_z ZX + n_y n_z ZY + n_z Z^2 \\
+&= (n_x^2 + n_y^2 + n_z^2)I + n_xn_z(XZ + ZX) + n_yn_z (YZ + ZY) + n_x n_y (XY + YX) \\
+&= (n_x^2 + n_y^2 + n_z^2)I = I
+\end{align*}
+
+because $\hat{n}$ is a unit vector. 
+	
+Therefore, using Exercise 4.2 (Nielsen \& Chuang), if we let $A = \hat{n} \cdot \hat{\sigma}$, then the result follows directly.  
+\end{proof}
+\end{exercise}
+
+\begin{exercise} (4.6) One reason why the $R_{\hat n} (\theta )$ operators are referred to as rotation operators is the following fact, which you are to prove. Suppose a single qubit has a state represented by the Bloch vector $\vec{\lambda}$. Then the effect of the rotation $R_{\hat n} (\theta )$ on the state is to rotate it by an angle $\theta$ about the $\hat{n}$ axis of the Bloch sphere. This fact explains the rather mysterious looking factor of two in the definition of the rotation matrices.
+
+\begin{proof}
+%	The axis $v$ with which we rotate around is the vector that is unperturbed by action of $R_{\hat n} (\theta )$ i.e. $R_{\hat n} (\theta ) v = v$. Hence, $v$ is the eigenvector of $R_{\hat n} (\theta )$ with associated eigenvalue $1$. So, first we write the matrix
+%	
+%	\begin{align*}
+%	R_{\hat n} (\theta ) &= \begin{bmatrix}
+ %\cos(\theta / 2) - i n_z \sin(\theta / 2) & - (i n_x + n_y ) \sin(\theta / 2) \\ - (i n_x - n_y ) \sin(\theta / 2) & \cos(\theta / 2) 	+ i n_z \sin(\theta / 2)
+ %\end{bmatrix}
+%	\end{align*}
+%
+%Now, we solve for the eigenvector with eigenvalue $1$ which we assume to exist if this is a proper rotation matrix
+%
+%\begin{align*}
+%	R_{\hat n} (\theta ) - I &= \begin{bmatrix}
+ %\cos(\theta / 2) - i n_z \sin(\theta / 2) - 1 & - (i n_x + n_y ) \sin(\theta / 2) \\ - (i n_x - n_y ) \sin(\theta / 2) & \cos(\theta / 2) 	+ i n_z \sin(\theta / 2) - 1
+ %\end{bmatrix} \\
+ %0 &= \cos(\theta / 2)v_1 - i n_z \sin(\theta / 2)v_1 - v_1  - (i n_x + n_y ) \sin(\theta / 2)v_2  \\
+ %0 &= - (i n_x - n_y ) \sin(\theta / 2)v_1 + \cos(\theta / 2)v_2 	+ i n_z \sin(\theta / 2)v_2 - v_2	
+ %\end{align*}
+	
+\end{proof}
+
+	
+\end{exercise}
 
 \subsection{Universal quantum gates}
 
