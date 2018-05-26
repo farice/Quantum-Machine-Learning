@@ -1232,17 +1232,17 @@ ZX &= \begin{bmatrix}1 & 0 \\ 0 & -1\end{bmatrix}\begin{bmatrix}0 & 1 \\ 1 & 0\e
 
 Note that the above is simply showing that the anti-commutator of $X$ and $Z$, $\{ X , Z\} = 0$. This holds for any pair of distinct Pauli matrices (Exercise 2.41). 
 
-Hence, ignoring the normalization factor
+Hence,
 
 \begin{align*}
-	( I + iX)( I + iZ)( I + iX) &= I + iX + iZ + i^2ZX + iX + i^2X^2 + i^2XZ + i^3XZX \\
-	&= I + iX + iZ - ZX  + iX - I - XZ + i^3 XZX \\
-	&= i (X + Z)  + iX -i XZX \\
-	&= i(X + Z) + iX + iZ \\
-	&= 2i(X + Z)
+	\frac{1}{2\sqrt{2}}( I + iX)( I + iZ)( I + iX) &= \frac{1}{2\sqrt{2}}[I + iX + iZ + i^2ZX + iX + i^2X^2 + i^2XZ + i^3XZX ]\\
+	&= \frac{1}{2\sqrt{2}}[I + iX + iZ - ZX  + iX - I - XZ + i^3 XZX] \\
+	&= \frac{1}{2\sqrt{2}}[i (X + Z)  + iX -i XZX ]\\
+	&= \frac{1}{2\sqrt{2}}[i(X + Z) + iX + iZ ]\\
+	&= \frac{1}{\sqrt{2}}[i(X + Z)]
 \end{align*}
 
-which gives the Hadamard transform up to a global phase. 
+which gives the Hadamard transform with phase $e^{i0}$. 
 
 \end{proof}
 	
@@ -1271,9 +1271,10 @@ Therefore, using Exercise 4.2 (Nielsen \& Chuang), if we let $A = \hat{n} \cdot 
 \end{proof}
 \end{exercise}
 
-\begin{exercise} (4.6) One reason why the $R_{\hat n} (\theta )$ operators are referred to as rotation operators is the following fact, which you are to prove. Suppose a single qubit has a state represented by the Bloch vector $\vec{\lambda}$. Then the effect of the rotation $R_{\hat n} (\theta )$ on the state is to rotate it by an angle $\theta$ about the $\hat{n}$ axis of the Bloch sphere. This fact explains the rather mysterious looking factor of two in the definition of the rotation matrices.
+% TODO 4.6
+%\begin{exercise} (4.6) One reason why the $R_{\hat n} (\theta )$ operators are referred to as rotation operators is the following fact, which you are to prove. Suppose a single qubit has a state represented by the Bloch vector $\vec{\lambda}$. Then the effect of the rotation $R_{\hat n} (\theta )$ on the state is to rotate it by an angle $\theta$ about the $\hat{n}$ axis of the Bloch sphere. This fact explains the rather mysterious looking factor of two in the definition of the rotation matrices.
 
-\begin{proof}
+%\begin{proof}
 %	The axis $v$ with which we rotate around is the vector that is unperturbed by action of $R_{\hat n} (\theta )$ i.e. $R_{\hat n} (\theta ) v = v$. Hence, $v$ is the eigenvector of $R_{\hat n} (\theta )$ with associated eigenvalue $1$. So, first we write the matrix
 %	
 %	\begin{align*}
@@ -1290,12 +1291,114 @@ Therefore, using Exercise 4.2 (Nielsen \& Chuang), if we let $A = \hat{n} \cdot 
  %\end{bmatrix} \\
  %0 &= \cos(\theta / 2)v_1 - i n_z \sin(\theta / 2)v_1 - v_1  - (i n_x + n_y ) \sin(\theta / 2)v_2  \\
  %0 &= - (i n_x - n_y ) \sin(\theta / 2)v_1 + \cos(\theta / 2)v_2 	+ i n_z \sin(\theta / 2)v_2 - v_2	
- %\end{align*}
+ %\end{align*}	
+%\end{proof}
+%\end{exercise}
+
+\begin{exercise} (4.7) Show that $XY X = −Y$ and use this to prove that $XR_y(\theta)X = R_y(-\theta)$.
+
+\begin{proof}
+	From above, we have that distinct Pauli matrices anti-commute. Furthermore, the Pauli matrices are hermitian and unitary $\implies$ $\sigma_i^2 = 0, i \in \{x, y, z \}$. Hence, 
 	
+	\begin{align*}
+	XY + YX &= 0 \\
+	XYX + YX^2 &= 0 \\
+	XYX + Y &=0 \\
+	XYX &= -Y
+	\end{align*}
+
+So, 
+
+\begin{align*}
+XR_y(\theta)X &= X\big[\cos(\theta/2)I - i\sin(\theta / 2) Y\big]X \\
+&= 	\cos(\theta/2)X^2 -i\sin(\theta/2)XYX \\
+&= \cos(\theta/2)I + i \sin(\theta /2) Y \\
+&= \cos(-\theta/2)I - i \sin(-\theta /2) Y \\
+&= R_y(-\theta)
+\end{align*}
+
+using that $\cos(-x) = \cos(x), \sin(-x) = -\sin(x)$.
+\end{proof}
+\end{exercise}
+
+% TODO 4.8
+% TODO 4.9
+% TODO 4.10
+% TODO 4.11
+
+\begin{lemma}\label{4.12}
+Suppose $U$ is a unitary operation on a single qubit. Then there exist real numbers $\alpha, \beta, \gamma, \delta$ such that
+
+\begin{align*}
+	U = \begin{bmatrix}
+ 	e^{i(\alpha - \beta / 2 - \delta / 2)} \cos ( \gamma / 2) & -e^{i (\alpha - \beta /2 + \delta / 2)} \sin(\gamma / 2) \\ 
+ 	e^{i(\alpha + \beta / 2 - \delta / 2)} \sin ( \gamma / 2) & e^{i (\alpha + \beta /2 + \delta / 2)} \cos(\gamma / 2)
+ \end{bmatrix}
+\end{align*}
+\end{lemma}
+
+\begin{theorem}
+Suppose $U$ is a unitary operation on a single qubit. Then there exist real numbers $\alpha, \beta, \gamma, \delta$ such that
+
+$$
+U = e^{i\alpha}R_z(\beta)R_y(\gamma)R_z(\delta).
+$$	
+\end{theorem}
+
+\begin{corollary}\label{4.2}
+	Suppose $U$ is a unitary gate on a single qubit. Then there exist unitary operators $A, B, C$ on a single qubit such that $ABC = I$ and U = $e^{i\alpha}AXBXC$, where $\alpha$ is some overall phase factor.
+\end{corollary}
+
+\begin{exercise} (4.12) Give $A, B, C$, and $\alpha$ for the Hadamard gate.
+
+\begin{proof}
+	Using Lemma \ref{4.12} above we can solve, assuming $\gamma = \pi / 2$, 
+	\begin{align*}
+		H &= \begin{bmatrix}
+ 1 & 1 \\ 1 & -1	
+ \end{bmatrix} = \begin{bmatrix}
+ 	e^{i(\alpha - \beta / 2 - \delta / 2)} & -e^{i (\alpha - \beta /2 + \delta / 2)} \\ 
+ 	e^{i(\alpha + \beta / 2 - \delta / 2)} & e^{i (\alpha + \beta /2 + \delta / 2)}
+ \end{bmatrix} \\ 
+ \alpha - \beta / 2 - \delta / 2 &= 0 \\
+ \alpha - \beta /2 + \delta / 2 &= \pi \\
+ \alpha + \beta / 2 - \delta / 2 &= 0 \\
+ (\alpha + \beta /2 + \delta / 2) &= \pi \\
+ \implies \alpha &= \pi / 2, \beta = 0, \delta = \pi
+	\end{align*}
+
+So, the proof of Corollary \ref{4.2} in Nielsen \& Chuang tells us to set 
+
+\begin{align*}
+A &= R_z (\beta)R_y(\gamma / 2) \\
+&= R_z (0)R_y(\pi / 4) \\
+&= \begin{bmatrix}
+ 	\cos(\pi / 8) & -\sin(\pi / 8) \\
+ 	\sin(\pi / 8) & \cos(\pi / 8)
+ \end{bmatrix}\\
+B &= R_y(-\gamma/2)R_z(- (\delta+\beta)/2)\\
+&= R_y(- \pi/4)R_z(- \pi/2)\\
+&=  \begin{bmatrix}
+ 	\cos(\pi / 8) & \sin(\pi / 8) \\
+ 	-\sin(\pi / 8) & \cos(\pi / 8)
+ \end{bmatrix} \begin{bmatrix}
+ 	e^{i\pi / 4} & 0 \\
+ 	0 & e^{- i\pi / 4}
+ \end{bmatrix}\\
+C &= R_z((\delta - \beta)/2)\\
+&= R_z(\pi /2) \\
+&= \begin{bmatrix}
+ 	e^{i\pi / 4} & 0 \\
+ 	0 & e^{- i\pi / 4}
+ \end{bmatrix}\\
+\end{align*}
+
+and $\alpha$ remains set $\alpha = \pi / 2$.
 \end{proof}
 
 	
 \end{exercise}
+
 
 \subsection{Universal quantum gates}
 
