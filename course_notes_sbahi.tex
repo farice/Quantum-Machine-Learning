@@ -414,7 +414,9 @@ v \cdot \sigma = v_1\sigma_x + v_2 \sigma_y + v_3\sigma_z
 
 Therefore, $\Lambda$ must have diagonal entries $\pm 1$. 
 
-Next, $P_+ P_- = \delta_{+-}$. Furthermore, $P_+ + P_- = (I + v \cdot \sigma)/2 + (I - v \cdot \sigma)/2 = I$. Finally, $(+1)P_+ + (-1)P_- = (I + v \cdot \sigma)/2 - (I - v \cdot \sigma)/2 = v \cdot \sigma$. 
+Next, $P_i P_j = \delta_{ij}P_j$ since if $i \neq j$ then $(I + v \cdot \sigma)(I - v\cdot \sigma) = I - (v \cdot \sigma)^2 = I - I = 0$. Furthermore, $P_+ + P_- = (I + v \cdot \sigma)/2 + (I - v \cdot \sigma)/2 = I$. 
+
+Finally, $(+1)P_+ + (-1)P_- = (I + v \cdot \sigma)/2 - (I - v \cdot \sigma)/2 = v \cdot \sigma$. 
 \end{proof}
 \end{exercise}
 
@@ -1346,7 +1348,7 @@ $$
 \end{theorem}
 
 \begin{corollary}\label{4.2}
-	Suppose $U$ is a unitary gate on a single qubit. Then there exist unitary operators $A, B, C$ on a single qubit such that $ABC = I$ and U = $e^{i\alpha}AXBXC$, where $\alpha$ is some overall phase factor.
+	Suppose $U$ is a unitary gate on a single qubit. Then there exist unitary operators $A, B, C$ on a single qubit such that $ABC = I$ and $U = e^{i\alpha}AXBXC$, where $\alpha$ is some overall phase factor.
 \end{corollary}
 
 \begin{exercise} (4.12) Give $A, B, C$, and $\alpha$ for the Hadamard gate.
@@ -1394,11 +1396,282 @@ C &= R_z((\delta - \beta)/2)\\
 \end{align*}
 
 and $\alpha$ remains set $\alpha = \pi / 2$.
-\end{proof}
+\end{proof}	
+\end{exercise}
+% TODO 4.13
+% TODO 4.14
+% TODO 4.15
 
+\subsection{Controlled Operations} 
+
+In terms of the computational basis, the action of the \texttt{CNOT} is given by $\ket{c}\ket{t} \rightarrow \ket{c} \ket{t \oplus c}$.
+
+\begin{exercise}(4.16)
+
+What is the $4\times 4$ unitary matrix for the circuit
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=.2\linewidth]{4_16-1.png}
+\end{figure}
+
+in the computational basis? What is the unitary matrix for the circuit
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=.25\linewidth]{4_16-2.png}
+\end{figure}
+
+in the computational basis?
+
+\begin{proof}
+	For the first circuit, we consider action on the computational basis.
 	
+	\begin{align*}
+		\ket{x_1}\ket{x_2 } &\rightarrow \ket{x_1}H\ket{x_2} = (I \otimes H) \ket{x_1}\ket{x_2 }
+	\end{align*}
+
+Now, given that $H = \begin{bmatrix} 1 & 1 \\ 1 & -1\end{bmatrix}$ w.r.t the computation basis, then
+
+\begin{align*}
+	(I \otimes H) &= \begin{bmatrix}	
+	1 & 1 & 0 & 0 \\
+	1 & -1 & 0 & 0 \\
+	0 & 0 & 1 & 1 \\
+	0 & 0 & 1 & -1
+ \end{bmatrix}
+\end{align*}
+
+Similarly, for the second circuit we have
+
+\begin{align*}
+	(H \otimes I) &= \begin{bmatrix}	
+	1 & 0 & 1 & 0 \\
+	0 & 1 & 0 & 1 \\
+	1 & 0 & -1 & 0 \\
+	0 & 1 & 0 & -1
+ \end{bmatrix}
+\end{align*}
+\end{proof}	
 \end{exercise}
 
+\begin{exercise} (4.17)
+Construct a \texttt{CNOT} gate from one controlled-$Z$ gate, that is, the gate whose action in the computational basis is specified by the unitary matrix
+
+$$
+\begin{bmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & -1		
+\end{bmatrix}
+$$
+
+and two Hadamard gates, specifying the control and target qubits.
+
+\begin{proof}
+Recall that, in terms of the computational basis, the action of the \texttt{CNOT} is given by $\ket{c}\ket{t} \rightarrow \ket{c} \ket{t \oplus c}$ and that $Z = \begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}$.
+
+We construct our algorithm by first making the observation that $H\ket{+} = \ket{0}$ and $H\ket{-} = \ket{1}$. Hence, beginning with state $\ket{c}\ket{t}$ we can initially apply $H$ to $\ket{t}$. Now, using the control-$Z$ gate with $\ket{c}$ as the control and $H\ket{t}$ as the target, we have two cases: 
+
+(1) If $\ket{c = 1}$, then the second qubit will swap either from $\ket{+}$ to $\ket{-}$ or vis versa. Therefore, we can apply another Hadamard to the second qubit and have $\ket{t \oplus c}$ at the second qubit, as expected. The first qubit is unaltered, as expected.
+
+(2) If $\ket{c = 1}$, then the second qubit will remain unchanged. Hence, if we apply another Hadamard to the second qubit, then $\ket{t}$ is recovered since $H^2 = I$. So, we have the expected behavior. 
+
+In summary, we have the circuit, beginning with state $\ket{c}\ket{t}$:
+
+(1) Apply $H$ to the second qubit
+
+(2) Controlled-$Z$ with the first qubit as the control and second as the target 
+
+(3) Apply $H$ to the second qubit. 
+\end{proof}
+\end{exercise}
+
+From the next exercise, we'll see that it didn't actually matter whether we used the first or second qubit as control/target:
+
+\begin{exercise}(4.18) Show that
+	
+\begin{figure}[H]
+\centering
+\includegraphics[width=.4\linewidth]{4_18.png}
+\end{figure}
+
+\begin{proof}
+We simply prove the statement for the computational basis. 
+
+(1) $\ket{0}\ket{0}$: Both circuits give the identity transform since they are conditioned on a qubit which is $\ket{0}$, in either case.
+
+(2) $\ket{1}\ket{0}$: The first circuit is conditioned on $\ket{1}$, so it applies $Z$ to $\ket{0}$ which gives $\ket{0}$. Hence, we have $\ket{1}\ket{0}$. The second circuit is conditioned on $\ket{0}$, so we have the identity transform which gives $\ket{1}\ket{0}$, similarly.
+
+(3) $\ket{0}\ket{1}$: By symmetry, we have the same outcome as in (2). 
+
+(4) $\ket{1}\ket{1}$: The first circuit is conditioned on the first $\ket{1}$, so it applies $Z$ to the second qubit which gives $-\ket{1}\ket{1}$. Similarly, the second circuit gives $-\ket{1}\ket{1}$.
+\end{proof}
+\end{exercise}
+
+\begin{exercise} (4.19) The \texttt{CNOT} gate is a simple permutation whose action on a density matrix $\rho$ is to rearrange the elements in the matrix. Write out this action explicitly in the computational basis.
+
+\begin{proof}
+	\begin{align*}
+	\ket{00}\bra{00}  &= \begin{bmatrix}
+ 1 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 	0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 
+ \end{bmatrix} \\
+ \ket{01}\bra{01}  &= \begin{bmatrix}
+ 0 & 0 & 0 & 0 \\  0 & 1 & 0 & 0 \\0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 
+ \end{bmatrix}\\
+\ket{10}\bra{10}  &= \begin{bmatrix}
+ 0 & 0 & 0 & 0 \\  0 & 0 & 0 & 0 \\0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 0  	
+ \end{bmatrix} \\
+ \ket{11}\bra{11}  &= \begin{bmatrix}
+ 0 & 0 & 0 & 0 \\  0 & 0 & 0 & 0 \\0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1
+ \end{bmatrix}
+	\end{align*}
+
+Now, 
+
+\begin{align*}
+C_1(X)\ket{00} = \ket{00} \\
+C_1(X)\ket{01} = \ket{01} \\
+C_1(X)\ket{10} = \ket{11} \\
+C_1(X)\ket{11} = \ket{10}
+\end{align*}
+
+Hence, the permutation matrix acting on the computational basis as
+
+$$
+\begin{bmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 1 \\
+0 & 0 & 1 & 0	
+\end{bmatrix}
+$$
+
+satisfies this permutation. 
+\end{proof}
+\end{exercise}
+
+\begin{exercise}(4.20) Unlike ideal classical gates, ideal quantum gates do not have (as electrical engineers say) ‘high-impedance’ inputs. In fact, the role of ‘control’ and ‘target’ are arbitrary – they depend on what basis you think of a device as operating in. We have described how the \texttt{CNOT} behaves with respect to the computational basis, and in this description the state of the control qubit is not changed. However, if we work in a different basis then the control qubit does change: we will show that its phase is flipped depending on the state of the ‘target’ qubit! Show that
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=.5\linewidth]{4_20.png}
+\end{figure}
+
+Introducing basis states $\ket{\pm}$ use this circuit identity to show that the effect of a \texttt{CNOT} with the first qubit as control and the second qubit as target is as follows:
+
+
+\begin{align*}
+\ket{+}\ket{+} \rightarrow \ket{+}\ket{+} \\	
+\ket{-}\ket{+} \rightarrow \ket{-}\ket{+} \\	
+\ket{+}\ket{-} \rightarrow \ket{-}\ket{-} \\	
+\ket{-}\ket{-} \rightarrow \ket{+}\ket{-} 
+\end{align*}
+
+Thus, with respect to this new basis, the state of the target qubit is not changed, while the state of the control qubit is flipped if the target starts as $\ket{-}$, otherwise it is left alone. That is, in this basis, the target and control have essentially interchanged roles!
+
+\begin{proof}
+Consider action on $\ket{c}\ket{t}$ by the circuit on the LHS. The action of this circuit is given by $(H \otimes H) C^1(X)\ket{c}\ket{t} (H \otimes H)$ using $c$ as the control and $t$ as the target for the controlled operation. So, in Exercise 4.17, we showed that we can decompose $C^1(X)$ as $HC^1(Z)H$ using the same control and target as used for $C^1(X)$ originally, and with the $H$ transforms acting on the target qubit. Hence, we can rewrite action by the LHS circuit as $(H \otimes H) (I \otimes H) C^1(Z)\ket{c}\ket{t} (I \otimes H) (H \otimes H) = (H \otimes I) C^1(Z)\ket{c}\ket{t} (H \otimes I)$.
+
+Similarly, for the circuit on the RHS, action on $\ket{c}\ket{t}$ is given by $C^1(X)\ket{c}\ket{t}$ where in this case $t$ is the control and $c$ is the target. Hence, using the same result, we can rewrite this as $(H \otimes I) C^1(Z)\ket{c}\ket{t} (H \otimes I)$ with $t$ as control and $c$ as target. Finally, using Exercise 4.18, we can swap which qubits we regard as control/target in a controlled-$Z$ operation. Hence, we have the action $(H \otimes I) C^1(Z)\ket{c}\ket{t} (H \otimes I)$ with $c$ as control and $t$ as target, as in the LHS. 
+
+Now, using that $H^2 = I$, we note that the identity given by the circuit is equivalent to $C^1(X) (H \otimes H)\ket{c}\ket{t} = C^1(X) \ket{t}\ket{c} (H \otimes H)$ (applying $H \otimes H$ to the end of both circuits). Hence, this directly gives the effect of \texttt{CNOT} on the basis $\ket{\pm}$. 
+
+\end{proof}
+
+\end{exercise}
+
+\begin{exercise}(4.21) Verify that Figure 4.8 implements the $C^2(U)$ operation.
+	
+	\begin{proof}
+		
+	\end{proof}
+
+\end{exercise}
+
+%\begin{exercise}(4.23) Prove that a $C^2(U)$ gate (for any single qubit unitary $U$) can be
+%constructed using at most eight one-qubit gates, and six controlled-\texttt{NOT}s.
+%	
+%	\begin{proof}
+%	From Corollary \ref{4.2} we can decompose $U$ as $U = e^{i\alpha}AXBXC$. So, consider the circuit below
+%	
+%	\begin{figure}[H]
+%\centering
+%\includegraphics[width=0.75\linewidth]{4_23.jpg}	
+%\end{figure}
+%
+%Label the qubits $x_0, x_1, x_2$ from bottom to top. So, first consider the effect of the circuit on the first qubit, $x_0$. 
+%
+%Hence, the circuit gives the transformation
+%
+%\begin{align*}
+%	\ket{x_0} \mapsto AX^{x_2}B X^{x_1} B^\dag X^{x_2} B X^{x_1} C \ket{x_0}
+%\end{align*}
+%
+%Therefore, we consider this action in the computation basis. Using that $ABC = I$ and $A,B, C$ are unitary we have
+%
+%\begin{align*}
+%	x_1 = x_2 = 0 : \ket{x_0} &\mapsto AX^{0}B X^{0} B^\dag X^{0} B X^{0} C \ket{x_0} \\
+%	&= ABB^\dag BC = ABC = I \\
+%	x_1 = 1, x_2 = 0 : \ket{x_0} &\mapsto AX^{0}B X^{1} B^\dag X^{0} B X^{1} C \ket{x_0} \\
+%	&= ABXB^\dag BXC = ABC = I \\
+%	x_1 = 0, x_2 = 1 : \ket{x_0} &\mapsto AX^{1}B X^{0} B^\dag X^{1} B X^{0} C \ket{x_0} \\
+%	&= AXBB^\dag XBC = ABC = I \\
+%\end{align*}
+%
+%as expected.
+%
+%Now, for $x_1 = x_2 = 1$, we first recall that $B \equiv R_y(-\gamma / 2)R_z(-\frac{\delta + \beta}{2})$ from the proof of Corollary \ref{4.2}. Furthermore, from Exercise 4.7, $XBX = R_y(\gamma / 2)R_z(\frac{\delta + \beta}{2})$. Hence,
+%
+%\begin{align*}
+%	B^\dag XBX &= R_z^\dag\Big(-\frac{\delta + \beta}{2}\Big)R_y^\dag(-\gamma / 2)R_y(\gamma / 2)R_z\Big(\frac{\delta + \beta}{2}\Big) \\
+%	&= R_z\Big(-\frac{\delta + \beta}{2}\Big)R_y(-\gamma / 2)R_y(\gamma / 2)R_z\Big(\frac{\delta + \beta}{2}\Big) \\
+%	R_z\Big(-\frac{\delta + \beta}{2}\Big)R_y(0)R_z\Big(\frac{\delta + \beta}{2}\Big) \\
+%	&= R_z(0) = I
+%\end{align*}
+%
+%Therefore,
+%
+%\begin{align*}
+%	x_1 = 1, x_2 = 1 : \ket{x_0} &\mapsto AX^{1}B X^{1} B^\dag X^{1} B X^{1} C \ket{x_0} \\
+%	&= AXBXB^\dag XBXC \\
+%	&= AIXBXC = AXBXC
+%\end{align*}
+%
+%which give $U$ up to a global phase. 
+%
+%Now, we consider the effect of the phase gates, $T_\alpha, T_{\alpha/2}$, on the global phase. 
+%
+%First, note that 
+%
+%\begin{align*}
+%T_{\alpha/2}^\dag X T_{\alpha/2} X T_\alpha &= \begin{bmatrix}
+% 	e^{-i\phi / 2} & 0 \\ 0 & e^{i \phi / 2} & 0
+% \end{bmatrix} \\
+% T_{\alpha/2}^\dag T_{\alpha/2} T_\alpha &= I 
+%\end{align*}
+%
+%Hence, 
+%
+%\begin{align*}
+%	\ket{x_1}\ket{x_2} \begin{bmatrix}
+% 	e^{-i\phi / 2} & 0 \\ 0 & e^{i \phi / 2} & 0
+% \end{bmatrix}\ket{x_1} \mapsto e^{i \frac{\phi}{2} x_2}\ket{x_2}
+%\end{align*}
+%
+%Therefore, in the computational basis
+%
+%\begin{align*}
+%x_1 = 0, x_2 = 0 : \ket{x_1}\ket{x_2} \mapsto 	
+%\end{align*}
+%\end{proof}
+%\end{exercise}
+
+
+\begin{exercise}
+	
+\end{exercise}
 
 \subsection{Universal quantum gates}
 
