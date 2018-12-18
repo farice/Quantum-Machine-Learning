@@ -1,0 +1,97 @@
+\documentclass[12]{amsart}
+
+\usepackage{amssymb,amsmath}
+
+%\usepackage{refcheck}
+
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage{amsmath}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{enumerate}
+\usepackage{fullpage} 
+\usepackage{setspace}
+\usepackage{color}
+%\usepackage{ dsfont }
+\usepackage{float}
+\usepackage{physics}
+
+%new math symbols taking no arguments
+\newcommand\0{\mathbf{0}}
+\newcommand\CC{\mathbb{C}}
+\newcommand\FF{\mathbb{F}}
+\newcommand\NN{\mathbb{N}}
+\newcommand\QQ{\mathbb{Q}}
+\newcommand\RR{\mathbb{R}}
+\newcommand\ZZ{\mathbb{Z}}
+\newcommand\bb{\mathbf{b}}
+\newcommand\kk{\Bbbk}
+\newcommand\mm{\mathfrak{m}}
+\newcommand\pp{\mathfrak{p}}
+\newcommand\xx{\mathbf{x}}
+\newcommand\yy{\mathbf{y}}
+\newcommand\GL{\mathit{GL}}
+\newcommand\into{\hookrightarrow}
+\newcommand\nsub{\trianglelefteq}
+\newcommand\onto{\twoheadrightarrow}
+\newcommand\minus{\smallsetminus}
+\newcommand\goesto{\rightsquigarrow}
+\newcommand\nsubneq{\vartriangleleft}
+
+%redefined math symbols taking no arguments
+\newcommand\<{\langle}
+\renewcommand\>{\rangle}
+\renewcommand\iff{\Leftrightarrow}
+\renewcommand\phi{\varphi}
+\renewcommand\implies{\Rightarrow}
+
+%new math symbols taking arguments
+\newcommand\ol[1]{{\overline{#1}}}
+
+%redefined math symbols taking arguments
+\renewcommand\mod[1]{\ (\mathrm{mod}\ #1)}
+
+%roman font math operators
+\DeclareMathOperator\aut{Aut}
+
+%for easy 2 x 2 matrices
+\newcommand\twobytwo[1]{\left[\begin{array}{@{}cc@{}}#1\end{array}\right]}
+
+%for easy column vectors of size 2
+\newcommand\tworow[1]{\left[\begin{array}{@{}c@{}}#1\end{array}\right]}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{exercise}[theorem]{Exercise}
+
+\doublespacing
+
+\title{Quantum Enhanced Feature Spaces for Machine Learning}
+\author{Faris Sbahi}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Abstract}
+
+One of the greatest challenges in quantum machine learning is determining how to efficiently encode classical training and test data in quantum superposition. In machine learning, many supervised learning algorithms utilize so-called \textit{kernel methods} to map data into a higher dimensional feature space in which analyzing the data is simpler. Hence, one suggested workaround to the quantum encoding problem, is to encode data inputs into a quantum state that implicitly performs the feature map given by the kernel. Therefore, if the kernel is sufficiently difficult to evaluate classically, then there may exist a quantum advantage.
+
+Here, we propose a project to identify the properties of a kernel that may provide quantum advantage, explore the robustness of learning in quantum feature spaces to noise, and generalize learning in quantum feature spaces past Support Vector Machines (SVM).
+\section{Description}
+
+Last semester Prof. Marvian and I studied quantum algorithms and learning theory as part of a research independent study that culminated in a paper reviewing quantum machine learning. There, we discussed the above challenge of encoding classical data in quantum superposition for the purpose of learning. 
+
+Now, we propose a project to extend recent developments to utilize the high-dimensional density matrix Hilbert space of quantum states to encode data inputs. In a recent paper\cite{havlicek2018supervised}, researchers have identified a type of kernel that may provide quantum advantage and conjectured the sort of properties a kernel requires in order to be difficult to evaluate classically and easy on a quantum device. Hence, we seek to identify and prove kernel properties that lead to quantum advantage.
+
+Furthermore, in the same paper, researchers define a procedure equivalent to classifying data using SVM in a quantum feature space. Hence, we seek to extend these results to a broader set of kernel machine learning algorithms. We also seek to evaluate the performance of this method when there exists noise in the data or in the quantum device and define a procedure robust to this noise.
+
+Our final product (for the purposes of the independent study) will be a research paper, documenting our project results which will be graded on the basis of academic merit, creativity, writing style, and progress from our previous Research Independent Study.
+
+\nocite{*}
+\bibliographystyle{plain}
+\bibliography{independent_study}
+\end{document}
