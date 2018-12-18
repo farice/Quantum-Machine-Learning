@@ -1,0 +1,6 @@
+[submodule "Projects/QKD"]
+	path = Projects/QKD
+	url = git@github.com:farice/QKD.git
+[submodule "Papers/Bosonic-Codes"]
+	path = Papers/Bosonic-Codes
+	url = git@github.com:farice/qec-final-project.git
