@@ -1872,20 +1872,43 @@ In particular, the probability of getting this result is
 
 Finally, we can make a measurement $M$ whose expectation value $\bra{x}M\ket{x}$ corresponds to the feature of $x$ we wish to evaluate. 
 
-\section{Density Matrix Exponentiation Algorithms}
-\url{https://www.nature.com/articles/nphys3029}
+\section{Supervised learning with quantum enhanced feature spaces}
 
-\section{Review of Quantum Machine Learning}
-\url{https://www.nature.com/articles/nature23474}
+\subsection{Prelude}
 
-\section{Learnability of Quantum States}
-\begin{enumerate}
-\item \url{https://arxiv.org/abs/quant-ph/0608142}
-\item \url{https://arxiv.org/abs/1711.01053}
-\item \url{https://arxiv.org/abs/1801.05721}
-\end{enumerate}
+We are given data from a training set $T$ and a test set $S$ of a subset $\Omega \subset \RR^d$. We assume that $S$ and $T$ are drawn from the same input space $X$. Furthermore, there exists output space $Y = \{ -1, +1 \} $ and a distribution $D$ on $X \times Y$.
+
+Now, suppose we have a labelling $m: T \cup S \rightarrow Y$.  Our goal is to use this information to find some approximation function $\tilde{f} : X \rightarrow Y$ that minimizes estimation error for function class $F$. In other words, let true risk for function $f$ be defined as
+
+\begin{align*}
+R^{true}(f) = P_{X, Y \sim D}(f(X) \neq Y)	
+\end{align*}
+
+Then, estimation error is the difference in true risk between $\tilde{f}$ and optimal choice $f^* = \inf_{f \in F}R^{true}(f)$.
+
+One classical method is using so-called Support Vector Machines (SVM), which construct a separating hyperplane such that the distance to the nearest training observation (minimum margin) is maximized. Much of the popularity of SVMs can be attributed to its association with the "kernel trick" which maps the data to a higher dimensional space so that it is separable or approximately separable.
+
+Here, we suppose that the data is given classically and we seek to show that, in some cases, we can obtain a quantum advantage by either generating the separating hyperplane in quantum feature space or simply estimating the kernel function.
+
+\subsection{Feature Map}
+
+Consider the feature vector kernel $K(x, z) = | \bra{\Phi(x)}\ket{\Phi(z)} |^2$
+
+%\section{Density Matrix Exponentiation Algorithms}
+%\url{https://www.nature.com/articles/nphys3029}
+%
+%\section{Review of Quantum Machine Learning}
+%\url{https://www.nature.com/articles/nature23474}
+%
+%\section{Learnability of Quantum States}
+%\begin{enumerate}
+%\item \url{https://arxiv.org/abs/quant-ph/0608142}
+%\item \url{https://arxiv.org/abs/1711.01053}
+%\item \url{https://arxiv.org/abs/1801.05721}
+%\end{enumerate}
 
 \section{Quantum Cryptography}
+% TODO - add from computer security paper
 
 Quantum cryptography or quantum key distribution (QKD) is a procedure that enables provably secure distribution of private information. 
 
@@ -1910,9 +1933,14 @@ Suppose Alice and Bob share correlated random classical bit strings $X$ and $Y$.
 
 Information reconciliation simply entails conducting error-correction over a public channel, fixing errors between $X$ and $Y$, until Alice and Bob obtain a shared string $W$. In the end, Eve will also have a string $Z$ partially correlated to $W$. We can then use privacy amplification to "amplify" from $W$ a subset of bits $S$ whose correlation with $Z$ are below the desired threshold. 
 
-\subsubsection{Privacy Amplification}
-
-\subsection{Quantum key distribution}
+%\subsubsection{Privacy Amplification}
+% TODO
+%
+%\subsection{Quantum key distribution}
+% TODO
+%
+%\subsection{Quantum Error Correction Codes}
+% TODO
 
 \section{Appendix}
 
