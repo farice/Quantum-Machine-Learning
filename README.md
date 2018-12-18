@@ -1,5 +1,3 @@
 # Quantum Algorithms and Learning Theory
 
-Research independent Study with a focus on quantum algorithms for solving linear systems and quantum learning theory.
-
-See `syllabus.md`
+A collection of notes and resources from thesis work and a research independent study pertaining to quantum algorithms and quantum machine learning
