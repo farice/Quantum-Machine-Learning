@@ -11,6 +11,7 @@
 \usepackage{graphicx}
 \usepackage{mathtools}
 \usepackage{float}
+\usepackage{hyperref}
 
 %new math symbols taking no arguments
 \newcommand\0{\mathbf{0}}
@@ -56,7 +57,7 @@
 %for easy column vectors of size 2
 \newcommand\tworow[1]{\left[\begin{array}{@{}c@{}}#1\end{array}\right]}
 
-\newtheorem{theorem}{Theorem}[section]
+\newtheorem{theorem}{Theorem}
 \newtheorem{corollary}{Corollary}[theorem]
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{exercise}[theorem]{Exercise}
@@ -67,6 +68,8 @@
 
 \begin{document}
 \maketitle
+
+\tableofcontents
 
 \section{Nielsen \& Chuang: Chapter 2}
 
@@ -1912,19 +1915,101 @@ Consider the feature vector kernel $K(x, z) = | \bra{\Phi(x)}\ket{\Phi(z)} |^2$
 
 \subsection{Stochastic Regression}
 
-\subsubsection{Definitions}
+\subsubsection{Definitions and Assumptions}
 
-Let $b \in \CC^m$ and $A \in \CC^{m \times n}$ s.t. $\Vert A \Vert \leq 1$ where $\Vert \cdot \Vert$ signifies the operator norm. Furthermore, require that $\rank(A) = k$ and $\Vert A^+ \Vert \leq \kappa$ where $A^+$ is the pseudoinverse of $A$.
+Let $b \in \CC^m$ and $A \in \CC^{m \times n}$ s.t. $\Vert A \Vert \leq 1$ where $\Vert \cdot \Vert$ signifies the operator norm (or spectral norm). Furthermore, require that $\rank(A) = k$ and $\Vert A^+ \Vert \leq \kappa$ where $A^+$ is the pseudoinverse of $A$.
 
 So, define $x$ to be the least-squares solution to the linear system $Ax = b$ i.e. $x = A^+ b$. Then, in terms of these definitions, we define two primary goals:
 
 \begin{enumerate}
 \item Query a vector $\tilde{x}$ s.t. $\Vert \tilde{x} - x \Vert \leq \epsilon \Vert x \Vert$
-\item Approximately sample from the distribution $\frac{|x_j|^2}{\Vert x \Vert^2}$ within total variation distance (\ref{def:tve}) $2\epsilon$.
+\item Sample from a distribution that approximates $\frac{|x_j|^2}{\Vert x \Vert^2}$ within total variation distance (\autoref{def:tve}) $2\epsilon$.
 \end{enumerate}
 
+In order to do this, we simply assume that we have length-square sampling access to $A$. In other words, we are able to sample row indices of $A$ from the distribution $\frac{\Vert A_{i, \cdot}\Vert^2}{\Vert A \Vert^2_F}$
+
+\subsubsection{Chain of Approximations}
+
+First, we'll summarize the sequence of approximations that we'll perform using length-squared sampling techniques. We'll describe these steps in depth in the following sections.
+
+Of course, we know that the least squares solution of the linear system is given by the orthogonal projection
+
+\begin{align*}
+	(A^\dag A)^+ A^\dag = A^+ b
+\end{align*}
+
+So, we first approximate $A^\dag A$ by $R^\dag R$ where $R \in \CC^{r \times n}$, $r \ll m$ is constructed from length-square sampling $r$ rows of $A$. Now, denote the spectral decomposition 
+
+\begin{align*}
+A^\dag A \approx R^\dag R = \sum_{l=1}^k \frac{1}{\sigma_l^2}\ket{v^{(l)}}\bra{v^{(l)}}
+\end{align*}
+
+where of course $\sigma_i$ and $\ket{v^{(i)}} \in \CC^n$ are the singular values and right singular vectors of $R$, respectively.
+
+We see that computing these right singular vectors of $R$ can still be computationally prohibitive given the dimension $n$. Hence, we can use length-square sampling again, this time on the columns of $R$ to give a matrix $C \in \CC^{r \times c}$, $c \ll n$. Now, the left singular vectors of $C$ which we denote as $\ket{w^{(i)}} \in \CC^r$ can be efficiently computed via standard SVD methods. So,
+
+\begin{align*}
+RR^\dag \approx CC^\dag = \sum_{l=1}^k \frac{1}{\sigma_l^2}\ket{w^{(l)}}\bra{w^{(l)}}
+\end{align*}
 
 
+We can then show that ()
+
+\begin{align}
+\label{def:approx-right}
+\ket{\tilde{v}^{(i)}} := R^\dag \ket{w^{(l)}} / \tilde{\sigma}_l
+\end{align}
+
+provides a good approximation of $\ket{v^{(i)}}$. Note that $\tilde{\sigma}_l$ are the singular values of $C$ which then approximate the singular values of $R$ which similarly approximate the singular values of $A$ (since $A^\dag A \approx R^\dag R$ and $RR^\dag \approx CC^\dag$).
+
+At this point, it seems like we haven't made much progress since computing $R^\dag \ket{w^{(l)}}$ is still expensive. However, it turns out that all we need to enable query access to $\tilde{x}$ is the ability to efficiently estimate the trace inner product $\tr(U^\dag V)$ where $U$ and $V$ are operators such that $U$ can be the length-square sampled and $V$ can be queried. To see this, we write our solution, $\tilde{x}$, in terms of the approximations thus far
+
+\begin{align*}
+	\tilde{x} &\approx A^+ \ket{b} \\
+	&\approx (R^\dag R)^+ A^\dag \ket{b}\\
+	&\approx \sum_{l = 1}^k \frac{1}{\tilde{\sigma}_l^2} \ket{\tilde{v}^{(l)}} \bra{\tilde{v}^{(l)}} A^\dag \ket{b}
+\end{align*}
+
+Hence, define $U := A$, $V := \ket{b}\bra{\tilde{v}}$ in which case 
+
+\begin{align*}
+\tr(U^\dag V) &= \tr(A^\dag \ket{b} \bra{\tilde{v}}) \\
+&= \tr(\bra{\tilde{v}} A^\dag \ket{b} )\\
+&= \bra{\tilde{v}} A^\dag \ket{b}
+\end{align*}
+
+since $\bra{\tilde{v}} A^\dag \ket{b}$ is a scalar. Therefore, say that 
+
+$$
+\tilde{\lambda}_l \approx \tr(A^\dag \ket{b} \bra{\tilde{v}})
+$$
+
+and assume that we can compute and memoize these values of $\tilde{\lambda}_i$ efficiently. In which case,
+
+\begin{align*}
+\tilde{x} &\approx \sum_{l = 1}^k \frac{1}{\tilde{\sigma}_l^2} \ket{\tilde{v}^{(l)}} \tilde{\lambda}_l
+\intertext{Recalling the definition of $\ket{\tilde{v}^{(i)}}$ (\ref{def:approx-right}),}
+&= \sum_{l = 1}^k \frac{1}{\tilde{\sigma}_l^3} R^\dag \ket{w^{(l)}} \tilde{\lambda}_l\\
+&= R^\dag \sum_{l = 1}^k \frac{1}{\tilde{\sigma}_l^3} \ket{w^{(l)}} \tilde{\lambda}_l
+\intertext{and so defining $z := \sum_{l = 1}^k \frac{1}{\tilde{\sigma}_l^3} \ket{w^{(l)}} \tilde{\lambda}_l$,}
+&= R^\dag z
+\end{align*}
+
+We see that we can compute $z$ efficiently (and memoize it for future queries) because it is a $k$-linear combination of left singular vectors in $\CC^r$. So, say that we wish to query an element $\tilde{x}_j$. We can simply query column $R_{\cdot, j} \in \CC^r$ (or equivalently row $R_{j, \cdot}^\dag$) and compute $R_{\cdot, j} \cdot z$. Hence, we've achieved our first goal.
+
+In order to achieve our second goal, enabling sample access to a distribution that approximates $\frac{|x_j|^2}{\Vert x \Vert^2}$, we require on more trick: rejection sampling which we detail in Section ().
+
+All in all, we've performed the chain of approximations,
+
+\begin{align*}
+	\ket{x} &= A^+ \ket{b} = (A^\dag A)^+ A^\dag \ket{b}\\
+	&\approx (R^\dag R)^+ A^\dag \ket{b} = \sum_{l = 1}^k \frac{1}{\tilde{\sigma}_l^2} \ket{v^{(l)}} \bra{v^{(l)}} A^\dag \ket{b}\\
+	&\approx \sum_{l = 1}^k \frac{1}{\tilde{\sigma}_l^2} \ket{\tilde{v}^{(l)}} \bra{\tilde{v}^{(l)}} A^\dag \ket{b}\\ %\qquad \Big(\ket{\tilde{v}^{(l)}} := R^\dag \ket{w^{(l)}}\Big)
+	&\approx \sum_{l = 1}^k \frac{1}{\tilde{\sigma}_l^2} \ket{\tilde{v}^{(l)}} \tilde{\lambda}_l = R^\dag \sum_{l = 1}^k \frac{1}{\tilde{\sigma}_l^3} \ket{w^{(l)}} \tilde{\lambda}_l = R^\dag z
+\end{align*}
+
+
+Now that we've sketched the steps of this process, we detail each approximation and show that we can achieve the claimed correctness and complexity bounds.
 
 \section{Quantum Cryptography}
 % TODO - add from computer security paper
