@@ -60,6 +60,7 @@
 \newtheorem{corollary}{Corollary}[theorem]
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{exercise}[theorem]{Exercise}
+\newtheorem{definition}[theorem]{Definition}
 
 \title{Quantum Algorithms and Learning Theory\\\textit{Notes and Exercises}}
 \author{Faris Sbahi}
@@ -1907,6 +1908,24 @@ Consider the feature vector kernel $K(x, z) = | \bra{\Phi(x)}\ket{\Phi(z)} |^2$
 %\item \url{https://arxiv.org/abs/1801.05721}
 %\end{enumerate}
 
+\section{Singular Value Transformation using Length-Square Sampling Methods}
+
+\subsection{Stochastic Regression}
+
+\subsubsection{Definitions}
+
+Let $b \in \CC^m$ and $A \in \CC^{m \times n}$ s.t. $\Vert A \Vert \leq 1$ where $\Vert \cdot \Vert$ signifies the operator norm. Furthermore, require that $\rank(A) = k$ and $\Vert A^+ \Vert \leq \kappa$ where $A^+$ is the pseudoinverse of $A$.
+
+So, define $x$ to be the least-squares solution to the linear system $Ax = b$ i.e. $x = A^+ b$. Then, in terms of these definitions, we define two primary goals:
+
+\begin{enumerate}
+\item Query a vector $\tilde{x}$ s.t. $\Vert \tilde{x} - x \Vert \leq \epsilon \Vert x \Vert$
+\item Approximately sample from the distribution $\frac{|x_j|^2}{\Vert x \Vert^2}$ within total variation distance (\ref{def:tve}) $2\epsilon$.
+\end{enumerate}
+
+
+
+
 \section{Quantum Cryptography}
 % TODO - add from computer security paper
 
@@ -1987,6 +2006,17 @@ by orthonormality.
 
 \subsection{Spectral Theorem}
 Suppose $A$ is a compact\footnote{the image under $A$ acting on any bounded subset of $\mathcal{H}$ is a compact subset of $\mathcal{H}$} hermitian operator (compactness ensures $A$ has eigenvectors) on complex Hilbert space $\mathcal{H}$. Hence, there is an orthonormal basis of $\mathcal{H}$ consisting of eigenvectors of $A$. Each eigenvalue is in $\RR$.
+
+\begin{definition} Total Variation Distance.
+\label{def:tve}
+
+Let $P$ and $Q$ be distinct probability measures on a sigma-algebra $\mathcal{F}$ of subsets of the sample space $\Omega$. Then, the total variation distance is given by
+
+\begin{align*}
+\delta(P, Q) &= \sup_{A \in \mathcal{F}}\vert P(A) - Q(A)\vert
+\end{align*}
+	
+\end{definition}
 
 \nocite{*}
 \bibliographystyle{plain}
