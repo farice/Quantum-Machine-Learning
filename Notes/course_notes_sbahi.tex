@@ -1928,7 +1928,7 @@ So, define $x$ to be the least-squares solution to the linear system $Ax = b$ i.
 
 In order to do this, we simply assume that we have length-square sampling access to $A$. In other words, we are able to sample row indices of $A$ from the distribution $\frac{\Vert A_{i, \cdot}\Vert^2}{\Vert A \Vert^2_F}$
 
-\subsubsection{Chain of Approximations}
+\subsubsection{Sequence of Approximations}
 
 First, we'll summarize the sequence of approximations that we'll perform using length-squared sampling techniques. We'll describe these steps in depth in the following sections.
 
@@ -1970,21 +1970,21 @@ At this point, it seems like we haven't made much progress since computing $R^\d
 	&\approx \sum_{l = 1}^k \frac{1}{\tilde{\sigma}_l^2} \ket{\tilde{v}^{(l)}} \bra{\tilde{v}^{(l)}} A^\dag \ket{b}
 \end{align*}
 
-Hence, define $U := A$, $V := \ket{b}\bra{\tilde{v}}$ in which case 
+Hence, define $U := A$, $V := \ket{b}\bra{\tilde{v}^{(l)}}$ in which case 
 
 \begin{align*}
-\tr(U^\dag V) &= \tr(A^\dag \ket{b} \bra{\tilde{v}}) \\
-&= \tr(\bra{\tilde{v}} A^\dag \ket{b} )\\
-&= \bra{\tilde{v}} A^\dag \ket{b}
+\tr(U^\dag V) &= \tr(A^\dag \ket{b} \bra{\tilde{v}^{(l)}}) \\
+&= \tr(\bra{\tilde{v}^{(l)}} A^\dag \ket{b} )\\
+&= \bra{\tilde{v}^{(l)}} A^\dag \ket{b}
 \end{align*}
 
-since $\bra{\tilde{v}} A^\dag \ket{b}$ is a scalar. Therefore, say that 
+since $\bra{\tilde{v}^{(l)}} A^\dag \ket{b}$ is a scalar. Therefore, say that 
 
 $$
-\tilde{\lambda}_l \approx \tr(A^\dag \ket{b} \bra{\tilde{v}})
+\tilde{\lambda}_l \approx \tr(A^\dag \ket{b} \bra{\tilde{v}^{(l)}})
 $$
 
-and assume that we can compute and memoize these values of $\tilde{\lambda}_i$ efficiently. In which case,
+and assume that we can compute and memoize these scalars $\tilde{\lambda}_i$ efficiently. In which case,
 
 \begin{align*}
 \tilde{x} &\approx \sum_{l = 1}^k \frac{1}{\tilde{\sigma}_l^2} \ket{\tilde{v}^{(l)}} \tilde{\lambda}_l
@@ -2010,6 +2010,10 @@ All in all, we've performed the chain of approximations,
 
 
 Now that we've sketched the steps of this process, we detail each approximation and show that we can achieve the claimed correctness and complexity bounds.
+
+\subsubsection{Computing Approximate Singular Vectors}
+
+As described above, we begin by length-square
 
 \section{Quantum Cryptography}
 % TODO - add from computer security paper
