@@ -706,7 +706,7 @@ and so the density operator after result $m$ is given by
 	&= \sum_i p(i \mid m )\frac{M_m \ket{\psi_i}\bra{\psi_i}M_m^\dag}{\bra{\psi_i}M_m^\dag M_m\ket{\psi_i}}
 \end{align*}
 
-Furthermore, from Baye's rule we have that $p(i \mid m) = \frac{p(m \mid i)p(i)}{p(m)}$ so we can simplify
+Furthermore, from Bayes' rule we have that $p(i \mid m) = \frac{p(m \mid i)p(i)}{p(m)}$ so we can simplify
 
 \begin{align*}
 	\rho_m &= \sum_i \frac{p(m \mid i)p(i)}{p(m)}\frac{M_m \ket{\psi_i}\bra{\psi_i}M_m^\dag}{\bra{\psi_i}M_m^\dag M_m\ket{\psi_i}} \\
@@ -1960,9 +1960,9 @@ We can then show that ()
 \ket{\tilde{v}^{(i)}} := R^\dag \ket{w^{(l)}} / \tilde{\sigma}_l
 \end{align}
 
-provides a good approximation of $\ket{v^{(i)}}$. Note that $\tilde{\sigma}_l$ are the singular values of $C$ which then approximate the singular values of $R$ which similarly approximate the singular values of $A$. This follows because $A^\dag A \approx R^\dag R$ and $RR^\dag \approx CC^\dag$ which directly implies this fact by the Hoffman–Wielandt inequality detailed in Lemma 2.7 of (Kanna and Vempala) and stated below.
+provides a good approximation of $\ket{v^{(i)}}$. Note that $\tilde{\sigma}_l$ are the singular values of $C$ which then approximate the singular values of $R$ which similarly approximate the singular values of $A$. This follows from $A^\dag A \approx R^\dag R$ and $RR^\dag \approx CC^\dag$ by the Hoffman--Wielandt inequality detailed in Lemma 2.7 of (Kanna and Vempala) and stated without proof below.
 
-\begin{lemma}Hoffman–Wielandt inequality
+\begin{lemma}Hoffman--Wielandt inequality
 
 	If $P, Q$ are two real, symmetric $n \times n$ matrices and $\lambda_1, \cdots \lambda_n$ denote eigenvalues in non-decreasing order, then
 	
