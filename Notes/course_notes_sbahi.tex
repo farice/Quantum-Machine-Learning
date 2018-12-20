@@ -1960,7 +1960,17 @@ We can then show that ()
 \ket{\tilde{v}^{(i)}} := R^\dag \ket{w^{(l)}} / \tilde{\sigma}_l
 \end{align}
 
-provides a good approximation of $\ket{v^{(i)}}$. Note that $\tilde{\sigma}_l$ are the singular values of $C$ which then approximate the singular values of $R$ which similarly approximate the singular values of $A$ (since $A^\dag A \approx R^\dag R$ and $RR^\dag \approx CC^\dag$).
+provides a good approximation of $\ket{v^{(i)}}$. Note that $\tilde{\sigma}_l$ are the singular values of $C$ which then approximate the singular values of $R$ which similarly approximate the singular values of $A$. This follows because $A^\dag A \approx R^\dag R$ and $RR^\dag \approx CC^\dag$ which directly implies this fact by the Hoffman–Wielandt inequality detailed in Lemma 2.7 of (Kanna and Vempala) and stated below.
+
+\begin{lemma}Hoffman–Wielandt inequality
+
+	If $P, Q$ are two real, symmetric $n \times n$ matrices and $\lambda_1, \cdots \lambda_n$ denote eigenvalues in non-decreasing order, then
+	
+	\begin{align*}
+		\sum_{t=1}^n(\lambda_t(P) - \lambda_t(Q))^2 \leq \Vert P - Q \Vert_F^2
+	\end{align*}
+\end{lemma}
+
 
 At this point, it seems like we haven't made much progress since computing $R^\dag \ket{w^{(l)}}$ is still expensive. However, it turns out that all we need to enable query access to $\tilde{x}$ is the ability to efficiently estimate the trace inner product $\tr(U^\dag V)$ where $U$ and $V$ are operators such that $U$ can be the length-square sampled and $V$ can be queried. To see this, we write our solution, $\tilde{x}$, in terms of the approximations thus far
 
