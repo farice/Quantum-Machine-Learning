@@ -1917,7 +1917,7 @@ Consider the feature vector kernel $K(x, z) = | \bra{\Phi(x)}\ket{\Phi(z)} |^2$
 
 \subsubsection{Definitions and Assumptions}
 
-Let $b \in \CC^m$ and $A \in \CC^{m \times n}$ s.t. $\Vert A \Vert \leq 1$ where $\Vert \cdot \Vert$ signifies the operator norm (or spectral norm). Furthermore, require that $\rank(A) = k$ and $\Vert A^+ \Vert \leq \kappa$ where $A^+$ is the pseudoinverse of $A$.
+Let $b \in \CC^m$ and $A \in \CC^{m \times n}$ s.t. $\Vert A \Vert \leq 1$ where $\Vert \cdot \Vert$ signifies the operator norm (or spectral norm). Furthermore, require that $\rank(A) = k$ and $\Vert A^+ \Vert \leq \kappa$ where $A^+$ is the pseudoinverse of $A$. Hence, observe that $\Vert A \Vert \leq 1$ is equivalent to $A$ having maximum singular value $1$. Similarly, $A^+$ has inverted singular values from $A$ and so $\Vert A^+ \Vert$ gives the reciprocal of the minimum singular value. Therefore, the condition number of $A$ is given by $\Vert A \Vert \Vert A^+ \Vert = \kappa$.
 
 So, define $x$ to be the least-squares solution to the linear system $Ax = b$ i.e. $x = A^+ b$. Then, in terms of these definitions, we define two primary goals:
 
