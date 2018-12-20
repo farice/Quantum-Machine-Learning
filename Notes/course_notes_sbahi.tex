@@ -57,7 +57,7 @@
 %for easy column vectors of size 2
 \newcommand\tworow[1]{\left[\begin{array}{@{}c@{}}#1\end{array}\right]}
 
-\newtheorem{theorem}{Theorem}
+\newtheorem{theorem}{Theorem}[section]
 \newtheorem{corollary}{Corollary}[theorem]
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{exercise}[theorem]{Exercise}
@@ -2013,7 +2013,17 @@ Now that we've sketched the steps of this process, we detail each approximation 
 
 \subsubsection{Computing Approximate Singular Vectors}
 
-As described above, we begin by length-square
+As described above, we begin by length-square sampling the original matrix $A \in \CC^{m \times n }$. So, pick row index $i$ with probability $p_i = \frac{\Vert A_{i, \cdot}\Vert^2}{\Vert A \Vert_F^2}$ and output random row $Y = A_i / \sqrt{p_i} = \frac{A_{i, \cdot}}{\Vert A_{i, \cdot}\Vert}\Vert A\Vert_F$. After sampling $r$ rows, we implicitly define matrix $R$ to be the concatenation of the outputted random rows. Furthermore, we rescale $R$ so that $E[R^{\dag} R] = A^\dag A$, which requires normalizing by $\sqrt{r}$. Therefore,
+
+\begin{align*}
+R &= \frac{1}{\sqrt{s}} \begin{bmatrix}
+Y_1 \\
+Y_2 \\
+\vdots \\
+Y_r
+\end{bmatrix} \in \CC^{r \times n}
+\end{align*}
+
 
 \section{Quantum Cryptography}
 % TODO - add from computer security paper
