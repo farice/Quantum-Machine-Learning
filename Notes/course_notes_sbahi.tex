@@ -2113,8 +2113,10 @@ Hence, if we extend $\ket{\psi}$ to the orthonormal basis $\{\ket{i}\}$ which in
 
 by orthonormality.
 
-\subsection{Spectral Theorem}
-Suppose $A$ is a compact\footnote{the image under $A$ acting on any bounded subset of $\mathcal{H}$ is a compact subset of $\mathcal{H}$} hermitian operator (compactness ensures $A$ has eigenvectors) on complex Hilbert space $\mathcal{H}$. Hence, there is an orthonormal basis of $\mathcal{H}$ consisting of eigenvectors of $A$. Each eigenvalue is in $\RR$.
+\begin{theorem}Spectral Theorem
+
+Suppose $A$ is a compact\footnote{the image under $A$ acting on any bounded subset of $\mathcal{H}$ is a compact subset of $\mathcal{H}$} hermitian operator (compactness ensures $A$ has eigenvectors) on complex Hilbert space $\mathcal{H}$. Hence, there is an orthonormal basis of $\mathcal{H}$ consisting of eigenvectors of $A$. Each eigenvalue is in $\RR$.	
+\end{theorem}
 
 \begin{definition} Total Variation Distance.
 \label{def:tve}
@@ -2124,8 +2126,18 @@ Let $P$ and $Q$ be distinct probability measures on a sigma-algebra $\mathcal{F}
 \begin{align*}
 \delta(P, Q) &= \sup_{A \in \mathcal{F}}\vert P(A) - Q(A)\vert
 \end{align*}
-	
 \end{definition}
+
+\begin{lemma}Hoeffding--Chernoff Inequality
+
+Let $X_1, X_2, \cdots, X_s$	be i.i.d real random variables. For any positive, real numbers $a, t$ we have that
+
+\begin{align*}
+\Pr(\sum_{i=1}^s X_i > a) \leq e^{-ta} E\Bigg[\prod_{i=1}^s e^{tX_i}\Bigg]	
+\end{align*}
+
+\end{lemma}
+
 
 \nocite{*}
 \bibliographystyle{plain}
