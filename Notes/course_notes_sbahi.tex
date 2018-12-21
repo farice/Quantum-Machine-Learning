@@ -2129,14 +2129,20 @@ Let $P$ and $Q$ be distinct probability measures on a sigma-algebra $\mathcal{F}
 \end{definition}
 
 \begin{lemma}Hoeffding--Chernoff Inequality
+\label{lem:chernoff}
 
-Let $X_1, X_2, \cdots, X_s$	be i.i.d real random variables. For any positive, real numbers $a, t$ we have that
+Let $X_1, X_2, \cdots, X_s$	be i.i.d real random variables. For any positive, real numbers $a, t$ we have that, from Markov's inequality,
 
 \begin{align*}
-\Pr(\sum_{i=1}^s X_i > a) \leq e^{-ta} E\Bigg[\prod_{i=1}^s e^{tX_i}\Bigg]	
+\Pr(\sum_{i=1}^s X_i \geq a) &\leq e^{-ta} E\Bigg[\prod_{i=1}^s e^{tX_i}\Bigg]\\
+&= e^{-ta} \prod_{i=1}^s E\Bigg[e^{tX_i}\Bigg]
 \end{align*}
-
+by independence.
 \end{lemma}
+
+\begin{theorem}
+	
+\end{theorem}
 
 
 \nocite{*}
