@@ -3,4 +3,4 @@
 	url = https://github.com/farice/QKD
 [submodule "Papers/qec-final-project"]
 	path = Papers/qec-final-project
-	url = git@github.com:farice/qec-final-project.git
+	url = https://github.com/farice/qec-final-project
