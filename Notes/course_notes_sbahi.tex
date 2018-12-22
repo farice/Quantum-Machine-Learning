@@ -2072,22 +2072,33 @@ Information reconciliation simply entails conducting error-correction over a pub
 
 \section{Appendix}
 
-\subsection{Pauli Matrices}\label{pauli}
+\begin{definition}
+\label{pauli}
+Pauli Matrices
+
 \begin{align*}
 \sigma_x &= X = \begin{pmatrix} 0 & 1 \\ 1 & 0\end{pmatrix} \\
 \sigma_y &= Y = \begin{pmatrix} 0 & -i \\ i & 0\end{pmatrix}\\
 \sigma_z &= Z = \begin{pmatrix} 1 & 0 \\ 0 & -1\end{pmatrix}
 \end{align*}
+\end{definition}
 
-\subsection{Bell States}\label{bellstates}
+\begin{definition}
+\label{bellstates}
+Bell States
+
 \begin{align*}
 \frac{\ket{00} + \ket{11} }{\sqrt{2}} \\	
 \frac{\ket{00} - \ket{11} }{\sqrt{2}} \\	
 \frac{\ket{10} + \ket{01} }{\sqrt{2}} \\	
 \frac{\ket{01} - \ket{10} }{\sqrt{2}}
 \end{align*}
+\end{definition}
 
-\subsection{Positive Operators}\label{posop}
+\begin{definition}
+\label{posop}
+Positive Operators
+
 Let $A$ be a bounded\footnote{$\Vert Av \Vert \leq M\Vert v \Vert$ for some $M>0$ and all $v \in \mathcal{H}$} linear operator on complex Hilbert space $\mathcal{H}$. The following conditions are equivalent to $A$ being positive
 
 \begin{enumerate}
@@ -2095,8 +2106,11 @@ Let $A$ be a bounded\footnote{$\Vert Av \Vert \leq M\Vert v \Vert$ for some $M>0
 \item $A$ is hermitian and $\bra{x} A \ket{x} \geq 0$ for every $\ket{x} \in \mathcal{H}$
 \item the spectrum of $A$ is non-negative
 \end{enumerate}
+\end{definition}
 
-\subsection{Trace of an Operator}\label{trop}
+\begin{definition}
+\label{trop}
+Trace of an Operator
 
 Let $\{\ket{i}\}$ be an orthonormal basis for $A$ and so
 \begin{align*}
@@ -2112,6 +2126,7 @@ Hence, if we extend $\ket{\psi}$ to the orthonormal basis $\{\ket{i}\}$ which in
 \end{align*}
 
 by orthonormality.
+\end{definition}
 
 \begin{theorem}Spectral Theorem
 
@@ -2140,8 +2155,21 @@ Let $X_1, X_2, \cdots, X_s$	be i.i.d real random variables. For any positive, re
 by independence.
 \end{lemma}
 
-\begin{theorem}
+\begin{theorem}Hoeffding--Chernoff Inequality for matrix-valued random variables \cite{kannan2017randomized}
 	
+	Let $X$ be a random variable taking values which are real symmetric $d \times d$ matrices. Suppose $X_1, X_2, \cdots , X_s$ are i.i.d. draws of $X$. For any positive real numbers $a$, $t$, we have
+	
+	\begin{align}
+		\label{thm:chern-mat-eigen}
+		\Pr(\lambda_{max}\Big(\sum_{i=1}^s X_i\Big) \geq a ) &\leq de^{-ta} \Vert E[e^{tX}]\Vert_2^s \\
+		\label{thm:chern-mat-norm}
+		\Pr(\Big\Vert \Big(\sum_{i=1}^s X_i\Big)\Big\Vert_2 \geq a ) &\leq de^{-ta} (\Vert E[e^{tX}]\Vert_2^s + \Vert E[e^{-tX}]\Vert_2^s)
+	\end{align}
+	
+	where $\lambda_{max}$ is the largest eigenvalue.
+	\begin{proof}
+		
+	\end{proof}
 \end{theorem}
 
 
