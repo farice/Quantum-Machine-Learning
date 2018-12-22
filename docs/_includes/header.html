@@ -1,0 +1,5 @@
+{% if page.mathjax != false %} {% include mathjax.html %} {% endif %}
+{% assign default_paths = site.pages | map: "path" %} {% assign page_paths = site.header_pages | default: default_paths %} {{ site.title | escape }} {% if page_paths %}
+
+{% for path in page_paths %} {% assign my_page = site.pages | where: "path", path | first %} {% if my_page.title %} {{ my_page.title | escape }} {% endif %} {% endfor %}
+{% endif %}
