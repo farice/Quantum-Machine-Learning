@@ -1,3 +1,5 @@
+{% include mathjax.html %}
+
 \documentclass[11pt]{article}
 
 \oddsidemargin=17pt \evensidemargin=17pt
@@ -499,7 +501,7 @@ so if we observe $E_2$, then Bob concludes that Alice prepared $\ket{\psi_1}$. O
 From SVD, we have that $M_m = UDV$ for $U,V$ unitary and $D$ real, diagonal. Hence,
 
 \begin{align*}
-\sqrt{E_m} &= \sqrt{M_m^\dag M_m} = \sqrt{V^\dag DU^\dag UDV} \\ 	
+\sqrt{E_m} &= \sqrt{M_m^\dag M_m} = \sqrt{V^\dag DU^\dag UDV} \\
 &= \sqrt{V^\dag D^2V} \\
 &= V^\dag DV = V^\dag U^\dag UDV \\
 &= U_m^\dag M_m
@@ -657,7 +659,7 @@ Therefore, we have an orthonormal basis.
  	-\bra{10} + \bra{01}(E \otimes I)-\ket{10} + \ket{01} &= \bra{0}E\ket{0} + \bra{1}E\ket{1}\\
 \end{align*}
 
-	Hence, Eve can't infer anything. The states are only distinguishable if one can perform a measurement that acts on both qubits.  
+	Hence, Eve can't infer anything. The states are only distinguishable if one can perform a measurement that acts on both qubits.
 \end{proof}
 
 
@@ -1019,7 +1021,7 @@ A second technique is purification. Suppose we are given a state $\rho^A$ of sys
 % TODO 2.82
 \end{exercise}
 
-\subsection{EPR and the Bell Inequality}  
+\subsection{EPR and the Bell Inequality}
 
 Imagine we perform the following measurement. Charlie prepares a quantum system of two qubits in the state
 
@@ -1085,7 +1087,7 @@ Hence, the initial state of the machine is $\ket{\psi}\ket{s}$. So, some unitary
 
 	Hence, either $\bra{\phi}\ket{\psi}$ is 0 or 1. Thus, either $\ket{\psi} = \ket{\phi}$ (a contradiction to assuming they're distinct) or the two states are orthogonal.
 
-	Therefore, a cloning device can only clone states which are orthogonal to one another and so a general quantum cloning device is impossible.  
+	Therefore, a cloning device can only clone states which are orthogonal to one another and so a general quantum cloning device is impossible.
 \end{proof}
 
 \section{Nielsen \& Chuang: Chapter 4}
@@ -1258,7 +1260,7 @@ which gives the Hadamard transform with phase $e^{i0}$.
 \begin{exercise} (4.5) Prove that $(\hat{n} \cdot \hat{\sigma} ) ^2 = I$, and use this to verify the following equation
 
 \begin{align*}
-R_n(\theta) \equiv \exp(-i \theta n \cdot \sigma / 2) = \cos(\theta /2) I - i \sin(\theta / 2) (n_x X + n_y Y + n_z Z) 	
+R_n(\theta) \equiv \exp(-i \theta n \cdot \sigma / 2) = \cos(\theta /2) I - i \sin(\theta / 2) (n_x X + n_y Y + n_z Z)
 \end{align*}
 
 \begin{proof}
@@ -1273,7 +1275,7 @@ Evidently, $\hat{n} \cdot \hat{\sigma} = (n_x X + n_y Y + n_z Z)$ so, recalling 
 
 because $\hat{n}$ is a unit vector.
 
-Therefore, using Exercise 4.2 (Nielsen \& Chuang), if we let $A = \hat{n} \cdot \hat{\sigma}$, then the result follows directly.  
+Therefore, using Exercise 4.2 (Nielsen \& Chuang), if we let $A = \hat{n} \cdot \hat{\sigma}$, then the result follows directly.
 \end{proof}
 \end{exercise}
 
@@ -1467,7 +1469,7 @@ $$
 1 & 0 & 0 & 0 \\
 0 & 1 & 0 & 0 \\
 0 & 0 & 1 & 0 \\
-0 & 0 & 0 & -1		
+0 & 0 & 0 & -1
 \end{bmatrix}
 $$
 
@@ -1525,7 +1527,7 @@ We simply prove the statement for the computational basis.
  0 & 0 & 0 & 0 \\  0 & 1 & 0 & 0 \\0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0
  \end{bmatrix}\\
 \ket{10}\bra{10}  &= \begin{bmatrix}
- 0 & 0 & 0 & 0 \\  0 & 0 & 0 & 0 \\0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 0  	
+ 0 & 0 & 0 & 0 \\  0 & 0 & 0 & 0 \\0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 0
  \end{bmatrix} \\
  \ket{11}\bra{11}  &= \begin{bmatrix}
  0 & 0 & 0 & 0 \\  0 & 0 & 0 & 0 \\0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1
@@ -1667,7 +1669,7 @@ Now, using that $H^2 = I$, we note that the identity given by the circuit is equ
 %Therefore, in the computational basis
 %
 %\begin{align*}
-%x_1 = 0, x_2 = 0 : \ket{x_1}\ket{x_2} \mapsto 	
+%x_1 = 0, x_2 = 0 : \ket{x_1}\ket{x_2} \mapsto
 %\end{align*}
 %\end{proof}
 %\end{exercise}
