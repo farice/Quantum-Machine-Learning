@@ -2173,6 +2173,42 @@ by independence.
 		\begin{align*}
 		\Vert \sum_i X_i \Vert_2 = \max\Big(\lambda_{\max} \Big(\sum_i X_i\Big), \lambda_{\max} \Big(\sum_i (-X_i)\Big)\Big)	
 		\end{align*}
+		
+		since it is the square root of the maximum eigenvalue of $(\sum_i X_i^T) \sum_i X_i = (\sum_i X_i) \sum_i X_i$ and hence, equivalently, the maximum absolute value of an eigenvalue of $X_i$. Therefore, we can simply apply (\ref{thm:chern-mat-eigen}) to both $X_i$ and $-X_i$ and we get (\ref{thm:chern-mat-norm}).
+		
+		So, we can focus our attention on (\ref{thm:chern-mat-norm}). Let $S = \sum_i^s X_i$. Hence,
+		
+		\begin{align*}
+		\lambda_{\max}(S) \geq a \iff 	\lambda_{\max}(tS) \geq ta
+		\intertext{Furthermore, by considering the power series definition of the exponential,}
+		\iff \lambda_{\max}(e^{tS}) \geq e^{ta}\\
+		\implies \Tr(e^{tS}) \geq e^{ta}
+		\end{align*}
+		
+since the trace is the sum of the matrix's eigenvalues. Since $\Tr(e^{tS}) \geq 0$, we can apply Markov's inequality
+
+\begin{align*}
+\Pr(\Tr(e^{tS}) \geq e^{ta}) \leq \frac{E[\Tr(e^{tS})]}{e^{ta}}
+\end{align*}
+
+Now, we use the following lemma
+
+\begin{lemma}
+Golden-Thompson Inequality
+
+If $A$ and $B$ are Hermitian matrices, then
+
+\begin{align*}
+\Tr(e^{A + B}) \leq \Tr(e^A e^B)
+\end{align*}
+\end{lemma}
+
+Hence, we can let $A = t(S - X_s)$ and $B = tX_s$. Then,
+
+\begin{align*}
+E[\Tr(e^{tS})] \leq \Tr(e^{t(S - X_s)}e^{tX_s})	
+\end{align*}
+
 
 	\end{proof}
 \end{theorem}
