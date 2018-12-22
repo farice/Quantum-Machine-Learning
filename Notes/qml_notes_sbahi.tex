@@ -2161,14 +2161,19 @@ by independence.
 	
 	\begin{align}
 		\label{thm:chern-mat-eigen}
-		\Pr(\lambda_{max}\Big(\sum_{i=1}^s X_i\Big) \geq a ) &\leq de^{-ta} \Vert E[e^{tX}]\Vert_2^s \\
+		\Pr(\lambda_{\max}\Big(\sum_{i=1}^s X_i\Big) \geq a ) &\leq de^{-ta} \Vert E[e^{tX}]\Vert_2^s \\
 		\label{thm:chern-mat-norm}
 		\Pr(\Big\Vert \Big(\sum_{i=1}^s X_i\Big)\Big\Vert_2 \geq a ) &\leq de^{-ta} (\Vert E[e^{tX}]\Vert_2^s + \Vert E[e^{-tX}]\Vert_2^s)
 	\end{align}
 	
-	where $\lambda_{max}$ is the largest eigenvalue.
+	where $\lambda_{\max}$ is the largest eigenvalue.
 	\begin{proof}
+		First, we can show that (\ref{thm:chern-mat-eigen}) $\implies$ (\ref{thm:chern-mat-norm}). By definition of the 2-norm of a matrix,
 		
+		\begin{align*}
+		\Vert \sum_i X_i \Vert_2 = \max\Big(\lambda_{\max} \Big(\sum_i X_i\Big), \lambda_{\max} \Big(\sum_i (-X_i)\Big)\Big)	
+		\end{align*}
+
 	\end{proof}
 \end{theorem}
 
