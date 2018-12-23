@@ -1,86 +1,6 @@
-\documentclass[11pt]{article}
-\usepackage{subfiles}
-
-\oddsidemargin=17pt \evensidemargin=17pt
-\headheight=9pt     \topmargin=26pt
-\textheight=564pt   \textwidth=433.8pt
-\date{}
-\usepackage{url}
-\usepackage{amsmath}
-\usepackage{amsfonts,amssymb,amsthm,cite,float,graphicx}
-\usepackage{physics}
-\usepackage{graphicx}
-\usepackage{mathtools}
-\usepackage{float}
-\usepackage{hyperref}
-\hypersetup{
-    colorlinks=true, %set true if you want colored links
-    linktoc=all,     %set to all if you want both sections and subsections linked
-    linkcolor=blue,  %choose some color if you want links to stand out
-}
-
-%new math symbols taking no arguments
-\newcommand\0{\mathbf{0}}
-\newcommand\CC{\mathbb{C}}
-\newcommand\FF{\mathbb{F}}
-\newcommand\NN{\mathbb{N}}
-\newcommand\QQ{\mathbb{Q}}
-\newcommand\RR{\mathbb{R}}
-\newcommand\ZZ{\mathbb{Z}}
-\newcommand\bb{\mathbf{b}}
-\newcommand\kk{\Bbbk}
-\newcommand\mm{\mathfrak{m}}
-\newcommand\pp{\mathfrak{p}}
-\newcommand\xx{\mathbf{x}}
-\newcommand\yy{\mathbf{y}}
-\newcommand\GL{\mathit{GL}}
-\newcommand\into{\hookrightarrow}
-\newcommand\nsub{\trianglelefteq}
-\newcommand\onto{\twoheadrightarrow}
-\newcommand\minus{\smallsetminus}
-\newcommand\goesto{\rightsquigarrow}
-\newcommand\nsubneq{\vartriangleleft}
-
-%redefined math symbols taking no arguments
-\newcommand\<{\langle}
-\renewcommand\>{\rangle}
-\renewcommand\iff{\Leftrightarrow}
-\renewcommand\phi{\varphi}
-\renewcommand\implies{\Rightarrow}
-
-%new math symbols taking arguments
-\newcommand\ol[1]{{\overline{#1}}}
-
-%redefined math symbols taking arguments
-\renewcommand\mod[1]{\ (\mathrm{mod}\ #1)}
-
-%roman font math operators
-\DeclareMathOperator\aut{Aut}
-
-%for easy 2 x 2 matrices
-\newcommand\twobytwo[1]{\left[\begin{array}{@{}cc@{}}#1\end{array}\right]}
-
-%for easy column vectors of size 2
-\newcommand\tworow[1]{\left[\begin{array}{@{}c@{}}#1\end{array}\right]}
-
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{corollary}{Corollary}[theorem]
-\newtheorem{lemma}[theorem]{Lemma}
-\newtheorem{exercise}[theorem]{Exercise}
-\newtheorem{definition}[theorem]{Definition}
-
-\title{Quantum Algorithms and Learning Theory\\\textit{Notes and Exercises}}
-\author{Faris Sbahi}
+\documentclass[main.tex]{subfiles}
 
 \begin{document}
-\maketitle
-
-\tableofcontents
-
-\subfile{nielsen_chuang_notes.tex}
-
-\subfile{crypto_notes.tex}
-
 \section{Algorithms for solving linear systems of equations}
 
 One such application of Phase Estimation (Section \ref{phase_estimation}) is with respect to solving linear systems of equations. This is the so-called HHL algorithm \cite{lloyd2010quantum}.
@@ -485,10 +405,5 @@ E_X\Big[\Tr(e^{tS})\Big] &\leq E_X\Big[\Tr\Big(e^{tX}\Big)\Big] \Big\Vert E_{X}\
 as desired.
 \end{proof}
 \end{theorem}
-
-
-\nocite{*}
-\bibliographystyle{plain}
-\bibliography{course_notes}
 
 \end{document}
