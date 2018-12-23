@@ -1,0 +1,528 @@
+\documentclass[11pt]{article}
+\usepackage{subfiles}
+
+\oddsidemargin=17pt \evensidemargin=17pt
+\headheight=9pt     \topmargin=26pt
+\textheight=564pt   \textwidth=433.8pt
+\date{}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage{amsfonts,amssymb,amsthm,cite,float,graphicx}
+\usepackage{physics}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{float}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true, %set true if you want colored links
+    linktoc=all,     %set to all if you want both sections and subsections linked
+    linkcolor=blue,  %choose some color if you want links to stand out
+}
+
+%new math symbols taking no arguments
+\newcommand\0{\mathbf{0}}
+\newcommand\CC{\mathbb{C}}
+\newcommand\FF{\mathbb{F}}
+\newcommand\NN{\mathbb{N}}
+\newcommand\QQ{\mathbb{Q}}
+\newcommand\RR{\mathbb{R}}
+\newcommand\ZZ{\mathbb{Z}}
+\newcommand\bb{\mathbf{b}}
+\newcommand\kk{\Bbbk}
+\newcommand\mm{\mathfrak{m}}
+\newcommand\pp{\mathfrak{p}}
+\newcommand\xx{\mathbf{x}}
+\newcommand\yy{\mathbf{y}}
+\newcommand\GL{\mathit{GL}}
+\newcommand\into{\hookrightarrow}
+\newcommand\nsub{\trianglelefteq}
+\newcommand\onto{\twoheadrightarrow}
+\newcommand\minus{\smallsetminus}
+\newcommand\goesto{\rightsquigarrow}
+\newcommand\nsubneq{\vartriangleleft}
+
+%redefined math symbols taking no arguments
+\newcommand\<{\langle}
+\renewcommand\>{\rangle}
+\renewcommand\iff{\Leftrightarrow}
+\renewcommand\phi{\varphi}
+\renewcommand\implies{\Rightarrow}
+
+%new math symbols taking arguments
+\newcommand\ol[1]{{\overline{#1}}}
+
+%redefined math symbols taking arguments
+\renewcommand\mod[1]{\ (\mathrm{mod}\ #1)}
+
+%roman font math operators
+\DeclareMathOperator\aut{Aut}
+
+%for easy 2 x 2 matrices
+\newcommand\twobytwo[1]{\left[\begin{array}{@{}cc@{}}#1\end{array}\right]}
+
+%for easy column vectors of size 2
+\newcommand\tworow[1]{\left[\begin{array}{@{}c@{}}#1\end{array}\right]}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{exercise}[theorem]{Exercise}
+\newtheorem{definition}[theorem]{Definition}
+
+\title{Quantum Algorithms and Learning Theory\\\textit{Notes and Exercises}}
+\author{Faris Sbahi}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+
+\subfile{nielsen_chuang_notes.tex}
+
+\section{Algorithms for solving linear systems of equations}
+
+One such application of Phase Estimation (Section \ref{phase_estimation}) is with respect to solving linear systems of equations. This is the so-called HHL algorithm \cite{lloyd2010quantum}.
+
+The general problem statement of a linear system is if we are given matrix $A$ and unit vector $\vec{b}$, then find $\vec{x}$ satisfying, $A\vec{x} = \vec{b}$. 
+
+However, assume that instead of solving for $x$ itself, we instead solve for an expectation value $x^T M x$ for some linear operator $M$. Hence, one can show that our algorithm has a runtime bound of $O(\log(N)\kappa ^{2})$, if we can further assume that the linear system is sparse and has a low condition number $\kappa$.
+
+So, assume that $A$ in our linear system is an $N \times N$ Hermitian matrix. Notice that this is an "unrestrictive" constraint on $A$ because we can always take non-Hermitian matrix $A'$ and linear system $A' \vec{x} = \vec{b}$ and instead solve $\begin{bmatrix}
+	0 && A' \\ A'^\dag && 0
+\end{bmatrix} \begin{bmatrix} 0 \\ x \end{bmatrix} = \begin{bmatrix} b \\ 0 \end{bmatrix}$. Hence, we we will assume that $A$ is Hermitian from here on. 
+
+Recall that because $A$ is hermitian $\implies$ we can perform quantum phase estimation using $e^{-iAt}$ as the unitary transformation. This can be done efficiently if $A$ is sparse.
+
+So, we first prepare $\ket{b}$ (the representation of $\vec{b}$). We assume that this can be done efficiently or that $\ket{b}$ is supplied as an input.
+
+Denote by $\ket{\psi_j}$ the eigenvectors of $A$ with associated eigenvalues $\lambda_j$. Hence, we can express $\ket{b}$ as $\ket{b} = \sum_j \beta_j \ket{\psi_j}$.  So, we initialize a first register to state $\sum_j \beta_j \ket{\psi_j}$ and second register to state $\ket{0}$ . After applying phase estimation, we then have the joint state $\sum_j \beta_j \ket{\psi_j} \ket{\widetilde{\lambda}_j}$, where $\widetilde{\lambda}_j$ is an approximation of $\lambda_j$. We'll assume that this approximation is perfect from here on. 
+
+Next we add an ancilla qubit and perform a rotation conditional on the first register while now holds $\ket{\lambda_j}$. The rotation transforms the system to
+
+\begin{align*}
+\sum_j \beta_j \ket{\psi_j} \ket{\lambda_j} \Big(\sqrt{1-\frac{C^2}{\lambda_j^2}}\ket{0} + \frac{C}{\lambda_j}\ket{1}\Big)
+\end{align*}
+
+for some small constant $C \in \RR$ that is $O(1/\kappa)$.
+
+Hence, we can undo phase estimation to restore the second register to $\ket{0}$.
+
+Now, if we measure the ancillary qubit in the computational basis, we'll evidently collapse the state to $\ket{1}$ with some probability. We'd then have
+
+\begin{align*}
+	\sum_j \frac{C}{\lambda_j} \beta_j \ket{\psi_j} \ket{\lambda_j}\ket{1} = C (A^{-1} \ket{b})
+\end{align*}
+
+In particular, the probability of getting this result is 
+
+\begin{align*} 
+	p(-1) &= \Bigg(\sum_j \beta_j \bra{\psi_j} \bra{\lambda_j} \Big(\sqrt{1-\frac{C^2}{\lambda_j^2}}\bra{0} + \frac{C}{\lambda_j}\bra{1}\Big) \Bigg)\ket{1}\bra{1} \Bigg(\sum_j \beta_j \ket{\psi_j} \ket{\lambda_j} \Big(\sqrt{1-\frac{C^2}{\lambda_j^2}}\ket{0} + \frac{C}{\lambda_j}\ket{1}\Big)\Bigg) \\
+	&= \sum_j \beta_j \bra{\psi_j} \bra{\lambda_j} \Big(\sqrt{1-\frac{C^2}{\lambda_j^2}}\bra{0} + \frac{C}{\lambda_j}\bra{1}\Big) \ket{1}\bra{1} \beta_j \ket{\psi_j} \ket{\lambda_j} \Big(\sqrt{1-\frac{C^2}{\lambda_j^2}}\ket{0} + \frac{C}{\lambda_j}\ket{1}\Big) \\
+	&= \sum_j \beta_j \bra{\psi_j} \bra{\lambda_j} \frac{C}{\lambda_j}\bra{1}\ket{1}\bra{1} \beta_j \ket{\psi_j} \ket{\lambda_j} \frac{C}{\lambda_j}\ket{1} \\
+	&= \sum_j \beta_j^2 \frac{C^2}{\lambda_j^2} \\
+	&= \| A^{-1} \ket{b} \|^2 C^2 = O(1/\kappa^4)
+\end{align*} 
+
+Finally, we can make a measurement $M$ whose expectation value $\bra{x}M\ket{x}$ corresponds to the feature of $x$ we wish to evaluate. 
+
+\section{Supervised learning with quantum enhanced feature spaces}
+
+\subsection{Prelude}
+
+We are given data from a training set $T$ and a test set $S$ of a subset $\Omega \subset \RR^d$. We assume that $S$ and $T$ are drawn from the same input space $X$. Furthermore, there exists output space $Y = \{ -1, +1 \} $ and a distribution $D$ on $X \times Y$.
+
+Now, suppose we have a labelling $m: T \cup S \rightarrow Y$.  Our goal is to use this information to find some approximation function $\tilde{f} : X \rightarrow Y$ that minimizes estimation error for function class $F$. In other words, let true risk for function $f$ be defined as
+
+\begin{align*}
+R^{true}(f) = P_{X, Y \sim D}(f(X) \neq Y)	
+\end{align*}
+
+Then, estimation error is the difference in true risk between $\tilde{f}$ and optimal choice $f^* = \inf_{f \in F}R^{true}(f)$.
+
+One classical method is using so-called Support Vector Machines (SVM), which construct a separating hyperplane such that the distance to the nearest training observation (minimum margin) is maximized. Much of the popularity of SVMs can be attributed to its association with the "kernel trick" which maps the data to a higher dimensional space so that it is separable or approximately separable.
+
+Here, we suppose that the data is given classically and we seek to show that, in some cases, we can obtain a quantum advantage by either generating the separating hyperplane in quantum feature space or simply estimating the kernel function.
+
+\subsection{Feature Map}
+
+Consider the feature vector kernel $K(x, z) = | \bra{\Phi(x)}\ket{\Phi(z)} |^2$
+
+%\section{Density Matrix Exponentiation Algorithms}
+%\url{https://www.nature.com/articles/nphys3029}
+%
+%\section{Review of Quantum Machine Learning}
+%\url{https://www.nature.com/articles/nature23474}
+%
+%\section{Learnability of Quantum States}
+%\begin{enumerate}
+%\item \url{https://arxiv.org/abs/quant-ph/0608142}
+%\item \url{https://arxiv.org/abs/1711.01053}
+%\item \url{https://arxiv.org/abs/1801.05721}
+%\end{enumerate}
+
+\section{Singular Value Transformation using Length-Square Sampling Methods}
+
+\subsection{Stochastic Regression}
+
+\subsubsection{Definitions and Assumptions}
+
+Let $b \in \CC^m$ and $A \in \CC^{m \times n}$ s.t. $\Vert A \Vert \leq 1$ where $\Vert \cdot \Vert$ signifies the operator norm (or spectral norm). Furthermore, require that $\rank(A) = k$ and $\Vert A^+ \Vert \leq \kappa$ where $A^+$ is the pseudoinverse of $A$. Hence, observe that $\Vert A \Vert \leq 1$ is equivalent to $A$ having maximum singular value $1$\footnote{To see this, simply consider Spectral Theorem applied to Hermitian matrix $A^\dag A$}. Similarly, $A^+$ has inverted singular values from $A$ and so $\Vert A^+ \Vert$ is equal to the reciprocal of the minimum nonzero singular value. Therefore, the condition number of $A$ is given by $\Vert A \Vert \Vert A^+ \Vert \leq \kappa$.
+
+So, define $x$ to be the least-squares solution to the linear system $Ax = b$ i.e. $x = A^+ b$. Then, in terms of these definitions, we define two primary goals:
+
+\begin{enumerate}
+\item Query a vector $\tilde{x}$ s.t. $\Vert \tilde{x} - x \Vert \leq \epsilon \Vert x \Vert$
+\item Sample from a distribution that approximates $\frac{|x_j|^2}{\Vert x \Vert^2}$ within total variation distance (\autoref{def:tve}) $2\epsilon$.
+\end{enumerate}
+
+In order to do this, we simply assume that we have length-square sampling access to $A$. In other words, we are able to sample row indices of $A$ from the distribution $\frac{\Vert A_{(i, \cdot)}\Vert^2}{\Vert A \Vert^2_F}$
+
+\subsubsection{Sequence of Approximations}
+
+First, we'll summarize the sequence of approximations that we'll perform using length-squared sampling techniques. We'll describe these steps in depth in the following sections.
+
+Of course, we know that the least squares solution of the linear system is given by the orthogonal projection
+
+\begin{align*}
+	(A^\dag A)^+ A^\dag = A^+ b
+\end{align*}
+
+So, we first approximate $A^\dag A$ by $R^\dag R$ where $R \in \CC^{r \times n}$, $r \ll m$ is constructed from length-square sampling $r$ rows of $A$. Now, denote the spectral decomposition 
+
+\begin{align*}
+A^\dag A \approx R^\dag R = \sum_{l=1}^k \frac{1}{\sigma_l^2}\ket{v^{(l)}}\bra{v^{(l)}}
+\end{align*}
+
+where of course $\sigma_i$ and $\ket{v^{(i)}} \in \CC^n$ are the singular values and right singular vectors of $R$, respectively.
+
+We see that computing these right singular vectors of $R$ can still be computationally prohibitive given the dimension $n$. Hence, we can use length-square sampling again, this time on the columns of $R$ to give a matrix $C \in \CC^{r \times c}$, $c \ll n$. Now, the left singular vectors of $C$ which we denote as $\ket{w^{(i)}} \in \CC^r$ can be efficiently computed via standard SVD methods. So,
+
+\begin{align*}
+RR^\dag \approx CC^\dag = \sum_{l=1}^k \frac{1}{\sigma_l^2}\ket{w^{(l)}}\bra{w^{(l)}}
+\end{align*}
+
+
+We can then show that ()
+
+\begin{align}
+\label{def:approx-right}
+\ket{\tilde{v}^{(i)}} := R^\dag \ket{w^{(l)}} / \tilde{\sigma}_l
+\end{align}
+
+provides a good approximation of $\ket{v^{(i)}}$. Note that $\tilde{\sigma}_l$ are the singular values of $C$ which then approximate the singular values of $R$ which similarly approximate the singular values of $A$. This follows from $A^\dag A \approx R^\dag R$ and $RR^\dag \approx CC^\dag$ by the Hoffman--Wielandt inequality detailed in Lemma 2.7 of \cite{kannan2017randomized} and stated without proof below.
+
+\begin{lemma}Hoffman--Wielandt inequality
+
+	If $P, Q$ are two real, symmetric $n \times n$ matrices and $\lambda_1, \cdots \lambda_n$ denote eigenvalues in non-decreasing order, then
+	
+	\begin{align*}
+		\sum_{t=1}^n(\lambda_t(P) - \lambda_t(Q))^2 \leq \Vert P - Q \Vert_F^2
+	\end{align*}
+\end{lemma}
+
+
+At this point, it seems like we haven't made much progress since computing $R^\dag \ket{w^{(l)}}$ is still expensive. However, it turns out that all we need to enable query access to $\tilde{x}$ is the ability to efficiently estimate the trace inner product $\tr(U^\dag V)$ where $U$ and $V$ are operators such that $U$ can be the length-square sampled and $V$ can be queried. To see this, we write our solution, $\tilde{x}$, in terms of the approximations thus far
+
+\begin{align*}
+	\tilde{x} &\approx A^+ \ket{b} \\
+	&\approx (R^\dag R)^+ A^\dag \ket{b}\\
+	&\approx \sum_{l = 1}^k \frac{1}{\tilde{\sigma}_l^2} \ket{\tilde{v}^{(l)}} \bra{\tilde{v}^{(l)}} A^\dag \ket{b}
+\end{align*}
+
+Hence, define $U := A$, $V := \ket{b}\bra{\tilde{v}^{(l)}}$ in which case 
+
+\begin{align*}
+\tr(U^\dag V) &= \tr(A^\dag \ket{b} \bra{\tilde{v}^{(l)}}) \\
+&= \tr(\bra{\tilde{v}^{(l)}} A^\dag \ket{b} )\\
+&= \bra{\tilde{v}^{(l)}} A^\dag \ket{b}
+\end{align*}
+
+since $\bra{\tilde{v}^{(l)}} A^\dag \ket{b}$ is a scalar. Therefore, say that 
+
+$$
+\tilde{\lambda}_l \approx \tr(A^\dag \ket{b} \bra{\tilde{v}^{(l)}})
+$$
+
+and assume that we can compute and memoize these scalars $\tilde{\lambda}_i$ efficiently. In which case,
+
+\begin{align*}
+\tilde{x} &\approx \sum_{l = 1}^k \frac{1}{\tilde{\sigma}_l^2} \ket{\tilde{v}^{(l)}} \tilde{\lambda}_l
+\intertext{Recalling the definition of $\ket{\tilde{v}^{(i)}}$ (\ref{def:approx-right}),}
+&= \sum_{l = 1}^k \frac{1}{\tilde{\sigma}_l^3} R^\dag \ket{w^{(l)}} \tilde{\lambda}_l\\
+&= R^\dag \sum_{l = 1}^k \frac{1}{\tilde{\sigma}_l^3} \ket{w^{(l)}} \tilde{\lambda}_l
+\intertext{and so defining $z := \sum_{l = 1}^k \frac{1}{\tilde{\sigma}_l^3} \ket{w^{(l)}} \tilde{\lambda}_l$,}
+&= R^\dag z
+\end{align*}
+
+We see that we can compute $z$ efficiently (and memoize it for future queries) because it is a $k$-linear combination of left singular vectors in $\CC^r$. So, say that we wish to query an element $\tilde{x}_j$. We can simply query column $R_{\cdot, j} \in \CC^r$ (or equivalently row $R_{j, \cdot}^\dag$) and compute $R_{\cdot, j} \cdot z$. Hence, we've achieved our first goal.
+
+In order to achieve our second goal, enabling sample access to a distribution that approximates $\frac{|x_j|^2}{\Vert x \Vert^2}$, we require one more trick: rejection sampling which we detail in Section ().
+
+All in all, we've performed the chain of approximations,
+
+\begin{align*}
+	\ket{x} &= A^+ \ket{b} = (A^\dag A)^+ A^\dag \ket{b}\\
+	&\approx (R^\dag R)^+ A^\dag \ket{b} = \sum_{l = 1}^k \frac{1}{\tilde{\sigma}_l^2} \ket{v^{(l)}} \bra{v^{(l)}} A^\dag \ket{b}\\
+	&\approx \sum_{l = 1}^k \frac{1}{\tilde{\sigma}_l^2} \ket{\tilde{v}^{(l)}} \bra{\tilde{v}^{(l)}} A^\dag \ket{b}\\ %\qquad \Big(\ket{\tilde{v}^{(l)}} := R^\dag \ket{w^{(l)}}\Big)
+	&\approx \sum_{l = 1}^k \frac{1}{\tilde{\sigma}_l^2} \ket{\tilde{v}^{(l)}} \tilde{\lambda}_l = R^\dag \sum_{l = 1}^k \frac{1}{\tilde{\sigma}_l^3} \ket{w^{(l)}} \tilde{\lambda}_l = R^\dag z
+\end{align*}
+
+
+Now that we've sketched the steps of this process, we detail each approximation and show that we can achieve the claimed correctness and complexity bounds.
+
+\subsubsection{Computing Approximate Singular Vectors}
+
+As described above, we begin by length-square sampling the original matrix $A \in \CC^{m \times n }$. So, pick row index $i$ with probability
+
+\begin{align*}
+p_i = \frac{\Vert A_{(i, \cdot)}\Vert^2}{\Vert A \Vert_F^2} 	
+\end{align*}
+
+and output random row $Y = A_{(i, \cdot)} / \sqrt{p_i} = \frac{A_{(i, \cdot)}}{\Vert A_{(i, \cdot)}\Vert}\Vert A\Vert_F$. After sampling $r$ rows, we implicitly define matrix $R$ to be the concatenation of the outputted random rows. Furthermore, we rescale $R$ so that $E[R^{\dag} R] = A^\dag A$, which requires normalizing by $\sqrt{r}$. Therefore,
+
+\begin{align*}
+R &= \frac{1}{\sqrt{r}} \begin{bmatrix}
+Y_1 \\
+Y_2 \\
+\vdots \\
+Y_r
+\end{bmatrix} \in \CC^{r \times n}
+\end{align*}
+
+
+\section{Quantum Cryptography}
+% TODO - add from computer security paper
+
+Quantum cryptography or quantum key distribution (QKD) is a procedure that enables provably secure distribution of private information. 
+
+\subsection{Private key cryptography}
+
+Private key cryptosystems which employ a one-time pad (OTP) are provably secure i.e. as long as the key strings are secret, Alice and Bob can guarantee that Eve's mutual information with their unencoded information can be made as small as desired regardless of Eve's eavesdropping strategy.
+
+The major difficulty of private key cryptosystems is secure distribution of key bits. The above cryptosystem, using a OTP, requires key bits to be as long as the message and for key bits to not be reused. 
+
+\begin{exercise}(12.25)
+Consider a system with $n$ users, any pair of which would like to be able to communicate privately. Using public key cryptography how many keys are required? Using private key cryptography how many keys are required? 
+\begin{proof}
+	We'd need a unique OTP for each pair of users if we used private key cryptography. Hence, we'd need $\binom{n}{2}$ keys. 
+	
+	For public key, we'd need a private-public keypair for each user. Hence, we'd need $2n$ keys. 
+\end{proof}
+\end{exercise}
+
+\subsection{Privacy amplification and information reconciliation}
+
+Suppose Alice and Bob share correlated random classical bit strings $X$ and $Y$. Furthermore, suppose we have an upper bound on Eve's mutual information with $X$ and $Y$. We can use "information reconciliation" and then "privacy amplification" to systematically increase the correlation between their key strings, while reducing Eve's mutual information about the result, to any desired level of security.
+
+Information reconciliation simply entails conducting error-correction over a public channel, fixing errors between $X$ and $Y$, until Alice and Bob obtain a shared string $W$. In the end, Eve will also have a string $Z$ partially correlated to $W$. We can then use privacy amplification to "amplify" from $W$ a subset of bits $S$ whose correlation with $Z$ are below the desired threshold. 
+
+%\subsubsection{Privacy Amplification}
+% TODO
+%
+%\subsection{Quantum key distribution}
+% TODO
+%
+%\subsection{Quantum Error Correction Codes}
+% TODO
+
+\section{Appendix}
+
+\begin{definition}
+\label{pauli}
+Pauli Matrices
+
+\begin{align*}
+\sigma_x &= X = \begin{pmatrix} 0 & 1 \\ 1 & 0\end{pmatrix} \\
+\sigma_y &= Y = \begin{pmatrix} 0 & -i \\ i & 0\end{pmatrix}\\
+\sigma_z &= Z = \begin{pmatrix} 1 & 0 \\ 0 & -1\end{pmatrix}
+\end{align*}
+\end{definition}
+
+\begin{definition}
+\label{bellstates}
+Bell States
+
+\begin{align*}
+\frac{\ket{00} + \ket{11} }{\sqrt{2}} \\	
+\frac{\ket{00} - \ket{11} }{\sqrt{2}} \\	
+\frac{\ket{10} + \ket{01} }{\sqrt{2}} \\	
+\frac{\ket{01} - \ket{10} }{\sqrt{2}}
+\end{align*}
+\end{definition}
+
+\begin{definition}
+\label{posop}
+Positive Operators
+
+Let $A$ be a bounded\footnote{$\Vert Av \Vert \leq M\Vert v \Vert$ for some $M>0$ and all $v \in \mathcal{H}$} linear operator on complex Hilbert space $\mathcal{H}$. The following conditions are equivalent to $A$ being positive
+
+\begin{enumerate}
+\item $A=S^\dag S$ for some bounded operator $S$ on $\mathcal{H}$
+\item $A$ is hermitian and $\bra{x} A \ket{x} \geq 0$ for every $\ket{x} \in \mathcal{H}$
+\item the spectrum of $A$ is non-negative
+\end{enumerate}
+\end{definition}
+
+\begin{definition}
+\label{trop}
+Trace of an Operator
+
+Let $\{\ket{i}\}$ be an orthonormal basis for $A$ and so
+\begin{align*}
+\tr(A) &= \sum_i A_{ii} \\
+&= \sum_i \bra{i} A \ket{i}	
+\end{align*}
+
+Hence, if we extend $\ket{\psi}$ to the orthonormal basis $\{\ket{i}\}$ which includes $\ket{\psi}$ as the first element (for example via the Gram-Schmidt procedure) then
+
+\begin{align*}
+	\tr(A\ket{\psi}\bra{\psi}) &= \sum_i \bra{i} A\ket{\psi}\bra{\psi}\ket{i}	 \\
+	&= \bra{\psi} A\ket{\psi}
+\end{align*}
+
+by orthonormality.
+\end{definition}
+
+\begin{theorem}Spectral Theorem
+\label{thm:spec}
+Suppose $A$ is a compact\footnote{the image under $A$ acting on any bounded subset of $\mathcal{H}$ is a compact subset of $\mathcal{H}$} hermitian operator (compactness ensures $A$ has eigenvectors) on complex Hilbert space $\mathcal{H}$. Hence, there is an orthonormal basis of $\mathcal{H}$ consisting of eigenvectors of $A$. Each eigenvalue is in $\RR$.	
+\end{theorem}
+
+\begin{lemma}
+\label{lem:psd-trace}
+Let $A, B, C$ by symmetric $d \times d$ matrices satisfying $A \succeq 0$ and $B \preceq C$. Hence, $\Tr(AB) \leq \Tr(AC)$
+
+\begin{proof}
+	Write $A$ in its spectral decomposition $A = \sum \lambda_i \ket{i}\bra{i}$, invoking Spectral Theorem (\ref{thm:spec}). Hence,
+	
+	\begin{align*}
+		\Tr(AB) &= \Tr(\sum \lambda_i \ket{i}\bra{i} B)\\
+		&= \sum \lambda_i \Tr(\ket{i}\bra{i} B) \tag{linearity of trace}\\
+		&= \sum \lambda_i \Tr(\bra{i} B \ket{i}) \tag{cyclic property of trace}\\
+		&\leq \sum \lambda_i \Tr(\bra{i} C \ket{i})\\
+		&= \sum \lambda_i \Tr(\ket{i}\bra{i} C) = \Tr(\sum \lambda_i \ket{i}\bra{i} C) = \Tr(AC)
+	\end{align*}
+\end{proof}
+\end{lemma}
+
+\begin{corollary}
+\label{cor:psd-tr-norm-ineq}
+If $A, B \succeq 0$, then $\Tr(AB) \leq \Vert B \Vert_2 \Tr(A)$
+
+\begin{proof}
+Note that the singular values of $B$ coincide with the eigenvalues of $B$ since $B^\dag B = B^2$ and $B \succeq 0$ $\implies$ $\lambda_i(B) \geq 0$, $\forall i$. So, let $C = \Vert B \Vert_2 I$ which then trivially satisfies $\lambda_i(C) = \lambda_{\max}(B)$, $\forall i$ since $C$ is the diagonal matrix with diagonal values all equal to $\lambda_{\max}(B)$. Therefore, $B \preceq C$. So, we can simply apply \ref{lem:psd-trace} above,
+
+\begin{align*}
+\Tr(AB) &\leq \Tr(AC) \\
+&= \Tr\big(A \Vert B \Vert_2 I\big)\\
+&= \Vert B \Vert_2 \Tr(A)
+\end{align*}
+\end{proof}
+\end{corollary}
+
+
+
+\begin{definition} Total Variation Distance.
+\label{def:tve}
+
+Let $P$ and $Q$ be distinct probability measures on a $\sigma$-algebra $\mathcal{F}$ of subsets of the sample space $\Omega$. Then, the total variation distance is given by
+
+\begin{align*}
+\delta(P, Q) &= \sup_{A \in \mathcal{F}}\vert P(A) - Q(A)\vert
+\end{align*}
+\end{definition}
+
+\begin{lemma}Hoeffding--Chernoff Inequality
+\label{lem:chernoff}
+
+Let $X_1, X_2, \cdots, X_s$	be i.i.d real random variables. For any positive, real numbers $a, t$ we have that, from Markov's inequality,
+
+\begin{align*}
+\Pr(\sum_{i=1}^s X_i \geq a) &\leq e^{-ta} E\Bigg[\prod_{i=1}^s e^{tX_i}\Bigg]\\
+&= e^{-ta} \prod_{i=1}^s E\Bigg[e^{tX_i}\Bigg]
+\end{align*}
+by independence.
+\qed
+\end{lemma}
+
+\begin{theorem}Hoeffding--Chernoff Inequality for matrix-valued random variables \cite{kannan2017randomized}
+	
+	Let $X$ be a random variable taking values which are real symmetric $d \times d$ matrices. Suppose $X_1, X_2, \cdots , X_s$ are i.i.d. draws of $X$. For any positive real numbers $a$, $t$, we have
+	
+	\begin{align}
+		\label{thm:chern-mat-eigen}
+		\Pr(\lambda_{\max}\Big(\sum_{i=1}^s X_i\Big) \geq a ) &\leq de^{-ta} \Vert E[e^{tX}]\Vert_2^s \\
+		\label{thm:chern-mat-norm}
+		\Pr(\Big\Vert \Big(\sum_{i=1}^s X_i\Big)\Big\Vert_2 \geq a ) &\leq de^{-ta} (\Vert E[e^{tX}]\Vert_2^s + \Vert E[e^{-tX}]\Vert_2^s)
+	\end{align}
+	
+	where $\lambda_{\max}$ is the largest eigenvalue.
+	\begin{proof}
+		First, we can show that (\ref{thm:chern-mat-eigen}) $\implies$ (\ref{thm:chern-mat-norm}). By definition of the 2-norm of a matrix,
+		
+		\begin{align*}
+		\Vert \sum_i X_i \Vert_2 = \max\Big(\lambda_{\max} \Big(\sum_i X_i\Big), \lambda_{\max} \Big(\sum_i (-X_i)\Big)\Big)	
+		\end{align*}
+		
+		since it is the square root of the maximum eigenvalue of $(\sum_i X_i^T) \sum_i X_i = (\sum_i X_i) \sum_i X_i$ and hence, equivalently, the maximum absolute value of an eigenvalue of $X_i$. Therefore, we can simply apply (\ref{thm:chern-mat-eigen}) to both $X_i$ and $-X_i$ and we get (\ref{thm:chern-mat-norm}).
+		
+		So, we can focus our attention on (\ref{thm:chern-mat-norm}). Let $S = \sum_i^s X_i$. Hence,
+		
+		\begin{align*}
+		\lambda_{\max}(S) \geq a \iff 	\lambda_{\max}(tS) \geq ta
+		\intertext{Furthermore, by considering the power series definition of the exponential,}
+		\iff \lambda_{\max}(e^{tS}) \geq e^{ta}\\
+		\implies \Tr(e^{tS}) \geq e^{ta}
+		\end{align*}
+		
+since the trace is the sum of the matrix's eigenvalues. Since $\Tr(e^{tS}) \geq 0$, we can apply Markov's inequality
+
+\begin{align*}
+\Pr(\Tr(e^{tS}) \geq e^{ta}) \leq \frac{E[\Tr(e^{tS})]}{e^{ta}}
+\end{align*}
+
+Now, we use the following lemma
+
+\begin{lemma}
+Golden-Thompson Inequality
+
+If $A$ and $B$ are Hermitian matrices, then
+
+\begin{align*}
+\Tr(e^{A + B}) \leq \Tr(e^A e^B)
+\end{align*}
+\qed
+\end{lemma}
+
+Hence, we can let $A = t(\sum_i^{s-1} X_i)$ and $B = tX_s$. Then,
+
+\begin{align*}
+E_X\Big[\Tr(e^{tS})\Big] &\leq E_X\Big[\Tr(e^{t\big(\sum_i^{s-1} X_i\big)}e^{tX_s})\Big]\\
+\shortintertext{Since the expectation operator commutes with the summation of the trace by linearity of trace,}
+&= \Tr\Big(E_X\Big[e^{t\big(\sum_i^{s-1} X_i\big)}e^{tX_s}\Big]\Big)\\
+&= \Tr\Big(E_{X_1, X_2, \cdots, X_{s-1}}\Big[e^{t\big(\sum_i^{s-1} X_i\big)}\Big]E_{X_s}\Big[e^{tX_s}\Big]\Big) \tag{by independence}\\
+\end{align*}
+
+Now, we can apply Corollary (\ref{cor:psd-tr-norm-ineq}), which gives 
+
+\begin{align*}
+&\leq \Tr\Big(E_{X_1, X_2, \cdots, X_{s-1}}\Big[e^{t\big(\sum_i^{s-1} X_i\big)}\Big]\Big) \Big\Vert E_{X_s}\Big[e^{tX_s}\Big]\Big\Vert_2\\
+&= \Tr\Big(E_{X}\Big[e^{t\big(\sum_i^{s-1} X_i\big)}\Big]\Big) \Big\Vert E_{X}\Big[e^{tX}\Big]\Big\Vert_2 \\
+&= E_X\Big[\Tr\Big(e^{t\big(\sum_i^{s-1} X_i\big)}\Big)\Big] \Big\Vert E_{X}\Big[e^{tX}\Big]\Big\Vert_2  \intertext{So we can repeat this process iteratively, peeling an $X_i$ each time from the left term. For clarity, the next step gives,}
+E_X\Big[\Tr\Big(e^{t\big(\sum_i^{s-1} X_i\big)}\Big)\Big] &\leq E_X\Big[\Tr(e^{t\big(\sum_i^{s-2} X_i\big)}e^{tX_{s-1}})\Big]\\
+&\leq E_X\Big[\Tr\Big(e^{t\big(\sum_i^{s-2} X_i\big)}\Big)\Big] \Big\Vert E_{X}\Big[e^{tX}\Big]\Big\Vert_2 \tag{applying (\ref{cor:psd-tr-norm-ineq}) again}
+\intertext{Therefore, after peeling all terms but the last $X_i$, we have}
+E_X\Big[\Tr(e^{tS})\Big] &\leq E_X\Big[\Tr\Big(e^{tX}\Big)\Big] \Big\Vert E_{X}\Big[e^{tX}\Big]\Big\Vert_2^{s-1} \intertext{Hence, since the trace is the sum of eigenvalues, $\Tr(e^{tX}) \leq d \lambda_{\max}(e^{tX})$ i.e. the worst case of all $d$ eigenvalues being the max}
+&\leq d \Big\Vert E_{X}\Big[e^{tX}\Big]\Big\Vert_2^{s}
+\end{align*}
+
+as desired.
+\end{proof}
+\end{theorem}
+
+
+\nocite{*}
+\bibliographystyle{plain}
+\bibliography{course_notes}
+
+\end{document}
