@@ -1965,7 +1965,7 @@ We can then show that ()
 \ket{\tilde{v}^{(i)}} := R^\dag \ket{w^{(l)}} / \tilde{\sigma}_l
 \end{align}
 
-provides a good approximation of $\ket{v^{(i)}}$. Note that $\tilde{\sigma}_l$ are the singular values of $C$ which then approximate the singular values of $R$ which similarly approximate the singular values of $A$. This follows from $A^\dag A \approx R^\dag R$ and $RR^\dag \approx CC^\dag$ by the Hoffman--Wielandt inequality detailed in Lemma 2.7 of (Kanna and Vempala) and stated without proof below.
+provides a good approximation of $\ket{v^{(i)}}$. Note that $\tilde{\sigma}_l$ are the singular values of $C$ which then approximate the singular values of $R$ which similarly approximate the singular values of $A$. This follows from $A^\dag A \approx R^\dag R$ and $RR^\dag \approx CC^\dag$ by the Hoffman--Wielandt inequality detailed in Lemma 2.7 of \cite{kannan2017randomized} and stated without proof below.
 
 \begin{lemma}Hoffman--Wielandt inequality
 
@@ -2028,7 +2028,13 @@ Now that we've sketched the steps of this process, we detail each approximation 
 
 \subsubsection{Computing Approximate Singular Vectors}
 
-As described above, we begin by length-square sampling the original matrix $A \in \CC^{m \times n }$. So, pick row index $i$ with probability $p_i = \frac{\Vert A_{i, \cdot}\Vert^2}{\Vert A \Vert_F^2}$ and output random row $Y = A_i / \sqrt{p_i} = \frac{A_{i, \cdot}}{\Vert A_{i, \cdot}\Vert}\Vert A\Vert_F$. After sampling $r$ rows, we implicitly define matrix $R$ to be the concatenation of the outputted random rows. Furthermore, we rescale $R$ so that $E[R^{\dag} R] = A^\dag A$, which requires normalizing by $\sqrt{r}$. Therefore,
+As described above, we begin by length-square sampling the original matrix $A \in \CC^{m \times n }$. So, pick row index $i$ with probability
+
+\begin{align*}
+p_i = \frac{\Vert A_{i, \cdot}\Vert^2}{\Vert A \Vert_F^2} 	
+\end{align*}
+
+and output random row $Y = A_{i, \cdot} / \sqrt{p_i} = \frac{A_{i, \cdot}}{\Vert A_{i, \cdot}\Vert}\Vert A\Vert_F$. After sampling $r$ rows, we implicitly define matrix $R$ to be the concatenation of the outputted random rows. Furthermore, we rescale $R$ so that $E[R^{\dag} R] = A^\dag A$, which requires normalizing by $\sqrt{r}$. Therefore,
 
 \begin{align*}
 R &= \frac{1}{\sqrt{r}} \begin{bmatrix}
@@ -2157,10 +2163,10 @@ Let $A, B, C$ by symmetric $d \times d$ matrices satisfying $A \succeq 0$ and $B
 
 \begin{corollary}
 \label{cor:psd-tr-norm-ineq}
-If $A \succeq 0$, then $\Tr(AB) \leq \Vert B \Vert_2 C$
+If $A, B \succeq 0$, then $\Tr(AB) \leq \Vert B \Vert_2 \Tr(A)$
 
 \begin{proof}
-Let $C = \Vert B \Vert_2 I$ which then trivially satisfies $\lambda_i(C) = \lambda_{\max}(B)$, $\forall i$ since $C$ is the diagonal matrix with diagonal values all equal to $\lambda_{\max}(B)$. Therefore, $B \preceq C$. So, we can simply apply \ref{lem:psd-trace} above,
+Note that the singular values of $B$ coincide with the eigenvalues of $B$ since $B^\dag B = B^2$ and $B \succeq 0$ $\implies$ $\lambda_i(B) \geq 0$, $\forall i$. So, let $C = \Vert B \Vert_2 I$ which then trivially satisfies $\lambda_i(C) = \lambda_{\max}(B)$, $\forall i$ since $C$ is the diagonal matrix with diagonal values all equal to $\lambda_{\max}(B)$. Therefore, $B \preceq C$. So, we can simply apply \ref{lem:psd-trace} above,
 
 \begin{align*}
 \Tr(AB) &\leq \Tr(AC) \\
