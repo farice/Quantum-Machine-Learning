@@ -1917,7 +1917,7 @@ Consider the feature vector kernel $K(x, z) = | \bra{\Phi(x)}\ket{\Phi(z)} |^2$
 
 \subsubsection{Definitions and Assumptions}
 
-Let $b \in \CC^m$ and $A \in \CC^{m \times n}$ s.t. $\Vert A \Vert \leq 1$ where $\Vert \cdot \Vert$ signifies the operator norm (or spectral norm). Furthermore, require that $\rank(A) = k$ and $\Vert A^+ \Vert \leq \kappa$ where $A^+$ is the pseudoinverse of $A$. Hence, observe that $\Vert A \Vert \leq 1$ is equivalent to $A$ having maximum singular value $1$\footnote{To see this, simply consider Spectral Theorem applied to Hermitian matrix $A^\dag A$}. Similarly, $A^+$ has inverted singular values from $A$ and so $\Vert A^+ \Vert$ is equal to the reciprocal of the minimum nonzero singular value. Therefore, the condition number of $A$ is given by $\Vert A \Vert \Vert A^+ \Vert = \kappa \Vert A \Vert$.
+Let $b \in \CC^m$ and $A \in \CC^{m \times n}$ s.t. $\Vert A \Vert \leq 1$ where $\Vert \cdot \Vert$ signifies the operator norm (or spectral norm). Furthermore, require that $\rank(A) = k$ and $\Vert A^+ \Vert \leq \kappa$ where $A^+$ is the pseudoinverse of $A$. Hence, observe that $\Vert A \Vert \leq 1$ is equivalent to $A$ having maximum singular value $1$\footnote{To see this, simply consider Spectral Theorem applied to Hermitian matrix $A^\dag A$}. Similarly, $A^+$ has inverted singular values from $A$ and so $\Vert A^+ \Vert$ is equal to the reciprocal of the minimum nonzero singular value. Therefore, the condition number of $A$ is given by $\Vert A \Vert \Vert A^+ \Vert \leq \kappa$.
 
 So, define $x$ to be the least-squares solution to the linear system $Ax = b$ i.e. $x = A^+ b$. Then, in terms of these definitions, we define two primary goals:
 
@@ -2007,7 +2007,7 @@ and assume that we can compute and memoize these scalars $\tilde{\lambda}_i$ eff
 
 We see that we can compute $z$ efficiently (and memoize it for future queries) because it is a $k$-linear combination of left singular vectors in $\CC^r$. So, say that we wish to query an element $\tilde{x}_j$. We can simply query column $R_{\cdot, j} \in \CC^r$ (or equivalently row $R_{j, \cdot}^\dag$) and compute $R_{\cdot, j} \cdot z$. Hence, we've achieved our first goal.
 
-In order to achieve our second goal, enabling sample access to a distribution that approximates $\frac{|x_j|^2}{\Vert x \Vert^2}$, we require on more trick: rejection sampling which we detail in Section ().
+In order to achieve our second goal, enabling sample access to a distribution that approximates $\frac{|x_j|^2}{\Vert x \Vert^2}$, we require one more trick: rejection sampling which we detail in Section ().
 
 All in all, we've performed the chain of approximations,
 
@@ -2153,6 +2153,7 @@ Let $X_1, X_2, \cdots, X_s$	be i.i.d real random variables. For any positive, re
 &= e^{-ta} \prod_{i=1}^s E\Bigg[e^{tX_i}\Bigg]
 \end{align*}
 by independence.
+\qed
 \end{lemma}
 
 \begin{theorem}Hoeffding--Chernoff Inequality for matrix-valued random variables \cite{kannan2017randomized}
@@ -2201,12 +2202,16 @@ If $A$ and $B$ are Hermitian matrices, then
 \begin{align*}
 \Tr(e^{A + B}) \leq \Tr(e^A e^B)
 \end{align*}
+\qed
 \end{lemma}
 
-Hence, we can let $A = t(S - X_s)$ and $B = tX_s$. Then,
+Hence, we can let $A = t(\sum_i^{s-1} X_i)$ and $B = tX_s$. Then,
 
 \begin{align*}
-E[\Tr(e^{tS})] \leq \Tr(e^{t(S - X_s)}e^{tX_s})	
+E\Big[\Tr(e^{tS})\Big] &\leq E\Big[\Tr(e^{t\big(\sum_i^{s-1} X_i\big)}e^{tX_s})\Big]\\
+&= \Tr\Big(E\Big[e^{t\big(\sum_i^{s-1} X_i\big)}e^{tX_s}\Big]\Big) \tag{since the expectation operator commutes the summation of the trace}\\
+&= \Tr\Big(E_{X_1, X_2, \cdots, X_{s-1}}\Big[e^{t\big(\sum_i^{s-1} X_i\big)}\Big]E_{X_s}\Big[e^{tX_s}\Big]\Big) \tag{by independence}\\
+&= 
 \end{align*}
 
 
