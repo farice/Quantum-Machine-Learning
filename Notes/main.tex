@@ -79,6 +79,8 @@
 
 \subfile{nielsen_chuang_notes.tex}
 
+\subfile{crypto_notes.tex}
+
 \section{Algorithms for solving linear systems of equations}
 
 One such application of Phase Estimation (Section \ref{phase_estimation}) is with respect to solving linear systems of equations. This is the so-called HHL algorithm \cite{lloyd2010quantum}.
@@ -288,42 +290,6 @@ Y_2 \\
 Y_r
 \end{bmatrix} \in \CC^{r \times n}
 \end{align*}
-
-
-\section{Quantum Cryptography}
-% TODO - add from computer security paper
-
-Quantum cryptography or quantum key distribution (QKD) is a procedure that enables provably secure distribution of private information. 
-
-\subsection{Private key cryptography}
-
-Private key cryptosystems which employ a one-time pad (OTP) are provably secure i.e. as long as the key strings are secret, Alice and Bob can guarantee that Eve's mutual information with their unencoded information can be made as small as desired regardless of Eve's eavesdropping strategy.
-
-The major difficulty of private key cryptosystems is secure distribution of key bits. The above cryptosystem, using a OTP, requires key bits to be as long as the message and for key bits to not be reused. 
-
-\begin{exercise}(12.25)
-Consider a system with $n$ users, any pair of which would like to be able to communicate privately. Using public key cryptography how many keys are required? Using private key cryptography how many keys are required? 
-\begin{proof}
-	We'd need a unique OTP for each pair of users if we used private key cryptography. Hence, we'd need $\binom{n}{2}$ keys. 
-	
-	For public key, we'd need a private-public keypair for each user. Hence, we'd need $2n$ keys. 
-\end{proof}
-\end{exercise}
-
-\subsection{Privacy amplification and information reconciliation}
-
-Suppose Alice and Bob share correlated random classical bit strings $X$ and $Y$. Furthermore, suppose we have an upper bound on Eve's mutual information with $X$ and $Y$. We can use "information reconciliation" and then "privacy amplification" to systematically increase the correlation between their key strings, while reducing Eve's mutual information about the result, to any desired level of security.
-
-Information reconciliation simply entails conducting error-correction over a public channel, fixing errors between $X$ and $Y$, until Alice and Bob obtain a shared string $W$. In the end, Eve will also have a string $Z$ partially correlated to $W$. We can then use privacy amplification to "amplify" from $W$ a subset of bits $S$ whose correlation with $Z$ are below the desired threshold. 
-
-%\subsubsection{Privacy Amplification}
-% TODO
-%
-%\subsection{Quantum key distribution}
-% TODO
-%
-%\subsection{Quantum Error Correction Codes}
-% TODO
 
 \section{Appendix}
 
