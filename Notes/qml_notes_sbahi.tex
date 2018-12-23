@@ -12,6 +12,11 @@
 \usepackage{mathtools}
 \usepackage{float}
 \usepackage{hyperref}
+\hypersetup{
+    colorlinks=true, %set true if you want colored links
+    linktoc=all,     %set to all if you want both sections and subsections linked
+    linkcolor=blue,  %choose some color if you want links to stand out
+}
 
 %new math symbols taking no arguments
 \newcommand\0{\mathbf{0}}
@@ -2170,7 +2175,7 @@ Let $C = \Vert B \Vert_2 I$ which then trivially satisfies $\lambda_i(C) = \lamb
 \begin{definition} Total Variation Distance.
 \label{def:tve}
 
-Let $P$ and $Q$ be distinct probability measures on a sigma-algebra $\mathcal{F}$ of subsets of the sample space $\Omega$. Then, the total variation distance is given by
+Let $P$ and $Q$ be distinct probability measures on a $\sigma$-algebra $\mathcal{F}$ of subsets of the sample space $\Omega$. Then, the total variation distance is given by
 
 \begin{align*}
 \delta(P, Q) &= \sup_{A \in \mathcal{F}}\vert P(A) - Q(A)\vert
