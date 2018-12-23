@@ -2129,9 +2129,26 @@ by orthonormality.
 \end{definition}
 
 \begin{theorem}Spectral Theorem
-
+\label{thm:spec}
 Suppose $A$ is a compact\footnote{the image under $A$ acting on any bounded subset of $\mathcal{H}$ is a compact subset of $\mathcal{H}$} hermitian operator (compactness ensures $A$ has eigenvectors) on complex Hilbert space $\mathcal{H}$. Hence, there is an orthonormal basis of $\mathcal{H}$ consisting of eigenvectors of $A$. Each eigenvalue is in $\RR$.	
 \end{theorem}
+
+\begin{lemma} Let $A, B, C$ by symmetric $d \times d$ matrices satisfying $A \succeq 0$ and $B \preceq C$. Hence, $\tr(AB) \leq \tr(AC)$
+
+\begin{proof}
+	Write $A$ in its spectral decomposition $A = \sum \lambda_i \ket{i}\bra{i}$, invoking Spectral Theorem (\ref{thm:spec}). Hence,
+	
+	\begin{align*}
+		\tr(AB) &= \tr(\sum \lambda_i \ket{i}\bra{i} B)\\
+		&= \sum \lambda_i \tr(\ket{i}\bra{i} B) \tag{linearity of trace}\\
+		&= \sum \lambda_i \tr(\bra{i} B \ket{i}) \tag{cyclic property of trace}\\
+		&\leq \sum \lambda_i \tr(\bra{i} C \ket{i})\\
+		&= \sum \lambda_i \tr(\ket{i}\bra{i} C) = \tr(\sum \lambda_i \ket{i}\bra{i} C) = \tr(AC)
+	\end{align*}
+\end{proof}
+	
+\end{lemma}
+
 
 \begin{definition} Total Variation Distance.
 \label{def:tve}
@@ -2209,12 +2226,12 @@ Hence, we can let $A = t(\sum_i^{s-1} X_i)$ and $B = tX_s$. Then,
 
 \begin{align*}
 E\Big[\Tr(e^{tS})\Big] &\leq E\Big[\Tr(e^{t\big(\sum_i^{s-1} X_i\big)}e^{tX_s})\Big]\\
-&= \Tr\Big(E\Big[e^{t\big(\sum_i^{s-1} X_i\big)}e^{tX_s}\Big]\Big) \tag{since the expectation operator commutes the summation of the trace}\\
+\shortintertext{Since the expectation operator commutes with the summation of the trace by linearity of trace,}
+&= \Tr\Big(E\Big[e^{t\big(\sum_i^{s-1} X_i\big)}e^{tX_s}\Big]\Big)\\
 &= \Tr\Big(E_{X_1, X_2, \cdots, X_{s-1}}\Big[e^{t\big(\sum_i^{s-1} X_i\big)}\Big]E_{X_s}\Big[e^{tX_s}\Big]\Big) \tag{by independence}\\
-&= 
 \end{align*}
 
-
+Now, observe that from 
 	\end{proof}
 \end{theorem}
 
