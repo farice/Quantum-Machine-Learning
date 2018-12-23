@@ -2133,21 +2133,38 @@ by orthonormality.
 Suppose $A$ is a compact\footnote{the image under $A$ acting on any bounded subset of $\mathcal{H}$ is a compact subset of $\mathcal{H}$} hermitian operator (compactness ensures $A$ has eigenvectors) on complex Hilbert space $\mathcal{H}$. Hence, there is an orthonormal basis of $\mathcal{H}$ consisting of eigenvectors of $A$. Each eigenvalue is in $\RR$.	
 \end{theorem}
 
-\begin{lemma} Let $A, B, C$ by symmetric $d \times d$ matrices satisfying $A \succeq 0$ and $B \preceq C$. Hence, $\tr(AB) \leq \tr(AC)$
+\begin{lemma}
+\label{lem:psd-trace}
+Let $A, B, C$ by symmetric $d \times d$ matrices satisfying $A \succeq 0$ and $B \preceq C$. Hence, $\Tr(AB) \leq \Tr(AC)$
 
 \begin{proof}
 	Write $A$ in its spectral decomposition $A = \sum \lambda_i \ket{i}\bra{i}$, invoking Spectral Theorem (\ref{thm:spec}). Hence,
 	
 	\begin{align*}
-		\tr(AB) &= \tr(\sum \lambda_i \ket{i}\bra{i} B)\\
-		&= \sum \lambda_i \tr(\ket{i}\bra{i} B) \tag{linearity of trace}\\
-		&= \sum \lambda_i \tr(\bra{i} B \ket{i}) \tag{cyclic property of trace}\\
-		&\leq \sum \lambda_i \tr(\bra{i} C \ket{i})\\
-		&= \sum \lambda_i \tr(\ket{i}\bra{i} C) = \tr(\sum \lambda_i \ket{i}\bra{i} C) = \tr(AC)
+		\Tr(AB) &= \Tr(\sum \lambda_i \ket{i}\bra{i} B)\\
+		&= \sum \lambda_i \Tr(\ket{i}\bra{i} B) \tag{linearity of trace}\\
+		&= \sum \lambda_i \Tr(\bra{i} B \ket{i}) \tag{cyclic property of trace}\\
+		&\leq \sum \lambda_i \Tr(\bra{i} C \ket{i})\\
+		&= \sum \lambda_i \Tr(\ket{i}\bra{i} C) = \Tr(\sum \lambda_i \ket{i}\bra{i} C) = \Tr(AC)
 	\end{align*}
 \end{proof}
-	
 \end{lemma}
+
+\begin{corollary}
+\label{cor:psd-tr-norm-ineq}
+If $A \succeq 0$, then $\Tr(AB) \leq \Vert B \Vert_2 C$
+
+\begin{proof}
+Let $C = \Vert B \Vert_2 I$ which then trivially satisfies $\lambda_i(C) = \lambda_{\max}(B)$, $\forall i$ since $C$ is the diagonal matrix with diagonal values all equal to $\lambda_{\max}(B)$. Therefore, $B \preceq C$. So, we can simply apply \ref{lem:psd-trace} above,
+
+\begin{align*}
+\Tr(AB) &\leq \Tr(AC) \\
+&= \Tr\big(A \Vert B \Vert_2 I\big)\\
+&= \Vert B \Vert_2 \Tr(A)
+\end{align*}
+\end{proof}
+\end{corollary}
+
 
 
 \begin{definition} Total Variation Distance.
@@ -2225,14 +2242,27 @@ If $A$ and $B$ are Hermitian matrices, then
 Hence, we can let $A = t(\sum_i^{s-1} X_i)$ and $B = tX_s$. Then,
 
 \begin{align*}
-E\Big[\Tr(e^{tS})\Big] &\leq E\Big[\Tr(e^{t\big(\sum_i^{s-1} X_i\big)}e^{tX_s})\Big]\\
+E_X\Big[\Tr(e^{tS})\Big] &\leq E_X\Big[\Tr(e^{t\big(\sum_i^{s-1} X_i\big)}e^{tX_s})\Big]\\
 \shortintertext{Since the expectation operator commutes with the summation of the trace by linearity of trace,}
-&= \Tr\Big(E\Big[e^{t\big(\sum_i^{s-1} X_i\big)}e^{tX_s}\Big]\Big)\\
+&= \Tr\Big(E_X\Big[e^{t\big(\sum_i^{s-1} X_i\big)}e^{tX_s}\Big]\Big)\\
 &= \Tr\Big(E_{X_1, X_2, \cdots, X_{s-1}}\Big[e^{t\big(\sum_i^{s-1} X_i\big)}\Big]E_{X_s}\Big[e^{tX_s}\Big]\Big) \tag{by independence}\\
 \end{align*}
 
-Now, observe that from 
-	\end{proof}
+Now, we can apply Corollary (\ref{cor:psd-tr-norm-ineq}), which gives 
+
+\begin{align*}
+&\leq \Tr\Big(E_{X_1, X_2, \cdots, X_{s-1}}\Big[e^{t\big(\sum_i^{s-1} X_i\big)}\Big]\Big) \Big\Vert E_{X_s}\Big[e^{tX_s}\Big]\Big\Vert_2\\
+&= \Tr\Big(E_{X}\Big[e^{t\big(\sum_i^{s-1} X_i\big)}\Big]\Big) \Big\Vert E_{X}\Big[e^{tX}\Big]\Big\Vert_2 \\
+&= E_X\Big[\Tr\Big(e^{t\big(\sum_i^{s-1} X_i\big)}\Big)\Big] \Big\Vert E_{X}\Big[e^{tX}\Big]\Big\Vert_2  \intertext{So we can repeat this process iteratively, peeling an $X_i$ each time from the left term. For clarity, the next step gives,}
+E_X\Big[\Tr\Big(e^{t\big(\sum_i^{s-1} X_i\big)}\Big)\Big] &\leq E_X\Big[\Tr(e^{t\big(\sum_i^{s-2} X_i\big)}e^{tX_{s-1}})\Big]\\
+&\leq E_X\Big[\Tr\Big(e^{t\big(\sum_i^{s-2} X_i\big)}\Big)\Big] \Big\Vert E_{X}\Big[e^{tX}\Big]\Big\Vert_2 \tag{applying (\ref{cor:psd-tr-norm-ineq}) again}
+\intertext{Therefore, after peeling all terms but the last $X_i$, we have}
+E_X\Big[\Tr(e^{tS})\Big] &\leq E_X\Big[\Tr\Big(e^{tX}\Big)\Big] \Big\Vert E_{X}\Big[e^{tX}\Big]\Big\Vert_2^{s-1} \intertext{Hence, since the trace is the sum of eigenvalues, $\Tr(e^{tX}) \leq d \lambda_{\max}(e^{tX})$ i.e. the worst case of all $d$ eigenvalues being the max}
+&\leq d \Big\Vert E_{X}\Big[e^{tX}\Big]\Big\Vert_2^{s}
+\end{align*}
+
+as desired.
+\end{proof}
 \end{theorem}
 
 
