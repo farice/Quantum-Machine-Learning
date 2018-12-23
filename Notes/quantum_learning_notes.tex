@@ -211,68 +211,8 @@ Y_r
 \end{bmatrix} \in \CC^{r \times n}
 \end{align*}
 
-\section{Appendix}
-
-\begin{definition}
-\label{pauli}
-Pauli Matrices
-
-\begin{align*}
-\sigma_x &= X = \begin{pmatrix} 0 & 1 \\ 1 & 0\end{pmatrix} \\
-\sigma_y &= Y = \begin{pmatrix} 0 & -i \\ i & 0\end{pmatrix}\\
-\sigma_z &= Z = \begin{pmatrix} 1 & 0 \\ 0 & -1\end{pmatrix}
-\end{align*}
-\end{definition}
-
-\begin{definition}
-\label{bellstates}
-Bell States
-
-\begin{align*}
-\frac{\ket{00} + \ket{11} }{\sqrt{2}} \\	
-\frac{\ket{00} - \ket{11} }{\sqrt{2}} \\	
-\frac{\ket{10} + \ket{01} }{\sqrt{2}} \\	
-\frac{\ket{01} - \ket{10} }{\sqrt{2}}
-\end{align*}
-\end{definition}
-
-\begin{definition}
-\label{posop}
-Positive Operators
-
-Let $A$ be a bounded\footnote{$\Vert Av \Vert \leq M\Vert v \Vert$ for some $M>0$ and all $v \in \mathcal{H}$} linear operator on complex Hilbert space $\mathcal{H}$. The following conditions are equivalent to $A$ being positive
-
-\begin{enumerate}
-\item $A=S^\dag S$ for some bounded operator $S$ on $\mathcal{H}$
-\item $A$ is hermitian and $\bra{x} A \ket{x} \geq 0$ for every $\ket{x} \in \mathcal{H}$
-\item the spectrum of $A$ is non-negative
-\end{enumerate}
-\end{definition}
-
-\begin{definition}
-\label{trop}
-Trace of an Operator
-
-Let $\{\ket{i}\}$ be an orthonormal basis for $A$ and so
-\begin{align*}
-\tr(A) &= \sum_i A_{ii} \\
-&= \sum_i \bra{i} A \ket{i}	
-\end{align*}
-
-Hence, if we extend $\ket{\psi}$ to the orthonormal basis $\{\ket{i}\}$ which includes $\ket{\psi}$ as the first element (for example via the Gram-Schmidt procedure) then
-
-\begin{align*}
-	\tr(A\ket{\psi}\bra{\psi}) &= \sum_i \bra{i} A\ket{\psi}\bra{\psi}\ket{i}	 \\
-	&= \bra{\psi} A\ket{\psi}
-\end{align*}
-
-by orthonormality.
-\end{definition}
-
-\begin{theorem}Spectral Theorem
-\label{thm:spec}
-Suppose $A$ is a compact\footnote{the image under $A$ acting on any bounded subset of $\mathcal{H}$ is a compact subset of $\mathcal{H}$} hermitian operator (compactness ensures $A$ has eigenvectors) on complex Hilbert space $\mathcal{H}$. Hence, there is an orthonormal basis of $\mathcal{H}$ consisting of eigenvectors of $A$. Each eigenvalue is in $\RR$.	
-\end{theorem}
+\begin{subappendices}
+\subsection{Appendix}
 
 \begin{lemma}
 \label{lem:psd-trace}
@@ -405,5 +345,6 @@ E_X\Big[\Tr(e^{tS})\Big] &\leq E_X\Big[\Tr\Big(e^{tX}\Big)\Big] \Big\Vert E_{X}\
 as desired.
 \end{proof}
 \end{theorem}
+\end{subappendices}
 
 \end{document}
