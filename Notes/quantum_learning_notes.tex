@@ -200,10 +200,17 @@ As described above, we begin by length-square sampling the original matrix $A \i
 p_i = \frac{\Vert A_{(i, \cdot)}\Vert^2}{\Vert A \Vert_F^2} 	
 \end{align*}
 
-and output random row $Y = A_{(i, \cdot)} / \sqrt{s p_i} = \frac{1}{\sqrt{s}}\frac{A_{(i, \cdot)}}{\Vert A_{(i, \cdot)}\Vert}\Vert A\Vert_F$ (which is just a scaling of the $i$th row of $A$\footnote{The reason that we scale by $s$ is so that the expectations of $A^\dag A$ and $R^\dag R$ coincide in the theorem that follows. The reason that we scale by $p_i$ is so that the norms of all rows are equivalent---a fact which we'll utilize when we sample $R$ column-wise.}). In other words,
+and output random row 
 
 \begin{align*}
-\Pr(Y = A_{(i, \cdot)} / \sqrt{s p_i}) = p_i
+ 	Y &= \frac{1}{\sqrt{s p_i}} \bra{A_{(i, \cdot)}} \\\
+ 	&= \frac{1}{\sqrt{s}}\frac{\Vert A\Vert_F}{\Vert A_{(i, \cdot)}\Vert}\bra{A_{(i, \cdot)}}
+\end{align*}
+
+which is just a scaling of the $i$th row of $A$\footnote{The reason that we scale by $s$ is so that the expectations of $A^\dag A$ and $R^\dag R$ coincide in the theorem that follows. The reason that we scale by $p_i$ is so that the norms of all rows are equivalent---a fact which we'll utilize when we sample $R$ column-wise.}. In other words,
+
+\begin{align*}
+\Pr(Y = \frac{1}{\sqrt{s p_i}} \bra{A_{(i, \cdot)}}) = p_i
 \end{align*}
 
 
@@ -215,11 +222,11 @@ R &= \begin{bmatrix}
 Y_1 \\
 Y_2 \\
 \vdots \\
-Y_r
+Y_s
 \end{bmatrix} \in \CC^{s \times n}
 \end{align}
 
-Note that $Y_k$ denotes the random row outputted by the procedure on the $k$th i.i.d. draw.
+Note that $\bra{Y_k}$ denotes the random row outputted by the procedure on the $k$th i.i.d. draw.
 
 \begin{theorem}
 Let $A \in \CC^{m \times n}$ and $R \in \CC^{r \times n}$ be constructed by the length-square sampling and scaling so that $E[R^\dag R] = E[A^\dag A]$ (requirements that are met by $R$ defined in (\ref{def:R})). Then, for all $\epsilon \in [0, \Vert A \Vert / \Vert A \Vert_F]$\footnote{If $\epsilon \geq \Vert A \Vert / \Vert A \Vert_F$, then we can simply use $\hat{0}$ to approximate $A^\dag A$}, we have
@@ -238,8 +245,29 @@ Hence, for $s \geq (4 \ln \frac{2n}{\eta}) / \epsilon^2$, with probability at le
 	From our definition above, we have that 
 	
 	\begin{align*}
-		R^\dag R &= 
-	\end{align*}
+		R^\dag R &= \begin{bmatrix}
+Y_1^\dag &
+Y_2^\dag &
+\hdots &
+Y_s^\dag
+\end{bmatrix}\begin{bmatrix}
+Y_1 \\
+Y_2 \\
+\vdots \\
+Y_s
+\end{bmatrix} \\
+&= \sum_{k=1}^s \ket{Y_k}\bra{Y_k} \intertext{Let $i_k$ give the index of the row sampled from $A$ on the $k$th draw. Hence, }\\
+&= \frac{1}{s} \sum_{k=1}^s \frac{1}{p_{i_k}} \ket{A_{(i_k, \cdot)}}\bra{A_{(i_k, \cdot)}}
+\end{align*}
+
+Furthermore,
+
+\begin{align*}
+E[R^\dag R] &= 	\frac{1}{s} \sum_{k=1}^s \sum_{i_k = 1}^m \frac{p_{i_k}}{p_{i_k}} \ket{A_{(i_k, \cdot)}}\bra{A_{(i_k, \cdot)}} \\
+&= \frac{1}{s} \sum_{k=1}^s A^\dag A \\
+&= A^\dag A
+\end{align*}
+
 
 \end{proof}
 \end{theorem}
