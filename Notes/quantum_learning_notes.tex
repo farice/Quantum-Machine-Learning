@@ -196,9 +196,10 @@ Now that we've sketched the steps of this process, we detail each approximation 
 
 As described above, we begin by length-square sampling the original matrix $A \in \CC^{m \times n }$. Suppose we want to draw $s$ rows in $s$ i.i.d. trials. Then, pick row index $i$ of $A$ with probability
 
-\begin{align*}
+\begin{align}
+\label{def:A-prob}
 p_i = \frac{\Vert A_{(i, \cdot)}\Vert^2}{\Vert A \Vert_F^2} 	
-\end{align*}
+\end{align}
 
 and output random row 
 
@@ -238,7 +239,7 @@ Let $A \in \CC^{m \times n}$ and $R \in \CC^{r \times n}$ be constructed by the 
 Hence, for $s \geq (4 \ln \frac{2n}{\eta}) / \epsilon^2$, with probability at least $(1 - \eta)$ we have
 
 \begin{align*}
-	\Vert R^\dag R - A^\dag A \Vert \epsilon\leq \Vert A \Vert \Vert A \Vert_F
+	\Vert R^\dag R - A^\dag A \Vert \leq \epsilon\Vert A \Vert \Vert A \Vert_F
 \end{align*}
 
 \begin{proof}
@@ -268,10 +269,47 @@ E[R^\dag R] &= 	\frac{1}{s} \sum_{k=1}^s \sum_{i_k = 1}^m \frac{p_{i_k}}{p_{i_k}
 &= A^\dag A
 \end{align*}
 
+Note that similarly $E[R^\dag R] = \frac{1}{s} A^\dag A$.
+
+\begin{lemma}
+	Let $X = Y^\dag Y - E[Y^\dag Y]$. Then,
+	
+	\begin{align}
+	E[X^2] &\preceq E[(Y^\dag Y)^2] \\
+	&= A^\dag A \Vert A \Vert_F^2 \frac{1}{s^2}	
+	\end{align}
+	
+	Furthermore,
+	
+	\begin{align}
+	\Vert X \Vert_2 = \frac{1}{s} \Vert A \Vert^2_F	
+	\end{align}
+\begin{proof}
+First, observe that $E[X^2]$ is the element-wise variance of $Y^\dag Y$ and $E[(Y^\dag Y)^2]$ is the corresponding second moment. Hence, the relation $E[X^2] \leq E[(Y^\dag Y)^2]$ holds element-wise which implies that the matrix relation $E[X^2] \preceq E[(Y^\dag Y)^2]$ holds as well.
+
+Furthermore, 
+
+\begin{align*}
+E[(Y^\dag Y)^2] &= \frac{1}{s^2} \sum_{i = 1}^m \frac{p_{i}}{p_{i}^2} \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}} \\
+&= \frac{1}{s^2} \sum_{i = 1}^m \frac{\Vert A \Vert_F^2}{\bra{A_{(i, \cdot)}}\ket{A_{(i, \cdot)}}} \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\tag{using (\ref{def:A-prob})}\\
+&= \frac{1}{s^2} \sum_{i = 1}^m \Vert A \Vert_F^2 \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}} = \frac{\Vert A \Vert_F^2}{s^2} \sum_{i = 1}^m  \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}} \\
+&= A^\dag A \Vert A \Vert_F^2 \frac{1}{s^2}	
+\end{align*}
+
+Recall that $E[R^\dag R] = \frac{1}{s} A^\dag A$. So, observe that
+
+\begin{align*}
+\Vert X \Vert_2 &= \Vert Y^\dag Y - E[Y^\dag Y] \Vert_2 \\
+&= \frac{1}{s}\Bigg\Vert\frac{1}{p_i}\ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}} - A^\dag A \Bigg\Vert_2 \\
+&\leq \frac{1}{s} \max\Big\{ \Big\Vert\frac{1}{p_i}\ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\Big\Vert_2 ,  \Big\Vert A^\dag A \Big\Vert_2\Big\}\\
+&\leq \frac{1}{s} \max\Big\{ \frac{\Vert A \Vert_F^2}{\Vert \ket{A_{(i, \cdot)}} \Vert_2^2}\Big \Vert \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\Big\Vert_2 ,  \Vert A^\dag A \Vert_F^2\Big\} \intertext{using $\Vert A^\dag A \Vert_2 = \Vert A \Vert_2^2 \leq \Vert A \Vert_F^2$ and plugging in (\ref{def:A-prob}).}\\
+&= \frac{1}{s} \Vert A \Vert^2_F	
+\end{align*}
+\end{proof}
+\end{lemma}
 
 \end{proof}
 \end{theorem}
-
 
 \begin{subappendices}
 \subsection{Appendix}
