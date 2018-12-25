@@ -229,6 +229,59 @@ Y_s
 
 Note that $\bra{Y_k}$ denotes the random row outputted by the procedure on the $k$th i.i.d. draw.
 
+\begin{lemma}
+	Let $X = Y^\dag Y - E[Y^\dag Y]$. Then,
+	
+	\begin{align}
+	E[X^2] &\preceq E[(Y^\dag Y)^2] \\
+	&= A^\dag A \Vert A \Vert_F^2 \frac{1}{s^2}	
+	\end{align}
+	
+	Furthermore,
+	
+	\begin{align}
+	\Vert X \Vert_2 = \frac{1}{s} \Vert A \Vert^2_F	
+	\end{align}
+\begin{proof}
+First, observe that $E[X^2]$ is the element-wise variance of $Y^\dag Y$ and $E[(Y^\dag Y)^2]$ is the corresponding second moment. Hence, the relation $E[X^2] \leq E[(Y^\dag Y)^2]$ holds element-wise which implies that the matrix relation $E[X^2] \preceq E[(Y^\dag Y)^2]$ holds as well.
+
+Furthermore, 
+
+\begin{align*}
+E[(Y^\dag Y)^2] &= \frac{1}{s^2} \sum_{i = 1}^m \frac{p_{i}}{p_{i}^2} \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}} \\
+&= \frac{1}{s^2} \sum_{i = 1}^m \frac{\Vert A \Vert_F^2}{\bra{A_{(i, \cdot)}}\ket{A_{(i, \cdot)}}} \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\tag{using (\ref{def:A-prob})}\\
+&= \frac{1}{s^2} \sum_{i = 1}^m \Vert A \Vert_F^2 \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}} = \frac{\Vert A \Vert_F^2}{s^2} \sum_{i = 1}^m  \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}} \\
+&= A^\dag A \Vert A \Vert_F^2 \frac{1}{s^2}	
+\end{align*}
+
+Recall that $E[R^\dag R] = \frac{1}{s} A^\dag A$. So, observe that
+
+\begin{align*}
+\Vert X \Vert_2 &= \Vert Y^\dag Y - E[Y^\dag Y] \Vert_2 \\
+&= \frac{1}{s}\Bigg\Vert\frac{1}{p_i}\ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}} - A^\dag A \Bigg\Vert_2 \\
+&\leq \frac{1}{s} \max\Big\{ \Big\Vert\frac{1}{p_i}\ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\Big\Vert_2 ,  \Big\Vert A^\dag A \Big\Vert_2\Big\}\\
+&\leq \frac{1}{s} \max\Big\{ \frac{\Vert A \Vert_F^2}{\Vert \ket{A_{(i, \cdot)}} \Vert_2^2}\Big \Vert \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\Big\Vert_2 ,  \Vert A^\dag A \Vert_F^2\Big\} \intertext{using $\Vert A^\dag A \Vert_2 = \Vert A \Vert_2^2 \leq \Vert A \Vert_F^2$ and plugging in (\ref{def:A-prob}).}\\
+&= \frac{1}{s} \Vert A \Vert^2_F	
+\end{align*}
+\end{proof}
+\end{lemma}
+
+
+\begin{proposition}
+	If $t > 0, t \in \CC$ satisfies $\Vert tX \Vert_2 \leq 1$ for all possible values of $X$, then 
+	
+	\begin{align}
+	\begin{split}
+	\Vert E[e^{\pm tX}] \Vert_2 &\leq 1 + \frac{t^2}{s^2} \Vert A \Vert_2^2 \Vert A \Vert_F^2 \\
+	&\leq e^{t^2 \Vert A\Vert_2^2 \Vert A \Vert_F^2 / s^2}	
+	\end{split}
+	\end{align}
+	
+	\begin{proof}
+		
+	\end{proof}
+\end{proposition}
+
 \begin{theorem}
 Let $A \in \CC^{m \times n}$ and $R \in \CC^{r \times n}$ be constructed by the length-square sampling and scaling so that $E[R^\dag R] = E[A^\dag A]$ (requirements that are met by $R$ defined in (\ref{def:R})). Then, for all $\epsilon \in [0, \Vert A \Vert / \Vert A \Vert_F]$\footnote{If $\epsilon \geq \Vert A \Vert / \Vert A \Vert_F$, then we can simply use $\hat{0}$ to approximate $A^\dag A$}, we have
 
@@ -269,44 +322,7 @@ E[R^\dag R] &= 	\frac{1}{s} \sum_{k=1}^s \sum_{i_k = 1}^m \frac{p_{i_k}}{p_{i_k}
 &= A^\dag A
 \end{align*}
 
-Note that similarly $E[R^\dag R] = \frac{1}{s} A^\dag A$.
-
-\begin{lemma}
-	Let $X = Y^\dag Y - E[Y^\dag Y]$. Then,
-	
-	\begin{align}
-	E[X^2] &\preceq E[(Y^\dag Y)^2] \\
-	&= A^\dag A \Vert A \Vert_F^2 \frac{1}{s^2}	
-	\end{align}
-	
-	Furthermore,
-	
-	\begin{align}
-	\Vert X \Vert_2 = \frac{1}{s} \Vert A \Vert^2_F	
-	\end{align}
-\begin{proof}
-First, observe that $E[X^2]$ is the element-wise variance of $Y^\dag Y$ and $E[(Y^\dag Y)^2]$ is the corresponding second moment. Hence, the relation $E[X^2] \leq E[(Y^\dag Y)^2]$ holds element-wise which implies that the matrix relation $E[X^2] \preceq E[(Y^\dag Y)^2]$ holds as well.
-
-Furthermore, 
-
-\begin{align*}
-E[(Y^\dag Y)^2] &= \frac{1}{s^2} \sum_{i = 1}^m \frac{p_{i}}{p_{i}^2} \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}} \\
-&= \frac{1}{s^2} \sum_{i = 1}^m \frac{\Vert A \Vert_F^2}{\bra{A_{(i, \cdot)}}\ket{A_{(i, \cdot)}}} \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\tag{using (\ref{def:A-prob})}\\
-&= \frac{1}{s^2} \sum_{i = 1}^m \Vert A \Vert_F^2 \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}} = \frac{\Vert A \Vert_F^2}{s^2} \sum_{i = 1}^m  \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}} \\
-&= A^\dag A \Vert A \Vert_F^2 \frac{1}{s^2}	
-\end{align*}
-
-Recall that $E[R^\dag R] = \frac{1}{s} A^\dag A$. So, observe that
-
-\begin{align*}
-\Vert X \Vert_2 &= \Vert Y^\dag Y - E[Y^\dag Y] \Vert_2 \\
-&= \frac{1}{s}\Bigg\Vert\frac{1}{p_i}\ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}} - A^\dag A \Bigg\Vert_2 \\
-&\leq \frac{1}{s} \max\Big\{ \Big\Vert\frac{1}{p_i}\ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\Big\Vert_2 ,  \Big\Vert A^\dag A \Big\Vert_2\Big\}\\
-&\leq \frac{1}{s} \max\Big\{ \frac{\Vert A \Vert_F^2}{\Vert \ket{A_{(i, \cdot)}} \Vert_2^2}\Big \Vert \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\Big\Vert_2 ,  \Vert A^\dag A \Vert_F^2\Big\} \intertext{using $\Vert A^\dag A \Vert_2 = \Vert A \Vert_2^2 \leq \Vert A \Vert_F^2$ and plugging in (\ref{def:A-prob}).}\\
-&= \frac{1}{s} \Vert A \Vert^2_F	
-\end{align*}
-\end{proof}
-\end{lemma}
+Note that similarly $E[Y^\dag Y] = \frac{1}{s} A^\dag A$.
 
 \end{proof}
 \end{theorem}
@@ -445,6 +461,15 @@ E_X\Big[\Tr(e^{tS})\Big] &\leq E_X\Big[\Tr\Big(e^{tX}\Big)\Big] \Big\Vert E_{X}\
 as desired.
 \end{proof}
 \end{theorem}
+
+\begin{lemma}
+If $B \in \CC$ is a hermitian matrix for which $\Vert B \Vert_2 \leq 1$, then $e^{B} \leq I + B + B^2$
+
+\begin{proof}
+	
+\end{proof}
+\end{lemma}
+
 \end{subappendices}
 
 \end{document}
