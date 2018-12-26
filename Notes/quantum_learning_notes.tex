@@ -230,12 +230,20 @@ Y_s
 Note that $\bra{Y_k}$ denotes the random row outputted by the procedure on the $k$th i.i.d. draw.
 
 \begin{lemma}
-	Let $X = Y^\dag Y - E[Y^\dag Y]$. Then,
+	Let $X = Y^\dag Y - E[Y^\dag Y]$ which evidently satisfies $E[X] = 0$. Then,
 	
 	\begin{align}
 	E[X^2] &\preceq E[(Y^\dag Y)^2] \\
 	&= A^\dag A \Vert A \Vert_F^2 \frac{1}{s^2}	
 	\end{align}
+	
+	and so 
+	
+	\begin{align}
+	\label{eq:expect-x-2}
+	\Vert E[X^2] \Vert_2 \leq \frac{1}{s^2} \Vert A \Vert_2^2 \Vert A \Vert_F^2	
+	\end{align}
+
 	
 	Furthermore,
 	
@@ -278,7 +286,7 @@ Recall that $E[R^\dag R] = \frac{1}{s} A^\dag A$. So, observe that
 	\end{align}
 	
 	\begin{proof}
-		
+		First, from (\ref{lemma:exp-eigen-approx}) we know that $E[e^{tX}] \preceq E[I + X + X^2] = I + E[X^2]$ since $E[X] = 0$. Hence, we have the proposition by (\ref{eq:expect-x-2}).
 	\end{proof}
 \end{proposition}
 
@@ -361,8 +369,6 @@ Note that the singular values of $B$ coincide with the eigenvalues of $B$ since 
 \end{align*}
 \end{proof}
 \end{corollary}
-
-
 
 \begin{definition} Total Variation Distance.
 \label{def:tve}
@@ -463,10 +469,22 @@ as desired.
 \end{theorem}
 
 \begin{lemma}
-If $B \in \CC$ is a hermitian matrix for which $\Vert B \Vert_2 \leq 1$, then $e^{B} \leq I + B + B^2$
+\label{lemma:exp-eigen-approx}
+If $B \in \CC^{d \times d}$ is a hermitian matrix for which $\Vert B \Vert_2 \leq 1$, then $e^{B} \leq I + B + B^2$
 
 \begin{proof}
+	We know that $e^{\lambda_i} \leq 1 + \lambda_i + \lambda_i^2$, $|\lambda_i|^2 \leq 1$. Hence,
 	
+	\begin{align*}
+	e^{\lambda_i} \ket{v_i}\bra{v_i} \leq (1 + \lambda_i + \lambda_i^2) 	\ket{v_i}\bra{v_i}
+	\end{align*}
+
+	where $\ket{v_i}$ is the corresponding eigenvector. This then implies
+	
+	\begin{align*}
+	e^B &= \sum_{i=1}^d e^{\lambda_i} \ket{v_i}\bra{v_i} \preceq \sum_{i=1}^d (1 + \lambda_i + \lambda_i^2) \ket{v_i}\bra{v_i} \\
+	&= I + B + B^2
+	\end{align*}
 \end{proof}
 \end{lemma}
 
