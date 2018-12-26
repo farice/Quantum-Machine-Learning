@@ -276,6 +276,7 @@ Recall that $E[R^\dag R] = \frac{1}{s} A^\dag A$. So, observe that
 
 
 \begin{proposition}
+\label{prop:expect-exp-mat-norm}
 	If $t > 0, t \in \CC$ satisfies $\Vert tX \Vert_2 \leq 1$ for all possible values of $X$, then 
 	
 	\begin{align}
@@ -332,6 +333,29 @@ E[R^\dag R] &= 	\frac{1}{s} \sum_{k=1}^s \sum_{i_k = 1}^m \frac{p_{i_k}}{p_{i_k}
 
 Note that similarly $E[Y^\dag Y] = \frac{1}{s} A^\dag A$.
 
+So, we can define $X_i = \ket{Y_k}\bra{Y_k} - E\Big[\ket{Y_k}\bra{Y_k}\Big]$ which is evidently an i.i.d. copy of $X$ as we've defined previously. Hence,
+
+\begin{align*}
+\sum_{i=1}^s X_i &= R^\dag R - E[R^\dag R] \\
+&= R^\dag R - A^\dag A	
+\end{align*}
+
+Now, we can first apply Theorem \ref{thm:chern-mat-eigen} with $a = \epsilon \Vert A \Vert_2 \Vert A \Vert_F$,
+
+\begin{align*}
+\Pr(\Big\Vert \Big(\sum_{i=1}^s X_i\Big)\Big\Vert_2 \geq \epsilon \Vert A \Vert_2 \Vert A \Vert_F ) \\ &\leq ne^{-t \epsilon \Vert A \Vert_2 \Vert A \Vert_F} (\Vert E[e^{tX}]\Vert_2^s + \Vert E[e^{-tX}]\Vert_2^s)	
+\intertext{for any $t > 0$. Hence, we can apply Proposition \ref{prop:expect-exp-mat-norm} which then gives us}\\
+	&\leq 2ne^{-t \epsilon \Vert A \Vert_2 \Vert A \Vert_F} e^{t^2 \Vert A\Vert_2^2 \Vert A \Vert_F^2 / s^2}	
+	\intertext{for $t \leq s / \Vert A \Vert_F^2$. Hence, we can set $t = \frac{\epsilon s}{2 \Vert A \Vert_F \Vert A \Vert_2}$ (which is indeed less than $s / \Vert A \Vert_F^2$) and finally,}
+	&\leq 2ne^{- \epsilon^2 s / 4}
+\end{align*}
+
+Therefore, if we require that $s \geq (4 \ln \frac{2n}{\eta}) / \epsilon^2$ we then have
+
+\begin{align*}
+\Pr(\Big\Vert \Big(\sum_{i=1}^s X_i\Big)\Big\Vert_2 \geq \epsilon \Vert A \Vert_2 \Vert A \Vert_F ) &\leq 2ne^{- \frac{\epsilon^2}{4} \frac{4 \ln \frac{2n}{\eta}}{ \epsilon^2}} \\
+&= 2ne^{- \ln \frac{2n}{\eta}} = \eta
+\end{align*}
 \end{proof}
 \end{theorem}
 
