@@ -359,8 +359,45 @@ Therefore, if we require that $s \geq (4 \ln \frac{2n}{\eta}) / \epsilon^2$ we t
 \end{proof}
 \end{theorem}
 
+\section{Optimal Quantum Sample Complexity}
+
 \begin{subappendices}
 \subsection{Appendix}
+
+\begin{definition}
+Trace Distance
+
+The trace distance $T(\cdot \cdot)$ is a metric on the space of density operators and gives a measure of distinguishability between states. In particular, let $\rho, \sigma$ be density operators,
+
+\begin{align*}
+	T(\rho, \sigma) &= \frac{1}{2} \Tr [\sqrt{(\rho - \sigma)^2}] \\
+	&= \frac{1}{2} \sum_i |\lambda_i|
+\end{align*}
+
+where $\lambda_i$ are the eigenvalues of Hermitian $\rho - \sigma$.
+
+\end{definition}
+
+\begin{lemma}
+The maximum probability of distinguishing between two states with an optimal measurement is given by
+
+\begin{align*}
+	1/2[1 + T(\rho_1, \rho_2)]
+\end{align*}
+	
+\end{lemma}
+\begin{proof}
+Say that we have the ensemble $\{ (1/2, \rho_1), (1/2, \rho_2)\}$ where we chose $1/2$ because it gives the worst case where each density matrix is equally likely. We seek to define a POVM $\{E_1, E_2 \}$ where $E_1$ indicates $\rho_1$ and similarly for $\rho_2$. hence the probability of success is given by
+
+\begin{align*}
+1/2\Tr(E_1\rho_1) + 1/2\Tr(E_2\rho_2) \\
+&= 1/2\Tr(E_1\rho_1) + 1/2\Tr((I - E_1)\rho_2) \tag{completeness of POVM} \\
+&= 1/2\Tr(\rho_2) + 1/2\Tr(\rho_1 - \rho_2) \tag{linearity of trace} \\
+&= 1/2[ 1 + \Tr(\rho_1 - \rho_2)] \tag{$\Tr(\rho) = 1$ for any density operator}
+\end{align*}
+	
+\end{proof}
+
 
 \begin{lemma}
 \label{lem:psd-trace}
