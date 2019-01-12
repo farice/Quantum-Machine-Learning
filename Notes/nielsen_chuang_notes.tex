@@ -1761,4 +1761,72 @@ as expected.
 
 \end{exercise}
 
+\section{Nielsen \& Chuang: Chapter 11}
+
+\begin{exercise}(11.8)
+
+Let $X, Y$ be i.i.d random variables uniformly distributed over set $\{0, 1\}$. Hence, 
+
+\begin{align*}
+H(X) &= H(1/2) = 1 = H(Y)\\
+H(X,Y) &= - 4 [ 1/4 \log (1/4)] = 2\\
+H(X \mid Y) &= H(X, Y) - H(Y)\\ &= 2 - 1 = 1 \\&= H(Y \mid X) \\
+I(X : Y) &= H(X) - H(X \mid Y)\\ &= 0\\
+\end{align*}
+
+Now, let $Z = X \oplus Y$. Then, 
+
+\begin{align*}
+H(Z) &= H(1/2) = 1 \\
+H(X, Y, Z) &= - 4 [ 1/4 \log (1/4)] = 2 \\
+H(X,Y \mid Z) &= H(X, Y, Z) - H(Z)\\ &= 1\\
+I(X, Y : Z) &= H(X, Y) - H(X, Y \mid Z) \\ &= 2 - 1 = 1
+\end{align*}
+
+Furthermore,
+
+\begin{align*} 
+H(X, Z) &= 2\\
+H(X \mid Z) &= H(X, Z) - H(Z)\\
+&= 2 - 1 = 1 \\ 
+I(X : Z) &= H(X) - H(X \mid Z) \\
+&= 1 - 1 = 0
+\end{align*}
+
+Similarly, $I(Y:Z) = 0)$. 
+
+$\therefore$ $I(X:Z) + I(Y:Z) < I(X, Y : Z)$ in this case.
+
+Thinking through this problem intuitively, it just says that if we've specified both $X,Y$, then we don't need to send a bit for $Z$ through our channel since we can compute its value readily. However, if we send just $X$ or $Y$, the XOR function provides uniform outcomes across $Z$.
+\end{exercise}
+
+\begin{exercise}(11.9) Let r.v. $X_1$ be uniformly distributed across $\{ 0, 1\}$. Furthermore, require that $X_2 = Y_2 = Y_1 = X_1$ (identically). 
+
+In this case,
+
+\begin{align*}
+	H(X_1 \mid Y_1 ) &= H(X_1, Y_1) - H(Y_1) \\
+	&= H(1/2) - H(1/2) = 0 \\
+	I(X_1 : Y_1) &= H(X_1) - H(X_1 \mid Y_1) \\
+	1 - 0 &= 1 \\
+	&= I(X_2 \mid Y_2)
+\end{align*}
+
+However,
+
+\begin{align*}
+	H(X_1, X_2 \mid Y_1, Y_2 ) &= H(X_1, X_2, Y_1, Y_2) - H(X_1, X_2) \\
+	&= H(1/2) - H(1/2) = 0 \\
+	I(X_1 : Y_1) &= H(X_1, X_2) - H(X_1, X_2 \mid Y_1, Y_2) \\
+	&= 1 - 0 = 0
+\end{align*}
+
+$\therefore$ $I(X_1 : Y_1) + I(X_2 : Y_2) > I(X_1, X_2 : Y_1, Y_2)$ in this case.
+
+Intuitively, the random variables are distributed identically, so we always only need a single bit to communicate their distribution across a channel. Hence, there will always be a single bit of mutual information across the r.v.'s since their conditional entropy will be zero bits (we know everything we need to know given one variable's value) and their joint entropy will be a single bit.
+\end{exercise}
+
+
+Conclusion from the above two exercises: mutual information is neither sub-additive nor super-additive.
+
 \end{document}
