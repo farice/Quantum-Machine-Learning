@@ -377,15 +377,34 @@ The sample complexity of $A$ is the maximum number invocations of the $QPEX(c,D)
 
 \subsubsection{Quantum Learning Models: Agnostic Setting}
 
-For a joint distribution $D : {0, 1}n+1 → [0, 1]$ over the set of examples, the learner has access to an $QAEX(D)$ oracle which acts on $\ket{0}^{\otimes n}\ket{0}$ and produces a quantum example $\sum_{(x, b)\in\{0,1\}^{n+1}} D(x,b)\ket{x,b}$. 
+For a joint distribution $D : \{0, 1\}^{n+1} \rightarrow [0, 1]$ over the set of examples, the learner has access to an $QAEX(D)$ oracle which acts on $\ket{0}^{\otimes n}\ket{0}$ and produces a quantum example $\sum_{(x, b)\in\{0,1\}^{n+1}} D(x,b)\ket{x,b}$. 
 
-A learning algorithm A is an $(\epsilon, \delta)$-agnostic quantum learner for $C$ if for every distribution $D$, given access to the QAEX(D) oracle, $A$ outputs an $h \in C$ such that $err_D (h) \leq \opt_D(h) + \epsilon$ with probability at least $1 - \delta$.
+A learning algorithm A is an $(\epsilon, \delta)$-agnostic quantum learner for $C$ if for every distribution $D$, given access to the $QAEX(D)$ oracle, $A$ outputs an $h \in C$ such that $err_D (h) \leq opt_D(h) + \epsilon$ with probability at least $1 - \delta$.
 
 The sample complexity of $A$ is the maximum number invocations of the $QAEX(D)$ oracle over all distributions $D$ and over the learner’s internal randomness. The $(\epsilon, \delta)$-agnostic quantum sample complexity of a concept class $C$ is the minimum sample complexity over all $(\epsilon, \delta)$-agnostic quantum learners for $C$.
 
 
 \begin{subappendices}
-\subsection{Appendix}
+\subsection{Pretty Good Measurement (PGM)}
+
+Given a set of density matrices $\{\sigma_i\}$ and a quantum state $\rho$ we are promised that $\rho$ is in state $\sigma_i$ with probability $p_i$. In the general case we have $i \in [m]$ and of course $\sum_{i=1}^m p_i = 1$. Our goal is then to successfully identify which of the $\sigma_i$ that our state $\rho$ is actually in. This is known as Quantum Hypothesis Testing. The “real life” analog of this is what you can imagine Bob trying to do for the case of the transported information from alice in terms of the Holevo Bound for information transportation.
+
+Getting at the problem we want to at least maximize our probability of getting the state right. This maximization with respect to both the probabilities on each state as well as with respect to any randomness that our approach employs. We then must choose a Quantum POVM $\{E_i\}$ that carries put a measurement and maximizes our probability of getting the state right.
+
+So say we pick a POVM. Hence, we know that
+
+\begin{align*}
+\Pr(Success)= p_i \Tr (\sigma_i E_i)
+\end{align*}
+
+
+So this is the quantity that we seek to maximize. 
+
+We've shown above that the trace distance provides the solution for $m=2$. As it turns out for $m>2$ this is not an easy problem. However, PGM provides a sound approximation. Consider
+
+
+
+\subsection{Trace Distance}
 
 \begin{definition}
 Trace Distance
@@ -435,7 +454,7 @@ Therefore, the optimal projection $E_1$ is onto the positive eigenspace of $(p_1
 \end{align*}
  
 	
-We did implicitly assume that $E_1 + E_2 = I$ where we could've had an additional indeterminate $E_3$. However, the proof would still follow in any case.
+We did implicitly assume that $E_1 + E_2 = I$ where we could've had an additional indeterminate $E_3$. However, the proof would still follow in any case (\cite{nielsen2010quantum}).
 \end{proof}
 
 
