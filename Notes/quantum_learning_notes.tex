@@ -387,7 +387,7 @@ The sample complexity of $A$ is the maximum number invocations of the $QAEX(D)$ 
 \begin{subappendices}
 \subsection{Pretty Good Measurement (PGM)}
 
-Given a set of density matrices $\{\sigma_i\}$ and a quantum state $\rho$ we are promised that $\rho$ is in state $\sigma_i$ with probability $p_i$. In the general case we have $i \in [m]$ and of course $\sum_{i=1}^m p_i = 1$. Our goal is then to successfully identify which of the $\sigma_i$ that our state $\rho$ is actually in. This is known as Quantum Hypothesis Testing. 
+Given a density matrix ensemble $\mathcal{E} = \{p_i, \sigma_i\}$ and a quantum state $\rho$ we are promised that $\rho$ is in state $\sigma_i$ with probability $p_i$. In the general case we have $i \in [m]$ and of course $\sum_{i=1}^m p_i = 1$. Our goal is then to successfully identify which of the $\sigma_i$ that our state $\rho$ is actually in. This is known as Quantum Hypothesis Testing. 
 
 In some sense, thinking back to Holevo's Theorem (Theorem \ref{thm:holevo}), this is related to Bob attempting to access information transported from Alice that is given from the distribution above.
 
@@ -412,13 +412,32 @@ Unfortunately, then, $\sum_i E_i \neq I$. Well, one case we may think about is i
 
 $$E_i = S^{1/2} \sigma_i S^{1/2} $$ 
 
-by orthonormality. Then we have
+Then we have
 
 $$
 \tr(E_i \sigma_i) = \tr(\sigma_i) = 1
 $$
 
-Inspired by this, define the PGM POVM to be $E_i = S^{-1/2}p_i \sigma_i S^{-1/2}$ for our original problem.
+by orthonormality. Inspired by this, define the PGM POVM to be 
+
+$$E_i = S^{-1/2}p_i \sigma_i S^{-1/2}$$ 
+
+for our original problem. Positive semidefiniteness is clear, so it remains to show that we have completeness
+
+\begin{align*}
+\sum_i E_i &= \sum_i S^{-1/2}p_i \sigma_i S^{-1/2}\\
+&=  S^{-1/2} \sum_i p_i \sigma_i S^{-1/2} \\
+&= S^{-1/2} S S^{-1/2} = I
+\end{align*}
+
+\begin{theorem}
+Let $\Pr_{opt}(\mathcal{E})$ by the optimal success probability for our 	quantum hypothesis testing problem. Define $\Pr_{PGM}(\mathcal{E})$ to be the average success probability using the PGM POVM. Then,
+
+\begin{align*}
+Pr_{opt}(\mathcal{E})^2 \leq Pr_{PGM}(\mathcal{E}) \leq 	Pr_{opt}(\mathcal{E})
+\end{align*}
+
+\end{theorem}
 
 \subsection{Trace Distance}
 
