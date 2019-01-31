@@ -407,6 +407,51 @@ Of course, we know that the upper bounds in sample complexity are the same as th
 
 \subsection{Information Theoretic Lower Bounds on Sample Complexity}
 
+\subsubsection{VC-independent lower bounds}
+
+\begin{lemma}
+Let $\mathcal{C}$ be a non-trivial concept class. For every $\delta \in (0,1/2), \epsilon \in (0,1/4)$, a $(\epsilon,\delta)$-PAC quantum learner for $\mathcal{C}$ has sample complexity $\Omega(\frac{1}{\epsilon}\log \frac{1}{\delta})$
+\end{lemma}
+
+\begin{proof} 
+Since $\mathcal{C}$ is non-trivial, we may assume there are two concepts $c_1,c_2 \in C$ defined on two inputs $\{x_1,x_2\}$ as follows $c_1(x_1) = c_2(x_1) = 0$ and $c_1(x_2) = 0,c_2(x_2) = 1$.
+
+ Consider the distribution $D(x_1) = 1−\epsilon$ and $D(x_2) = \epsilon$. For $i \in \{1,2\}$, the state of the algorithm after $T$ queries to $QPEX(c_i,D)$ is
+ 
+ $$
+ \ket{\psi_i} = (\sqrt{1-\epsilon}\ket{x_1, 0} + \sqrt{\epsilon}\ket{x_2, c_i(x_2)})^{\otimes T}
+ $$
+ 
+ Therefore, $\bra{\psi_1}\ket{\psi_2} = (1-\epsilon)^T$. Since the success probability of an $(\epsilon, \delta)$-PAC quantum learner is $\geq 1 - \delta$, Corollary \ref{cor:distinguish-two-pure-states} implies $\ket{\psi_1}\ket{\psi_2} \leq 2\sqrt{\delta(1-\delta)}$. 
+ 
+ $\therefore T = \Omega(\frac{1}{\epsilon}\log \frac{1}{\delta})$
+\end{proof}
+
+\begin{lemma}
+Let $\mathcal{C}$ be a non-trivial concept class. For every $\delta \in (0,1/2), \epsilon \in (0,1/4)$, a $(\epsilon,\delta)$-agnostic quantum learner for $\mathcal{C}$ has sample complexity $\Omega(\frac{1}{\epsilon^2}\log \frac{1}{\delta})$
+\end{lemma}
+
+\begin{proof}
+Since $\mathcal{C}$ is non-trivial, we may assume there are two concepts $c_1,c_2 \in C$ defined on two inputs $\{x_1,x_2\}$ such that $c_1(x) \neq c_2(x)$.
+
+ Consider the two distributions $D_\pm$ s.t.
+ 
+ \begin{align*}
+ 	D_\pm(x, c_1(x)) &= (1 \pm \epsilon)/2\\
+ 	D_\pm(x, c_2(x)) &= (1 \mp \epsilon)/2\\
+ \end{align*}
+ $D_+(x_1) = 1−\epsilon$ and $D(x_2) = \epsilon$. The state of the algorithm after $T$ queries to $QAEX(D_\pm)$ is
+ 
+ $$
+ \ket{\psi_\pm} = ((\sqrt{(1\pm\epsilon)/2})\ket{x, c_1(x)} + (\sqrt{(1\mp\epsilon)/2})\ket{x, c_2(x)})^{\otimes T}
+ $$
+ 
+ Therefore, $\bra{\psi_+}\ket{\psi_-} = (1-\epsilon^2)^{T/2}$. Since the success probability of an $(\epsilon, \delta)$-agnostic quantum learner is $\geq 1 - \delta$, Corollary \ref{cor:distinguish-two-pure-states} implies $\bra{\psi_+}\ket{\psi_-} \leq 2\sqrt{\delta(1-\delta)}$. 
+ 
+ $\therefore T = \Omega(\frac{1}{\epsilon^2}\log \frac{1}{\delta})$
+\end{proof}
+
+
 \subsubsection{Classical PAC Learning}
 
 \begin{theorem}
@@ -568,7 +613,7 @@ Since trace is basis-independent, we can write $\ket{\psi_0}\bra{\psi_0} - \ket{
  So, $\lambda = \pm |\sin(\theta)|$. Therefore, since the trace distance is the absolute sum of the eigenvalues of this difference, 
 
 \begin{align*}
-T(\ket{\psi_0}\bra{\psi_0}, \ket{\psi_1}\bra{\psi_1}	) &= 2|\sin(\theta)|
+T(\ket{\psi_0}\bra{\psi_0}, \ket{\psi_1}\bra{\psi_1}	) &= 2|\sin(\theta)|sam
 \end{align*}
 
 and indeed 
