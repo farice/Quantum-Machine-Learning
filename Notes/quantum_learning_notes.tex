@@ -559,16 +559,22 @@ So, write $\ket{\psi_1} = \cos(\theta) \ket{\psi_0} + e^{i\phi}\sin(\theta)\ket{
 Since trace is basis-independent, we can write $\ket{\psi_0}\bra{\psi_0} - \ket{\psi_1}\bra{\psi_1}$ in the above used orthogonal basis. This gives us characteristic polynomial
 
 \begin{align*}
-	
+	0 &= (1-\cos^2(\theta) - \lambda)(-\sin^2(\theta) - \lambda) - \cos^2(\theta)\sin^2(\theta)\\
+	&= (\sin^2(\theta) - \lambda)(-\sin^2(\theta) - \lambda) - \cos^2(\theta)\sin^2(\theta) \\
+	&= -\sin^4(\theta) + \lambda^2 - \cos^2(\theta)\sin^2(\theta) \\
+	&= -\sin^2(\theta) + \lambda^2
 \end{align*}
 
- 
+ So, $\lambda = \pm \sin(\theta)$. Therefore, since the trace distance is the absolute sum of the eigenvalues of this difference, 
 
 \begin{align*}
-T(\ket{\psi_0}\bra{\psi_0}, \ket{\psi_1}\bra{\psi_1}	) &= 1/2\Tr(\sqrt{(\ket{\psi_0}\bra{\psi_0} - \cos(\theta) \ket{\psi_0} + e^{i\phi}\sin(\theta)\ket{\psi_0^\perp}})^2)\\
-&= \Tr(\sqrt{1 - \ket{\psi_0}\bra{\psi_0}\ket{\psi_1}\bra{\psi_1}}) \\
-&= \Tr(\sqrt{1 - \bra{\psi_0}\ket{\psi_1}\bra{\psi_1}\ket{\psi_0}}) \\
-&= 1 - |\bra{\psi_0}\ket{\psi_1}|^2
+T(\ket{\psi_0}\bra{\psi_0}, \ket{\psi_1}\bra{\psi_1}	) &= 2\sin(\theta)
+\end{align*}
+
+and indeed 
+
+\begin{align*}
+\sqrt{1 - |\bra{\psi_0}\ket{\psi_1}|^2} &= 
 \end{align*}
 
 as desired.
