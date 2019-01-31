@@ -535,9 +535,9 @@ We did implicitly assume that $E_1 + E_2 = I$ where we could've had an additiona
 
 \begin{corollary}
 \label{cor:distinguish-two-pure-states}
-Consider attempting to distinguish two pure states $\ket{\psi_0}, \ket{\psi_1}$. Then, we will distinguish correctly with probability at most $1/2[1 + \sqrt{1 - |\bra{\psi_0}\ket{\psi_1}}|^2}]$.
+Consider attempting to distinguish two pure states $\ket{\psi_0}, \ket{\psi_1}$. Then, we will distinguish correctly with probability at most $1/2[1 + \sqrt{1 - |\bra{\psi_0}\ket{\psi_1}|^2}]$.
 
-Equivalently, if we can distinguish between the two states w.p. $1 - \delta$, then $|\bra{\psi_0}\ket{\psi_1}}| \leq 2\sqrt{\delta(1-\delta)}$. 	
+Equivalently, if we can distinguish between the two states w.p. $1 - \delta$, then $|\bra{\psi_0}\ket{\psi_1}| \leq 2\sqrt{\delta(1-\delta)}$. 	
 \end{corollary}
 
 \begin{proof}
@@ -550,11 +550,11 @@ Applying the previous Lemma, we have maximum probability
 and 
 
 \begin{align*}
-T(\ket{\psi_0}\bra{\psi_0}, \ket{\psi_1}\bra{\psi_1}	) &= 1/2\Tr(\ket{\psi_0}\bra{\psi_0} - 2\ket{\psi_0}\bra{\psi_0}\ket{\psi_1}\bra{\psi_1} + \ket{\psi_1}\bra{\psi_1})\\
-&= 1/2\Tr(\ket{\psi_0}\bra{\psi_0}) - 1\Tr(\ket{\psi_0}\bra{\psi_0}\ket{\psi_1}\bra{\psi_1}) + 1/2\Tr(\ket{\psi_1}\bra{\psi_1}) \\
-&= 1/2 + 1/2 - \Tr(\ket{\psi_0}\bra{\psi_0}\ket{\psi_1}\bra{\psi_1}) \\
-&= 1 - \Tr(\bra{\psi_0}\ket{\psi_1}\bra{\psi_1}\ket{\psi_0}) \\
-&= 1 - |\bra{\psi_0}\ket{\psi_1}}|^2
+T(\ket{\psi_0}\bra{\psi_0}, \ket{\psi_1}\bra{\psi_1}	) &= 1/2\Tr(\sqrt{\ket{\psi_0}\bra{\psi_0} - 2\ket{\psi_0}\bra{\psi_0}\ket{\psi_1}\bra{\psi_1} + \ket{\psi_1}\bra{\psi_1}})\\
+&= \Tr(\sqrt{1/2\ket{\psi_0}\bra{\psi_0} - \ket{\psi_0}\bra{\psi_0}\ket{\psi_1}\bra{\psi_1}) + 1/2\ket{\psi_1}\bra{\psi_1}}) \\
+&= \Tr(\sqrt{1 - \ket{\psi_0}\bra{\psi_0}\ket{\psi_1}\bra{\psi_1}}) \\
+&= \Tr(\sqrt{1 - \bra{\psi_0}\ket{\psi_1}\bra{\psi_1}\ket{\psi_0}}) \\
+&= 1 - |\bra{\psi_0}\ket{\psi_1}|^2
 \end{align*}
 
 as desired.
