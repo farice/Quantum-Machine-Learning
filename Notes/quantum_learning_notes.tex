@@ -383,9 +383,49 @@ A learning algorithm A is an $(\epsilon, \delta)$-agnostic quantum learner for $
 
 The sample complexity of $A$ is the maximum number invocations of the $QAEX(D)$ oracle over all distributions $D$ and over the learner’s internal randomness. The $(\epsilon, \delta)$-agnostic quantum sample complexity of a concept class $C$ is the minimum sample complexity over all $(\epsilon, \delta)$-agnostic quantum learners for $C$.
 
+\subsection{Goals}
+
+We seek to show that quantum examples are not actually more powerful than classical labeled examples in the PAC model and in the agnostic model.
+
+In the classical case, the sample complexity of concept class $\mathcal{C}$ with VC dimension $d$ in the PAC setting is
+
+$$
+\Theta(\frac{d}{\epsilon} + \frac{\log(1/\delta)}{\epsilon})
+$$
+
+where $\epsilon$ is the approximation coefficient and $\delta$ is the probability of success, as usual.
+
+In the agnostic case, the optimal sample complexity of such agnostic learners is tightly determined by the VC dimension of \mathcal{C}
+
+\begin{align*}
+\Theta(\frac{d}{\epsilon^2} + \frac{\log(1/\delta)}{\epsilon^2})
+\end{align*}
+
+The authors indeed show that, using the quantum learning models above, the bounds are the same in the quantum case. This requires a state identification argument which uses Fourier Analysis to analyze the performance of a Pretty Good Measurement\ref{app:pgm}. However, we can get close by instead using simple concepts from quantum information theory. In my view, this approach has a strong aesthetic and is likely transferrable to similar problems.
+
+Of course, we know that the upper bounds in sample complexity are the same as the classical case since we can always implement a classical algorithm on a quantum computer. Hence, we seek lower bounds instead. 
+
+\subsection{Information Theoretic Lower Bounds on Sample Complexity}
+
+\subsubsection{Classical PAC Learning}
+
+\begin{theorem}
+Let $C$ be a concept class with $VC-dim(\mathcal{C}) = d + 1$. Then for every $\delta \in (0,1/2)$ and $\epsilon \in (0,1/4)$, every $(\epsilon,\delta)$-PAC learner for $\mathcal{C}$ has sample complexity $\Omega(\frac{d}{\epsilon} + \frac{\log(1/\delta)}{\epsilon})$.
+\end{theorem}
+
+\begin{proof} 
+Consider an $(\epsilon,\delta)$-PAC learner for $\mathcal{C}$ that uses $T$ examples. The $d$-independent part of the lower bound, T = Ω(log(1/δ)/ε), even holds for quantum examples and was proven in Lemma 10. 
+
+Hence it remains to prove T = Ω(d/ε). It suffices to show this for a specific distribution D, defined as follows. Let S = {s0,s1,...,sd} ⊆ {0,1}n be some (d + 1)-element set shattered by C . Define D(s0) = 1−4ε and D(si) = 4ε/d for all i ∈ [d].
+Because S is shattered by C , for each string a ∈ {0, 1}d , there exists a concept ca ∈ C such that ca(s0) = 0 and ca(si) = ai for all i ∈ [d]. We define two correlated random variables A and B corresponding to the concept and to the examples, respectively. Let A be a random variable that is uniformly distributed over {0, 1}d ; if A = a, let B = B1 . . . BT be T i.i.d. examples from ca according to D. We give the following three-step analysis of these random variables:
+1. I(A:B)≥(1−δ)(1−H(1/4))d−H(δ)=Ω(d).
+Proof. Let random variable h(B) ∈ {0, 1}d be the hypothesis that the learner produces (given
+the examples in B) restricted to the elements s1,...,sd. Note that the error of the hypothesis
+\end{proof}
 
 \begin{subappendices}
 \subsection{Pretty Good Measurement (PGM)}
+\label{app:pgm}
 
 Given a density matrix ensemble $\mathcal{E} = \{p_i, \sigma_i\}$ and a quantum state $\rho$ we are promised that $\rho$ is in state $\sigma_i$ with probability $p_i$. In the general case we have $i \in [m]$ and of course $\sum_{i=1}^m p_i = 1$. Our goal is then to successfully identify which of the $\sigma_i$ that our state $\rho$ is actually in. This is known as Quantum Hypothesis Testing. 
 
@@ -490,6 +530,29 @@ Therefore, the optimal projection $E_1$ is onto the positive eigenspace of $(p_1
  
 	
 We did implicitly assume that $E_1 + E_2 = I$ where we could've had an additional indeterminate $E_3$. However, the proof would still follow in any case (\cite{nielsen2010quantum}).
+\end{proof}
+
+
+\begin{corollary}
+\label{cor:distinguish-two-pure-states}
+Consider attempting to distinguish two pure states $\ket{\psi_0,\psi_1}$. Then, we will distinguish correctly with probability at most $1/2[1 + \sqrt{1 - |\bra{\psi_0}\ket{\psi_1}}|^2}]$.
+
+Equivalently, if we can distinguish between the two states w.p. $1 - \delta$, then $|\bra{\psi_0}\ket{\psi_1}}| \leq 2\sqrt{\delta(1-\delta)}$. 	
+\end{corollary}
+
+\begin{proof}
+Applying the previous Lemma, we have maximum probability
+
+\begin{align*}
+1/2[1 + T(\ket{\psi_0}\bra{\psi_0}, \ket{\psi_1}\bra{\psi_1}	)] \\
+T(\ket{\psi_0}\bra{\psi_0}, \ket{\psi_1}\bra{\psi_1}	) &= 1/2\Tr(\ket{\psi_0}\bra{\psi_0} - 2\ket{\psi_0}\bra{\psi_0}\ket{\psi_1}\bra{\psi_1} + \ket{\psi_1}\bra{\psi_1})\\
+&= 1/2\Tr(\ket{\psi_0}\bra{\psi_0}) - 1\Tr(\ket{\psi_0}\bra{\psi_0}\ket{\psi_1}\bra{\psi_1}) + 1/2\Tr(\ket{\psi_1}\bra{\psi_1}) \\
+&= 1/2 + 1/2 - \Tr(\ket{\psi_0}\bra{\psi_0}\ket{\psi_1}\bra{\psi_1}) \\
+&= 1 - \Tr(\bra{\psi_0}\ket{\psi_1}\bra{\psi_1}\ket{\psi_0}) \\
+&= 1 - |\bra{\psi_0}\ket{\psi_1}}|^2
+\end{align*}
+
+as desired.
 \end{proof}
 
 
