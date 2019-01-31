@@ -565,16 +565,17 @@ Since trace is basis-independent, we can write $\ket{\psi_0}\bra{\psi_0} - \ket{
 	&= -\sin^2(\theta) + \lambda^2
 \end{align*}
 
- So, $\lambda = \pm \sin(\theta)$. Therefore, since the trace distance is the absolute sum of the eigenvalues of this difference, 
+ So, $\lambda = \pm |\sin(\theta)|$. Therefore, since the trace distance is the absolute sum of the eigenvalues of this difference, 
 
 \begin{align*}
-T(\ket{\psi_0}\bra{\psi_0}, \ket{\psi_1}\bra{\psi_1}	) &= 2\sin(\theta)
+T(\ket{\psi_0}\bra{\psi_0}, \ket{\psi_1}\bra{\psi_1}	) &= 2|\sin(\theta)|
 \end{align*}
 
 and indeed 
 
 \begin{align*}
-\sqrt{1 - |\bra{\psi_0}\ket{\psi_1}|^2} &= 
+|\bra{\psi_0}\ket{\psi_1}|^2 &= |\cos(\theta)|^2
+\implies \sqrt{1 - |\bra{\psi_0}\ket{\psi_1}|^2} &= |\sin(\theta)|
 \end{align*}
 
 as desired.
