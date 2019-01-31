@@ -387,22 +387,38 @@ The sample complexity of $A$ is the maximum number invocations of the $QAEX(D)$ 
 \begin{subappendices}
 \subsection{Pretty Good Measurement (PGM)}
 
-Given a set of density matrices $\{\sigma_i\}$ and a quantum state $\rho$ we are promised that $\rho$ is in state $\sigma_i$ with probability $p_i$. In the general case we have $i \in [m]$ and of course $\sum_{i=1}^m p_i = 1$. Our goal is then to successfully identify which of the $\sigma_i$ that our state $\rho$ is actually in. This is known as Quantum Hypothesis Testing. The “real life” analog of this is what you can imagine Bob trying to do for the case of the transported information from alice in terms of the Holevo Bound for information transportation.
+Given a set of density matrices $\{\sigma_i\}$ and a quantum state $\rho$ we are promised that $\rho$ is in state $\sigma_i$ with probability $p_i$. In the general case we have $i \in [m]$ and of course $\sum_{i=1}^m p_i = 1$. Our goal is then to successfully identify which of the $\sigma_i$ that our state $\rho$ is actually in. This is known as Quantum Hypothesis Testing. 
 
-Getting at the problem we want to at least maximize our probability of getting the state right. This maximization with respect to both the probabilities on each state as well as with respect to any randomness that our approach employs. We then must choose a Quantum POVM $\{E_i\}$ that carries put a measurement and maximizes our probability of getting the state right.
+In some sense, thinking back to Holevo's Theorem (Theorem \ref{thm:holevo}), this is related to Bob attempting to access information transported from Alice that is given from the distribution above.
+
+Hence, we perform a maximization with respect to both the probabilities on each state as well as with respect to any randomness that our approach employs. We then must choose a Quantum POVM $\{E_i\}$ that carries put a measurement and maximizes our probability of getting the state right.
 
 So say we pick a POVM. Hence, we know that
 
 \begin{align*}
-\Pr(Success)= p_i \Tr (\sigma_i E_i)
+\Pr(Success)= \sum_i p_i \Tr (\sigma_i E_i)
 \end{align*}
 
 
 So this is the quantity that we seek to maximize. 
 
-We've shown above that the trace distance provides the solution for $m=2$. As it turns out for $m>2$ this is not an easy problem. However, PGM provides a sound approximation. Consider
+We've shown above that the trace distance provides the solution for $m=2$. As it turns out for $m>2$ this is not an easy problem. However, PGM provides a sound approximation:
 
+Intuitively, it might seem reasonable to simply choose 
 
+$$E_i = p_i \sigma_i$$
+
+Unfortunately, then, $\sum_i E_i \neq I$. Well, one case we may think about is if we can guarantee $\sigma_i$ is a the sum of pure states from an orthonormal basis. In which case, let $S = \sum_i \sigma_i$ and we choose 
+
+$$E_i = S^{1/2} \sigma_i S^{1/2} $$ 
+
+by orthonormality. Then we have
+
+$$
+\tr(E_i \sigma_i) = \tr(\sigma_i) = 1
+$$
+
+Inspired by this, define the PGM POVM to be $E_i = S^{-1/2}p_i \sigma_i S^{-1/2}$ for our original problem.
 
 \subsection{Trace Distance}
 
