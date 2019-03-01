@@ -810,4 +810,20 @@ If $B \in \CC^{d \times d}$ is a hermitian matrix for which $\Vert B \Vert_2 \le
 
 \end{subappendices}
 
+\section{Online Learning of Quantum States}
+
+\subsection{Goals}
+
+We will prove that
+
+\begin{theorem}
+	Let $E_1, E_2, \cdots$ be a sequence of two-outcome measurements on an $n$-qubit state presented to the learner, and $l_1, l_2, \cdots$ be the corresponding loss functions revealed in successive iterations in the regret minimization model. Suppose $l_t$ is convex and $L$-lipschitz; in particular for every $x \in \RR$, there is a subderivative $l_t'(x)$ such that $| l_t'(x)| \leq L$. Then there is an explicit learning strategy that guarantees regret $R_T = O(L \sqrt{Tn})$ for all $T$. This is so even assuming the measurement $E_t$ and loss function $l_t$ are chosen adaptively, in response to the learner's previous behavior. 
+	
+	Specifically, the algorithm applies to $L_1$ loss and $L_2$ loss, and achieves regret $O(\sqrt{Tn})$ for both. 
+\end{theorem}
+
+
+\subsection{Online Learning and Regret}
+
+
 \end{document}
