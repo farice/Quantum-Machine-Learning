@@ -125,7 +125,7 @@
 \frametitle{Moore-Penrose Pseudoinverse}
     \framesubtitle{Motivation: Singular value transformation}
     \begin{itemize}
-    \item Let $A \in \CC^{m \times n}$ and $b \in \CC^m$ unit vector.
+    \item Let $A \in \RR^{m \times n}$ and $b \in \RR^m$ unit vector. In machine learning, $A$ is the matrix with rows given by the samples of $\mathcal{T}$. We assume the distribution $\mathcal{D}$ now extends to $\Omega \times Y$, $Y \subset \RR$.
     \item We wish to find the $x_{LS}$ which satisfies $x_{LS} = \arg\min_{x} \| Ax - b \|_2$
     \item Notation: $x_{LS} = A^+ b$
     \item Common strategy uses SVD: write $A = UDV^\dag$ and then $A^+ = VD^+U^\dag$ where $D^+$ simply inverts the non-zero diagonal entries.
@@ -145,7 +145,7 @@
     \item We can use HHL as a subroutine to compute $A^+ \ket{b} = \ket{x}$ in ($\ket{x}$ is the least-square solution).
     \item Note that $\ket{x}$ is a quantum state. Hence, we may efficiently measure an expectation value $x^T M x$ where $M$ is some p.s.d operator.
     \item Runtime bound $\tilde{O}(log(N)(s^3\kappa^6)/ \epsilon)$ time (query complexity)
-    \item Assumption: $A$ is sparse with low condition number $\kappa$. Hamiltonian simulation is efficient when $\hat{H}$ is sparse. No low-rank assumptions are necessary.
+    \item Assumption: $A$ is sparse with low condition number $\kappa$. Hamiltonian ($\hat{H}$) simulation is efficient when $\hat{H}$ is sparse. No low-rank assumptions are necessary.
     \item "Key" assumption: the quantum state $\ket{b}$ can be prepared efficiently.	
     
 
@@ -363,7 +363,7 @@ $$A^+x = (A^TA)^+A^Tx \approx \sum_{i=1}^k \frac{1}{\hat{\sigma}_i^2}\hat{v}_i\h
 \item Conjecture: For machine learning problems, SQ assumptions are more reasonable than state preparation assumptions.
 \item We discussed pseuo-inverse which inverts singular values, but in principle we could have applied any function to the singular values
 \item Gilyen et. al (2018) show that many quantum machine learning algorithms indeed apply polynomial functions to singular values
-\item Our discussion suggests that exponential quantum speedups are tightly related to problems where high-rank matrices play a crucial role (e.g. Hamiltonian simulation of QFT)
+\item Our discussion suggests that exponential quantum speedups are tightly related to problems where high-rank matrices play a crucial role (e.g. Hamiltonian simulation or QFT)
 \end{itemize}
 \end{frame}
 
