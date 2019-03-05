@@ -225,13 +225,13 @@ Say we have the vector $\vec{x} = (2, 0, 1, 3)$ and $\vec{x} \in \mathcal{SQ}$. 
       edge from parent node [left] {\tiny $4/14$}
     }
     child {node(2) {$x_3^2 + x_4^2 = 10$}
-    	child {node {$x_3^2 = 1/10$}
+    	child {node {$x_3^2 = 1$}
     		child {node {$\text{sgn}(x_3) = +1$}}
-    		edge from parent node [left] {\tiny $1$}
+    		edge from parent node [left] {\tiny $1/10$}
     	}
-      child {node(3) {$x_4^2 = 9/10$} 
+      child {node(3) {$x_4^2 = 9$} 
       		child {node {$\text{sgn}(x_4) = +1$}}
-      		edge from parent node [right] {\tiny $1$}
+      		edge from parent node [right] {\tiny $9/10$}
       } 
       edge from parent node [right] {\tiny $10/14$}
     };
@@ -258,12 +258,12 @@ Say we have the vector $\vec{x} = (2, 0, 1, 3)$ and $\vec{x} \in \mathcal{SQ}$. 
 \framesubtitle{Method 1: Inner product estimation (Tang, 2018)}
 \begin{fact} For $\{X_{i,j}\}$ i.i.d random variables with mean $\mu$ and variance $\sigma^2$, let 
 
-$$Y := \underset{j \in [6\log 1/\delta]}{\operatorname{median}}\;\underset{i \in [6/\epsilon^2]}{\operatorname{mean}}\;X_{i,j}$$ 
-
+$$Y := \underset{j \in [6\log 1/\delta]}{\operatorname{median}}\;\underset{i \in [6/\epsilon^2]}{\operatorname{mean}}\;X_{i,j}$$
+ 
+(In words: we create a mean estimator from $6/\epsilon^2$ samples of $X$. We compute the median of $6\log 1/\delta$ such estimators)
 Then $\vert Y - \mu\vert \leq \epsilon\sigma$ with probability $\geq 1-\delta$, using only $O(\frac{1}{\epsilon^2}\log\frac{1}{\delta})$ samples of $X$.
 \end{fact}
 \begin{proof} (sketch) The proof follows from two facts: 
-
 \begin{itemize}
 \item first, the median of $C_1,\ldots,C_n$ is at least $\lambda$ precisely when at least half of the $C_i$ are at least $\lambda$; 
 \item second, Chebyshev's inequality (applied to the mean).
