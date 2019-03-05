@@ -123,6 +123,7 @@
     \begin{itemize}
     \item "Training" dataset $\mathcal{T}$ consists of the accessible samples of data. $\mathcal{T}$ is drawn from a subset of $\Omega \subset \RR^d$ where each component represents a "feature". 
     \item Samples from $\Omega$ are assumed to be drawn according to some distribution $\mathcal{D}$. 
+    \pause
     \item Example: data is collected on the heights and lengths of cherry blossom petals. 
     \begin{figure}
    \includegraphics[width= 0.3\linewidth]{pca_high_redundancy.png}
@@ -140,6 +141,7 @@
     % We assume the distribution $\mathcal{D}$ now extends to $\Omega \times Y$, $Y \subset \RR$.
     \item We wish to find the $x_{LS}$ which satisfies $x_{LS} = \arg\min_{x} \| Ax - b \|_2$
     \item Notation: $x_{LS} = A^+ b$
+    \pause
     \item Common strategy uses SVD: write $A = UDV^\dag$ and then $A^+ = VD^+U^\dag$ where $D^+$ simply inverts the non-zero diagonal entries.
     \end{itemize}
 	\begin{figure}
@@ -173,6 +175,7 @@
 \item How can we compare the speed of quantum algorithms with quantum input and quantum output to classical algorithms with classical input and classical output? 
 \item Quantum machine learning algorithms can be exponentially faster than the best standard classical algorithms for similar tasks, but this comparison is unfair because the quantum algorithms get outside help through input state preparation. 
 \item We want a classical model that helps its algorithms stand a chance against quantum algorithms, while still ensuring that they can be run in nearly all circumstances one would run the quantum algorithm. 
+\pause
 \item Solution (Tang): compare quantum algorithms with quantum state preparation to classical algorithms with sample and query access to input.	
 \end{itemize}
 \end{frame}
@@ -246,6 +249,7 @@ Say we have the vector $\vec{x} = (2, 0, 1, 3)$ and $\vec{x} \in \mathcal{SQ}$. 
 \framesubtitle{Method 1: Inner product estimation (Tang, 2018)}
 \begin{itemize}
 	\item For $x, y \in \CC^n$, if we are given that $x \in \mathcal{SQ}$ and $y \in \mathcal{Q}$, then we can estimate $\< x, y\>$ with probability $\geq 1 - \delta$ and error $\epsilon \|x\|\|y\|$ 
+	\pause
 	\item Quantum analog: SWAP test
 \end{itemize}
 \begin{figure}
@@ -265,6 +269,7 @@ Then $\vert Y - \mu\vert \leq \epsilon\sigma$ with probability $\geq 1-\delta$, 
 
 \begin{itemize}
 	\item In words: We may create a mean estimator from $6/\epsilon^2$ samples of $X$. Here we compute the median of $6\log 1/\delta$ such estimators
+	\pause
 	\item Catoni (2012) shows that Chebyshev's inequality is the best guarantee one can provide when considering pure empirical mean estimators for an unknown distribution (and finite $\mu, \sigma$)
 	\item "Median of means" provides an exponential improvement in probability of success ($1 - \delta$) guarantee
 \end{itemize}
@@ -281,7 +286,7 @@ Then $\vert Y - \mu\vert \leq \epsilon\sigma$ with probability $\geq 1-\delta$, 
 \framesubtitle{Method 1: Inner product estimation (Tang, 2018)}
 \begin{corollary} For $x,y \in\CC^n$, given $x \in \mathcal{SQ}$ and $y \in \mathcal{Q}$, we can estimate $\langle x,y\rangle$ to $\epsilon\|x\|\|y\|$ error with probability $\geq 1-\delta$ with query complexity $O(\frac{1}{\epsilon^2}\log\frac{1}{\delta})$
 \end{corollary}
-
+\pause
 \begin{proof}Sample an \textbf{index} $s$ from $x$. Then, define $Z := x_s v_s\frac{\|v\|^2}{|v_s|^2}$. Apply the Fact with $X_{i,j}$ being independent samples $Z$.
 \end{proof}	
 \end{frame}
@@ -382,6 +387,7 @@ $$\|A - D\|_F^2 \leq \|A - A_\sigma\|_F^2 + \epsilon^2\|A\|_F^2$$
 \begin{problem} For a low-rank matrix $A \in \RR^{m\times n}$
   and a vector $x \in \RR^n$, given $x, A \in \mathcal{SQ}$, (approximately) simulate $A^+x \in \mathcal{SQ}$.
 \end{problem}
+\pause
 \begin{algorithm}   	
 \begin{itemize}
 \item Low-rank approximation (3) gives us $S,\hat{U} \in \mathcal{SQ}$.
