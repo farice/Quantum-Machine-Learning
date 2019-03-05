@@ -2,7 +2,7 @@
 % Please see https://bitbucket.org/rivanvx/beamer/wiki/Home for obtaining beamer.
 %%
 \documentclass{beamer}
-
+\usefonttheme{professionalfonts}
 \usepackage{tikz}
 \usetikzlibrary{trees}
 \tikzset{
@@ -264,7 +264,7 @@ Then $\vert Y - \mu\vert \leq \epsilon\sigma$ with probability $\geq 1-\delta$, 
 \end{fact}
 
 \begin{itemize}
-	\item In words: We create a mean estimator from $6/\epsilon^2$ samples of $X$. We compute the median of $6\log 1/\delta$ such estimators
+	\item In words: We may create a mean estimator from $6/\epsilon^2$ samples of $X$. Here we compute the median of $6\log 1/\delta$ such estimators
 	\item Catoni (2012) shows that Chebyshev's inequality is the best guarantee one can provide when considering pure empirical mean estimators for an unknown distribution (and finite $\mu, \sigma$)
 	\item "Median of means" provides an exponential improvement in probability of success ($1 - \delta$) guarantee
 \end{itemize}
@@ -330,21 +330,21 @@ Fact. If $r_i \leq 1, \forall i$, then the above procedure is well-defined and o
 \frametitle{Dequantization Toolbox}
 \framesubtitle{Method 2: Thin Matrix-Vector (Tang, 2018)}
 \begin{proposition}
-	 For $V \in \RR^{n\times k}$ and $w \in \RR^k$, given $V \in \mathcal{SQ}$ and $w \in \mathcal{Q}$, we can simulate $Vw \in \mathcal{SQ}$ with expected query complexity $O(k^2C(V,w))$, where
+	 For $V \in \RR^{n\times k}$ and $w \in \RR^k$, given $V^\dag \in \mathcal{SQ}$ and $w \in \mathcal{Q}$, we can simulate $Vw \in \mathcal{SQ}$ with expected query complexity $O(k^2C(V,w))$, where
 
-$$C(V,w) := \frac{\sum_{i=1}^k\|w_iV^{(i)}\|^2}{\|Vw\|^2}$$
+$$C(V,w) := \frac{\sum_{i=1}^k\|V_{(\cdot, i)}w_i\|^2}{\|Vw\|^2}$$
 
 We can compute entries $(Vw)_i$ with $O(k)$ queries.
 
 We can sample using rejection sampling:
 
 \begin{itemize}
-\item $P$ is the distribution formed by sampling from $V^{(j)}$ with probability proportional to $\|w_jV^{(j)}\|^2$
+\item $P$ is the distribution formed by sampling from $V_{(\cdot, j)}$ with probability proportional to $\|V_{(\cdot, j)}w_j\|^2$
   
 \item $Q$ is the target $Vw$.
 \end{itemize}
 
-$$r_i = \frac{(Vw)_i^2}{k \sum_{j=1}^k (w_jV_{ij})^2} = \frac{Q(i)}{kC(V,w)P(i)}$$
+$$r_i = \frac{(Vw)_i^2}{k \sum_{j=1}^k (V_{ij}w_j)^2} = \frac{Q(i)}{kC(V,w)P(i)}$$
 \end{proposition}
 \end{frame}
 
@@ -366,11 +366,11 @@ $$r_i = \frac{(Vw)_i^2}{k \sum_{j=1}^k (w_jV_{ij})^2} = \frac{Q(i)}{kC(V,w)P(i)}
 \framesubtitle{Method 3: Low-Rank Approximation (Frieze, Kannan, Vempala, 1998)}
 \begin{itemize}
 \item For $A \in \CC^{m\times n}$, given $A \in \mathcal{SQ}$ and some threshold $k$, we can output a description of a low-rank approximation of $A$ with $\text{poly}(k)$ queries.
-\item Specifically, our output is $\mathcal{SQ}(S,\hat{U})$ for $S \in \CC^{\ell \times n}$, $\hat{U} \in \CC^{\ell \times k}$ ($\ell = \text{poly}(k,\frac{1}{\epsilon}$), and this implicitly describes the low-rank approximation to $A$, $D := A(S^\dagger\hat{U})(S^\dagger\hat{U})^\dag$ (notice rank $D \leq k$).
+\item Specifically, we output two matrices $S,\hat{U}\in \mathcal{SQ}$ where $S \in \CC^{\ell \times n}$, $\hat{U} \in \CC^{\ell \times k}$ ($\ell = \text{poly}(k,\frac{1}{\epsilon}$), and this implicitly describes the low-rank approximation to $A$, $D := A(S^\dagger\hat{U})(S^\dagger\hat{U})^\dag$ ($\implies$ rank $D \leq k$).
 
 \item This matrix satisfies the following low-rank guarantee with probability $\geq 1-\delta$: for $\sigma := \sqrt{2/k}\|A\|_F$, and $A_{\sigma} := \sum_{\sigma_i \geq \sigma} \sigma_iu_iv_i^\dag$ (using SVD), 
 $$\|A - D\|_F^2 \leq \|A - A_\sigma\|_F^2 + \epsilon^2\|A\|_F^2$$
-\item This guarantee is non-standard: instead of $A_k$, we use $A_\sigma$. This makes our promise weaker, since it is useless if $A$ has no large singular values.
+\item Pay special attention to the $\|A - A_\sigma\|_F^2$ term. This says that our guarantee is weak if $A$ has no large singular values. 
 \item Quantum analog: phase estimation
 \end{itemize}
 \end{frame}
@@ -380,18 +380,17 @@ $$\|A - D\|_F^2 \leq \|A - A_\sigma\|_F^2 + \epsilon^2\|A\|_F^2$$
 \framesubtitle{Application (Lloyd, Tang, 2018)}
 
 \begin{problem} For a low-rank matrix $A \in \RR^{m\times n}$
-  and a vector $x \in \RR^n$, given $x, A \in \mathcal{SQ}$, (approximately) respond to requests for $A^+x \in \mathcal{SQ}$, where $A^+$ is the pseudoinverse of $A$. 
+  and a vector $x \in \RR^n$, given $x, A \in \mathcal{SQ}$, (approximately) simulate $A^+x \in \mathcal{SQ}$.
 \end{problem}
 \begin{algorithm}   	
 \begin{itemize}
-\item Use the low-rank approximation protocol (3) to get $\mathcal{SQ}(S,\hat{U})$.
+\item Low-rank approximation (3) gives us $S,\hat{U} \in \mathcal{SQ}$.
 
-\item From applying the matrix-vector protocol (2), we have $\hat{V} \in \mathcal{SQ}$, where $\hat{V} := S^T\hat{U}$; we can show that the columns of $\hat{V}$ behave like the right singular vectors of $A$. 
+\item Applying thin-matrix vector (2), we get $\hat{V} \in \mathcal{SQ}$, where $\hat{V} := S^T\hat{U}$; we can show that the columns of $\hat{V}$ behave like the right singular vectors of $A$. 
 
-\item Further, (3) also outputs their approximate singular values $\hat{\sigma}_i$
+\item Low-rank approximation (3) also outputs their approximate singular values $\hat{\sigma}_i$
  
 \item Hence, we can approximate the vector we wish to sample:
-
 $$A^+x = (A^TA)^+A^Tx \approx \sum_{i=1}^k \frac{1}{\hat{\sigma}_i^2}\hat{v}_i\hat{v}_i^T A^Tx$$
 \end{itemize}
 \end{algorithm}
@@ -401,8 +400,8 @@ $$A^+x = (A^TA)^+A^Tx \approx \sum_{i=1}^k \frac{1}{\hat{\sigma}_i^2}\hat{v}_i\h
 \frametitle{Moore-Penrose Pseudoinverse (low-rank) cont.} 	
 \framesubtitle{Application (Lloyd, Tang, 2018)}
 \begin{itemize}
-\item We approximate $\hat{v}_i^TA^Tx$ to additive error for all by noticing that $\hat{v}_i^TA^Tx = \Tr(A^Tx\hat{v}_i^T)$ is an inner product of the order two tensors $A^TA$ and $x\hat{v}_i^Tx$. 
-\item Thus, we can apply (1), since being given $A \in \mathcal{SQ}$ implies $A^T \in \mathcal{SQ}$ for $A^TA$ viewed as a long vector. 
+\item We approximate $\hat{v}_i^TA^Tx$ to additive error for all by noticing that $\hat{v}_i^TA^Tx = \tr(A^Tx\hat{v}_i^T)$ is an inner product of the order two tensors $A^T$ and $x\hat{v}_i^T$. 
+\item Thus, we can apply (1), since being given $A \in \mathcal{SQ}$ implies $A^T \in \mathcal{SQ}$ for $A^T$ viewed as a long vector. 
 \item Finally, using (2), sample from the linear combination using these estimates and $\hat{\sigma}_i$.	
 \end{itemize}
 \end{frame}
@@ -413,8 +412,8 @@ $$A^+x = (A^TA)^+A^Tx \approx \sum_{i=1}^k \frac{1}{\hat{\sigma}_i^2}\hat{v}_i\h
 \frametitle{Thoughts}	
 
 \begin{itemize}
-\item Conjecture: For machine learning problems, SQ assumptions are more reasonable than state preparation assumptions.
-\item We discussed pseuo-inverse which i$\mathcal{nv}$erts singular values, but in principle we could have applied any function to the singular values
+\item Claim (Tang): For machine learning problems, SQ assumptions are more reasonable than state preparation assumptions.
+\item We discussed pseudo-inverse which inverts singular values, but in principle we could have applied any function to the singular values
 \item Gilyen et. al (2018) show that many quantum machine learning algorithms indeed apply polynomial functions to singular values
 \item Our discussion suggests that exponential quantum speedups are tightly related to problems where high-rank matrices play a crucial role (e.g. Hamiltonian simulation or QFT)
 \end{itemize}
