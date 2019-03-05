@@ -259,25 +259,30 @@ Say we have the vector $\vec{x} = (2, 0, 1, 3)$ and $\vec{x} \in \mathcal{SQ}$. 
 \begin{fact} For $\{X_{i,j}\}$ i.i.d random variables with mean $\mu$ and variance $\sigma^2$, let 
 
 $$Y := \underset{j \in [6\log 1/\delta]}{\operatorname{median}}\;\underset{i \in [6/\epsilon^2]}{\operatorname{mean}}\;X_{i,j}$$
- 
-(In words: we create a mean estimator from $6/\epsilon^2$ samples of $X$. We compute the median of $6\log 1/\delta$ such estimators)
-Then $\vert Y - \mu\vert \leq \epsilon\sigma$ with probability $\geq 1-\delta$, using only $O(\frac{1}{\epsilon^2}\log\frac{1}{\delta})$ samples of $X$.
+
+Then $\vert Y - \mu\vert \leq \epsilon\sigma$ with probability $\geq 1-\delta$, using only $O(\frac{1}{\epsilon^2}\log\frac{1}{\delta})$ samples.
 \end{fact}
-\begin{proof} (sketch) The proof follows from two facts: 
+
 \begin{itemize}
-\item first, the median of $C_1,\ldots,C_n$ is at least $\lambda$ precisely when at least half of the $C_i$ are at least $\lambda$; 
-\item second, Chebyshev's inequality (applied to the mean).
+	\item In words: We create a mean estimator from $6/\epsilon^2$ samples of $X$. We compute the median of $6\log 1/\delta$ such estimators
+	\item Catoni (2012) shows that Chebyshev's inequality is the best guarantee one can provide when considering pure empirical mean estimators for an unknown distribution (and finite $\mu, \sigma$)
+	\item "Median of means" provides an exponential improvement in probability of success ($1 - \delta$) guarantee
 \end{itemize}
-\end{proof}
+%\begin{proof} (sketch) The proof follows from two facts:
+%\begin{itemize}
+%\item first, the median of $n$ random variables $C_1,\ldots,C_n$ is at least some constant $\lambda$ precisely when at least half of the $C_i$ are at least $\lambda$; 
+%\item second, Chebyshev's inequality (applied to the mean).
+%\end{itemize}
+%\end{proof}
 \end{frame}
 
 \begin{frame}
 \frametitle{Dequantization Toolbox}
 \framesubtitle{Method 1: Inner product estimation (Tang, 2018)}
-\begin{corollary} For $x,y \in\CC^n$, given $x \in \mathcal{SQ}$ and $\mathcal{Q}(y)$, we can estimate $\langle x,y\rangle$ to $\epsilon\|x\|\|y\|$ error with probability $\geq 1-\delta$ with query complexity $O(\frac{1}{\epsilon^2}\log\frac{1}{\delta})$
+\begin{corollary} For $x,y \in\CC^n$, given $x \in \mathcal{SQ}$ and $y \in \mathcal{Q}$, we can estimate $\langle x,y\rangle$ to $\epsilon\|x\|\|y\|$ error with probability $\geq 1-\delta$ with query complexity $O(\frac{1}{\epsilon^2}\log\frac{1}{\delta})$
 \end{corollary}
 
-\begin{proof}Sample $s$ from $v$ and let $Z = x_s v_s\frac{\|v\|^2}{|v_s|^2}$. Apply the Fact with $X_{i,j}$ being independent samples of $Z$.
+\begin{proof}Sample an \textbf{index} $s$ from $x$. Then, define $Z := x_s v_s\frac{\|v\|^2}{|v_s|^2}$. Apply the Fact with $X_{i,j}$ being independent samples $Z$.
 \end{proof}	
 \end{frame}
 
@@ -287,14 +292,12 @@ Then $\vert Y - \mu\vert \leq \epsilon\sigma$ with probability $\geq 1-\delta$, 
 \begin{itemize}
 	\item For $V \in \CC^{n\times k}, w \in \CC^k$, given $V^\dagger \in \mathcal{SQ}$ (\textit{column}-wise sampling of $V$) and $w \in \mathcal{Q}$, we can simulate $Vw \in \mathcal{SQ}$ with $\text{poly}(k)$ queries
 	\item In words: if we can least-square sample the columns of matrix $V$ and query the entries of vector $w$, then
-	\item Hence, as long as $k \ll n$, we can perform 
-
 \begin{enumerate}
 \item  We can query entries of their multiplication ($Vw$) 
 \item We can least-square sample from a distribution that emulates their multiplication	
 \end{enumerate}
 
-each using a number of steps polynomial in the number of columns of $V$. 
+\item Hence, as long as $k \ll n$, we can perform  each using a number of steps polynomial in the number of columns of $V$. 
 
 \end{itemize}
 \end{frame}
@@ -311,13 +314,13 @@ Input: Samples from distribution $P$
 Output: Samples from distribution $Q$
 \begin{itemize}
 \item Sample $s$ from $P$
-\item Compute $r_s = \frac{1}{M}\frac{Q(s)}{P(s)}$ 
+\item Compute $r_s = \frac{1}{N}\frac{Q(s)}{P(s)}$, for fixed constant $N$
 \item Output $s$ with probability $r_s$ and restart otherwise
 \end{itemize}
 \end{algorithm}
 
 \begin{fact}
-Fact. If $r_i \leq 1, \forall i$, then the above procedure is well-defined and outputs a sample from $Q$ in $M$ iterations in expectation.	
+Fact. If $r_i \leq 1, \forall i$, then the above procedure is well-defined and outputs a sample from $Q$ in $N$ iterations in expectation.	
 \end{fact}
 
 
