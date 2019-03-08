@@ -2,6 +2,17 @@
 \usepackage{subfiles}
 \usepackage[toc,page]{appendix}
 
+\usepackage{tikz}
+\usetikzlibrary{trees}
+\tikzset{
+  invisible/.style={opacity=0},
+  visible on/.style={alt={#1{}{invisible}}},
+  alt/.code args={<#1>#2#3}{%
+    \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}} % \pgfkeysalso doesn't change the path
+  },
+  properties/.style={green, ultra thick},
+}
+
 \oddsidemargin=17pt \evensidemargin=17pt
 \headheight=9pt     \topmargin=26pt
 \textheight=564pt   \textwidth=433.8pt
@@ -72,6 +83,9 @@
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{exercise}[theorem]{Exercise}
 \newtheorem{definition}[theorem]{Definition}
+\newtheorem{fact}[theorem]{Fact}
+\newtheorem{algorithm}[theorem]{Algorithm}
+\newtheorem{example}[theorem]{Example}
 
 \title{Quantum Algorithms and Learning Theory\\\textit{Notes and Exercises}}
 \author{Faris Sbahi}

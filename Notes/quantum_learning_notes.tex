@@ -105,19 +105,239 @@ Consider the feature vector kernel $K(x, z) = | \bra{\Phi(x)}\ket{\Phi(z)} |^2$
 
 As we've seen, most well-known QML algorithms convert input quantum states to a desired output state or value. Thus, they do not provide a routine to get necessary copies of these input states (a state preparation routine) and a strategy to extract information from an output state. Both are essential to making the algorithm useful.
 
-\subsection{Sampling Model}
+\begin{itemize}
+    %\item HHL algorithm: application of phase estimation and Hamiltonian simulation to solve linear system.
+    \item We can compute $A^+ \ket{b} = \ket{x_{LS}}$ in $\tilde{O}(log(N)(s^3\kappa^6)/ \epsilon)$ time (query complexity)
+    \item Uses a quantum algorithm based on phase estimation and Hamiltonian simulation
+    \item Assumption: $A$ is sparse with low condition number $\kappa$. Hamiltonian ($\hat{H}$) simulation is efficient when $\hat{H}$ is sparse. No low-rank assumptions are necessary.
+    \item "Key" assumption: the quantum state $\ket{b}$ can be prepared efficiently.	
+    \item What happens if we assume low rank?
+\end{itemize}
+
+\begin{itemize}
+\item In general, quantum machine learning algorithms convert quantum input states to the desired quantum output states. 
+\item In practice, data is initially stored classically and the algorithm's output must be accessed classically as well.
+\item Today's focus: A practical way to make comparisons between classical and quantum algorithms is to analyze classical algorithms under $\ell^2$ sampling conditions
+\item Tang: linear algebra problems in low-dimensional spaces (say constant or polylogarithmic) likely can be solved "efficiently" under these conditions
+\item Many of the initial practical applications of quantum machine learning were to problems of this type (e.g. Quantum Recommendation Systems - Kerendis, Prakash, 2016)
+\end{itemize}
+
+\begin{itemize}
+\item How can we compare the speed of quantum algorithms with quantum input and quantum output to classical algorithms with classical input and classical output? 
+\item Quantum machine learning algorithms can be exponentially faster than the best standard classical algorithms for similar tasks, but quantum algorithms get help through input state preparation. 
+\item Want a practical classical model that helps its algorithms offer similar guarantees to quantum algorithms, while still ensuring that they can be run in nearly all circumstances one would run the quantum algorithm. 
+\item Solution (Tang): compare quantum algorithms with quantum state preparation to classical algorithms with sample and query access to input.	
+\end{itemize}
 
 \subsubsection{Definitions}
 
+\begin{definition}
+We have "query access" to $x \in \CC^n$ if, given $i \in [n]$, we can efficiently compute $x_i$. We say that $x \in \mathcal{Q}$.
+\end{definition}
+\begin{definition} We have sample \textbf{and} query access to $x \in \CC^n$ if 
+
+\begin{enumerate}
+\item We have query access to $x$ i.e. $x\in \mathcal{Q}$ ($\implies$ $\mathcal{SQ} \subset \mathcal{Q}$)
+\item can produce independent random samples $i \in [n]$ where we sample $i$ with probability $|x_i|^2/\|x\|^2∣$ and can query for $\|x\|$.
+\end{enumerate}
+We say that $x \in \mathcal{SQ}$. 
+\end{definition}
+\begin{definition} For $A \in \CC^{m\times n}$, $A \in \mathcal{SQ}$ (abuse) if
+
+\begin{enumerate}
+\item $A_i \in \mathcal{SQ}$ where $A_i$ is the $i$th row of $A$
+\item $\tilde{A} \in \mathcal{SQ}$ for $\tilde{A}$ the vector of row norms (so $\tilde{A}_i = \|A_i\|$).	
+\end{enumerate}
+\end{definition}
+
+
+\begin{example}
+Say we have the vector $\vec{x} = (2, 0, 1, 3)$ and $\vec{x} \in \mathcal{SQ}$. Consider the following binary tree data structure.
+
+\begin{tikzpicture}[level distance=1.5cm,
+  level 1/.style={sibling distance=5.5cm},
+  level 2/.style={sibling distance=3cm}, 
+  level 3/.style={sibling distance=3cm}]
+  \node (1){$\| x \|^2 = 14$}
+    child {node {$x_1^2 + x_2^2 = 4$}
+      child {node {$x_1^2 = 4$}
+      	child {node {$\text{sgn}(x_1) = +1$}}
+      	edge from parent node [left] {\tiny $1$}
+      }
+      child {node {$x_2^2 = 0$} 
+      	child {node {$\text{sgn}(x_2) = +1$}}
+      	edge from parent node [right] {\tiny $0$}
+      }
+      edge from parent node [left] {\tiny $4/14$}
+    }
+    child {node(2) {$x_3^2 + x_4^2 = 10$}
+    	child {node {$x_3^2 = 1$}
+    		child {node {$\text{sgn}(x_3) = +1$}}
+    		edge from parent node [left] {\tiny $1/10$}
+    	}
+      child {node(3) {$x_4^2 = 9$} 
+      		child {node {$\text{sgn}(x_4) = +1$}}
+      		edge from parent node [right] {\tiny $9/10$}
+      } 
+      edge from parent node [right] {\tiny $10/14$}
+    };
+\end{tikzpicture}
+\end{example}
+
+
 \subsubsection{Low-Rank Estimation}
+
+\begin{itemize}
+\item For $A \in \CC^{m\times n}$, given $A \in \mathcal{SQ}$ and some threshold $k$, we can output a description of a low-rank approximation of $A$ with $\text{poly}(k)$ queries.
+\item Specifically, we output two matrices $S,\hat{U}\in \mathcal{SQ}$ where $S \in \CC^{\ell \times n}$, $\hat{U} \in \CC^{\ell \times k}$ ($\ell = \text{poly}(k,\frac{1}{\epsilon}$)), and this implicitly describes the low-rank approximation to $A$, $D := A(S^\dagger\hat{U})(S^\dagger\hat{U})^\dag$ ($\implies$ rank $D \leq k$).
+
+\item This matrix satisfies the following low-rank guarantee with probability $\geq 1-\delta$: for $\sigma := \sqrt{2/k}\|A\|_F$, and $A_{\sigma} := \sum_{\sigma_i \geq \sigma} \sigma_iu_iv_i^\dag$ (using SVD), 
+$$\|A - D\|_F^2 \leq \|A - A_\sigma\|_F^2 + \epsilon^2\|A\|_F^2$$
+\item Note the $\|A - A_\sigma\|_F^2$ term. This says that our guarantee is weak if $A$ has no large singular values. 
+\item Quantum analog: phase estimation
+\end{itemize}
+
+
+$$
+\begin{bmatrix}
+\\
+\cdots A \cdots 
+\\
+\\	
+\end{bmatrix}
+\begin{bmatrix}
+\\
+S^\dag
+\\
+\\	
+\end{bmatrix}
+\begin{bmatrix}
+\hat{U}
+\end{bmatrix}
+\begin{bmatrix}
+\hat{U^\dag}
+\end{bmatrix}
+\begin{bmatrix}
+\cdots S \cdots
+\end{bmatrix}
+$$
 
 \subsubsection{Trace Inner Product Estimation}
 
+\begin{itemize}
+	\item For $x, y \in \CC^n$, if we are given that $x \in \mathcal{SQ}$ and $y \in \mathcal{Q}$, then we can estimate $\< x, y\>$ with probability $\geq 1 - \delta$ and error $\epsilon \|x\|\|y\|$ 
+	\item Quantum analog: SWAP test
+\end{itemize}
+\begin{figure}
+\includegraphics[width= 0.5\linewidth]{images/swap_test.png}	
+\end{figure}
+
+\begin{fact} For $\{X_{i,j}\}$ i.i.d random variables with mean $\mu$ and variance $\sigma^2$, let 
+
+$$Y := \underset{j \in [\log 1/\delta]}{\operatorname{median}}\;\underset{i \in [1/\epsilon^2]}{\operatorname{mean}}\;X_{i,j}$$
+
+Then $\vert Y - \mu\vert \leq \epsilon\sigma$ with probability $\geq 1-\delta$, using only $O(\frac{1}{\epsilon^2}\log\frac{1}{\delta})$ samples.
+\end{fact}
+
+\begin{itemize}
+	\item In words: We may create a mean estimator from $1/\epsilon^2$ samples of $X$. We compute the median of $\log 1/\delta$ such estimators
+	\item Catoni (2012) shows that Chebyshev's inequality is the best guarantee one can provide when considering pure empirical mean estimators for an unknown distribution (and finite $\mu, \sigma$)
+	\item "Median of means" provides an exponential improvement in probability of success ($1 - \delta$) guarantee
+\end{itemize}
+
+\begin{corollary} For $x,y \in\CC^n$, given $x \in \mathcal{SQ}$ and $y \in \mathcal{Q}$, we can estimate $\langle x,y\rangle$ to $\epsilon\|x\|\|y\|$ error with probability $\geq 1-\delta$ with query complexity $O(\frac{1}{\epsilon^2}\log\frac{1}{\delta})$
+\end{corollary}
+\begin{proof}Sample an \textbf{index} $s$ from $x$. Then, define $Z := x_s y_s\frac{\|y\|^2}{|y_s|^2}$. Apply the Fact with $X_{i,j}$ being independent samples $Z$.
+\end{proof}	
+
 \subsubsection{Least-Square Sample Generation}
 
-Rejection Sampling
+\begin{itemize}
+	\item For $V \in \CC^{n\times k}, w \in \CC^k$, given $V^\dagger \in \mathcal{SQ}$ (\textit{column}-wise sampling of $V$) and $w \in \mathcal{Q}$, we can simulate $Vw \in \mathcal{SQ}$ with $\text{poly}(k)$ queries
+	\item In words: if we can least-square sample the columns of matrix $V$ and query the entries of vector $w$, then
+\begin{enumerate}
+\item  We can query entries of their multiplication ($Vw$) 
+\item We can least-square sample from a distribution that emulates their multiplication	
+\end{enumerate}
+
+\item Hence, as long as $k \ll n$, we can perform  each using a number of steps polynomial in the number of columns of $V$. 
+
+\end{itemize}
+
+\begin{definition}
+Rejection sampling
+\end{definition}
+\begin{algorithm}
+Input: Samples from distribution $P$
+
+Output: Samples from distribution $Q$
+\begin{itemize}
+\item Sample $s$ from $P$
+\item Compute $r_s = \frac{1}{N}\frac{Q(s)}{P(s)}$, for fixed constant $N$
+\item Output $s$ with probability $r_s$ and restart otherwise
+\end{itemize}
+\end{algorithm}
+
+\begin{fact}
+Fact. If $r_i \leq 1, \forall i$, then the above procedure is well-defined and outputs a sample from $Q$ in $N$ iterations in expectation.	
+\end{fact}
+
+
+\begin{proposition}
+	 For $V \in \RR^{n\times k}$ and $w \in \RR^k$, given $V^\dag \in \mathcal{SQ}$ and $w \in \mathcal{Q}$, we can simulate $Vw \in \mathcal{SQ}$ with expected query complexity $\tilde{O}((\frac{1}{\epsilon^2}\log\frac{1}{\delta}))$
+
+We can compute entries $(Vw)_i$ with $O(k)$ queries.
+
+We can sample using rejection sampling:
+
+\begin{itemize}
+\item $P$ is the distribution formed by sampling from $V_{(\cdot, j)}$.
+  
+\item $Q$ is the target $Vw$.
+\item Hence, compute $r_s$ to be a constant factor of $Q / P$
+\end{itemize}
+
+$$r_i = \frac{\|w^T V_{\cdot, i}\|^2}{\|w\|^2\|V_{\cdot, i}\|^2}$$
+\end{proposition}
+
+\begin{itemize}
+\item Notice that we can compute these $r_i$'s (in fact, despite that we cannot compute probabilities from the target distribution), and that the rejection sampling guarantee is satisfied (via Cauchy-Schwarz).
+
+\item Since the probability of success is $\|Vw\|^2/ \| w\|^2$, it suffices to estimate the probability of success of this rejection sampling process to estimate this norm.
+
+\item Through a Chernoff bound, we see that the average of $O(\|w\|^2(\frac{1}{\epsilon^2}\log\frac{1}{\delta}))$ "coin flips" is in $[(1-\epsilon)\|Vw\|,(1+\epsilon)\|Vw\|]$ with probability $\geq 1-\delta$.
+\end{itemize}
 
 \subsubsection{Application: Stochastic Regression}
+
+For a low-rank matrix $A \in \RR^{m\times n}$
+  and a vector $b \in \RR^n$, given $b, A \in \mathcal{SQ}$, (approximately) simulate $A^+b \in \mathcal{SQ}$.
+
+\begin{algorithm}   	
+\begin{itemize}
+\item Low-rank approximation (3) gives us $S,\hat{U} \in \mathcal{SQ}$.
+
+\item Applying thin-matrix vector (2), we get $\hat{V} \in \mathcal{SQ}$, where $\hat{V} := S^T\hat{U}$; we can show that the columns of $\hat{V}$ behave like the right singular vectors of $A$.
+\item Let $\hat{U}$ have columns $\{ \hat{u}_i\}$. Hence, $\hat{V}$ has columns $\{ S \hat{u}_i \}$. Write its $i$th column as $\hat{v}_i := S\hat{u}_i$.
+
+\item Low-rank approximation (3) also outputs the approximate singular values $\hat{\sigma}_i$ of $A$
+\end{itemize}
+\end{algorithm}
+
+Now, we can write the approximate vector we wish to sample in terms of these approximations:
+
+$$A^+b = (A^TA)^+A^Tb \approx \sum_{i=1}^k \frac{1}{\hat{\sigma}_i^2}\hat{v}_i\hat{v}_i^T A^Tb$$
+
+\begin{itemize}
+\item We approximate $\hat{v}_i^TA^Tb$ to additive error for all by noticing that $\hat{v}_i^TA^Tb = \tr(A^Tb\hat{v}_i^T)$ is an inner product of $A^T$ and $b\hat{v}_i^T$. 
+\item Thus, we can apply (1), since being given $A \in \mathcal{SQ}$ implies $A^T \in \mathcal{SQ}$ for $A^T$ viewed as a long vector. 
+\item Define the approximation of $\hat{v}_i^TA^Tb$ to be $\hat{\lambda}_i$. At this point we have (recalling that $\hat{v}_i := S\hat{u}_i$)
+
+$$A^+b \approx \sum_{i=1}^k \frac{1}{\hat{\sigma}_i^2}\hat{v}_i\hat{\lambda}_i = S \sum_{i=1}^k \frac{1}{\hat{\sigma}_i^2}\hat{u}_i\hat{\lambda}_i$$
+
+\item Finally, using (2) to provide sample access to each $S \hat{u}_i$, we are done	! $\tilde{O}(\kappa^{16}k^6 \|A\|^6_F / \epsilon^6)$ complexity.
+\end{itemize}
+
 
 \subsubsection{Definitions and Assumptions}
 
@@ -392,6 +612,16 @@ Therefore, if we require that $s \geq (4 \ln \frac{2n}{\eta}) / \epsilon^2$ we t
 \end{proof}
 \end{theorem}
 
+
+\subsection{Conclusions}
+
+\begin{itemize}
+\item Claim (Tang): For machine learning problems, $\mathcal{SQ}$ assumptions are more reasonable than state preparation assumptions.
+\item We discussed pseudo-inverse which inverts singular values, but in principle we could have applied any function to the singular values
+\item Gilyen et. al (2018) show that many quantum machine learning algorithms indeed apply polynomial functions to singular values
+\item Our discussion suggests that exponential quantum speedups are tightly related to problems where high-rank matrices play a crucial role (e.g. Hamiltonian simulation or QFT)
+\end{itemize}
+
 \section{Optimal Quantum Sample Complexity}
 
 This paper\cite{arunachalam2016optimal} provides an instructive example of how one can use quantum information theory to discuss the ability of a quantum learning algorithm to learn from a distribution of quantum states. Perhaps, this is unsurprising given the surface-level connection with quantum state discrimination which has been closely studied in quantum information theory.
@@ -400,7 +630,7 @@ This paper\cite{arunachalam2016optimal} provides an instructive example of how o
 
 \subsubsection{Quantum Learning Models: PAC Setting}
 
-a quantum example oracle $QPEX(c,D)$ acts on $\ket{0}^{\otimes n}\ket{0}$ and produces a quantum example $\sum_{x\in\{0,1\}^n} D(x)\ket{x,c(x)}$.
+A quantum example oracle $QPEX(c,D)$ acts on $\ket{0}^{\otimes n}\ket{0}$ and produces a quantum example $\sum_{x\in\{0,1\}^n} D(x)\ket{x,c(x)}$.
 
 A quantum learner is given access to some copies of the state generated by $QPEX(c,D)$ and performs a POVM where each outcome is associated with a hypothesis. 
 
