@@ -5,4 +5,4 @@ A collection of materials from thesis work and a research independent study pert
 ## Structure
 
 - [Rough Draft](https://github.com/farice/Quantum-Machine-Learning/blob/master/Notes/main.pdf)
-- [Quantum Supervised Learning Experiments](https://github.com/farice/Quantum-Supervised-Learning-with-Kernel-Methods)
+- [Quantum Supervised Learning Experiments](https://github.com/farice/Quantum-Supervised-Learning-with-Kernel-Methods/blob/master/Shifted%20Bent%20Kernel.ipynb)

@@ -88,7 +88,9 @@ In particular, the probability of getting this result is
 	&= \| A^{-1} \ket{b} \|^2 C^2 = \Omega(1/\kappa^2)
 \end{align*} 
 
-However, using amplitude amplification (Section \ref{sec:search}) this can be upper-bounded to $O(1/\kappa)$. Finally, we can make a measurement $M$ whose expectation value $\bra{x}M\ket{x}$ corresponds to the feature of $x$ we wish to evaluate. 
+However, using amplitude amplification (Section \ref{sec:search}) this can be upper-bounded to $O(1/\kappa)$. 
+
+Finally, we can make a measurement $M$ whose expectation value $\bra{x}M\ket{x}$ corresponds to the feature of $x$ we wish to evaluate. 
 
 The concessions we noted along the way clearly limit the algorithm's applicability to practical problems. We have three essential caveats to achieving exponential speedup: (1) $A$ must be sparse and have a condition number that scales at most sublinearly with $N$, (2) $\ket{b}$ must be loaded in quantum superposition in $\log(N)$ time, and (3) $\ket{x}$ isn't actually be read out, but instead an expectation is computed.
 
@@ -243,33 +245,13 @@ Consider the feature vector kernel $K(x, z) = | \bra{\Phi(x)}\ket{\Phi(z)} |^2$
 %\end{enumerate}
 
 
-\section{Singular Value Transformation using Quantum-Inspired Length-Square Sampling Methods}
+\section{Quantum-Inspired Length-Square Sampling}
 
 As we've seen, most well-known QML algorithms convert input quantum states to a desired output state or value. Thus, they do not provide a routine to get necessary copies of these input states (a state preparation routine) and a strategy to extract information from an output state. Both are essential to making the algorithm useful.
 
-\begin{itemize}
-    %\item HHL algorithm: application of phase estimation and Hamiltonian simulation to solve linear system.
-    \item We can compute $A^+ \ket{b} = \ket{x_{LS}}$ in $\tilde{O}(log(N)(s^3\kappa^6)/ \epsilon)$ time (query complexity)
-    \item Uses a quantum algorithm based on phase estimation and Hamiltonian simulation
-    \item Assumption: $A$ is sparse with low condition number $\kappa$. Hamiltonian ($\hat{H}$) simulation is efficient when $\hat{H}$ is sparse. No low-rank assumptions are necessary.
-    \item "Key" assumption: the quantum state $\ket{b}$ can be prepared efficiently.	
-    \item What happens if we assume low rank?
-\end{itemize}
+We've also seen that that many of the initial "practical" quantum algorithms attempted to workaround this difficulty by considering low-rank linear algebraic problems (poly-logarithmic in matrix dimension). For example, the data fitting algorithm \cite{wiebe2012quantum} allows one to compute $A^+ \ket{b} = \ket{x_{LS}}$ in $\tilde{O}(log(N)(s^3\kappa^6)/ \epsilon)$ time (query complexity) by using the HHL algorithm and matrix multiplication. Hence, we require that $A$ is sparse with low condition number $\kappa$ as well.
 
-\begin{itemize}
-\item In general, quantum machine learning algorithms convert quantum input states to the desired quantum output states. 
-\item In practice, data is initially stored classically and the algorithm's output must be accessed classically as well.
-\item Today's focus: A practical way to make comparisons between classical and quantum algorithms is to analyze classical algorithms under $\ell^2$ sampling conditions
-\item Tang: linear algebra problems in low-dimensional spaces (say constant or polylogarithmic) likely can be solved "efficiently" under these conditions
-\item Many of the initial practical applications of quantum machine learning were to problems of this type (e.g. Quantum Recommendation Systems - Kerendis, Prakash, 2016)
-\end{itemize}
-
-\begin{itemize}
-\item How can we compare the speed of quantum algorithms with quantum input and quantum output to classical algorithms with classical input and classical output? 
-\item Quantum machine learning algorithms can be exponentially faster than the best standard classical algorithms for similar tasks, but quantum algorithms get help through input state preparation. 
-\item Want a practical classical model that helps its algorithms offer similar guarantees to quantum algorithms, while still ensuring that they can be run in nearly all circumstances one would run the quantum algorithm. 
-\item Solution (Tang): compare quantum algorithms with quantum state preparation to classical algorithms with sample and query access to input.	
-\end{itemize}
+Nevertheless, these low-rank quantum algorithms still have substantial help from an assumed input state preparation routine which has been shown to be at least $\Omega(\sqrt{n})$ in vector input size (\cite{tang2018quantum}). Hence, a natural question to ask is whether there's a similar classical data structure which takes time polynomial in quantum state preparation which can offer machine learning algorithms with similar guarantees. In particular, we compare quantum algorithms with quantum state preparation to classical algorithms with sample and query access to input.	
 
 \subsubsection{Definitions}
 
@@ -329,6 +311,8 @@ Say we have the vector $\vec{x} = (2, 0, 1, 3)$ and $\vec{x} \in \mathcal{SQ}$. 
 
 
 \subsubsection{Low-Rank Estimation}
+
+The first tool we can construct given these sampling assumptions is a classical analog to quantum phase estimation (Section \ref{phase_estimation}).
 
 \begin{itemize}
 \item For $A \in \CC^{m\times n}$, given $A \in \mathcal{SQ}$ and some threshold $k$, we can output a description of a low-rank approximation of $A$ with $\text{poly}(k)$ queries.
