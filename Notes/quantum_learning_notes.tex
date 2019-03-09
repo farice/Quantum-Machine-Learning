@@ -8,9 +8,141 @@ Machine learning explores the study and construction of algorithms that are capa
 
 \section{Classical Learning Theory}
 
+We are given data from a training set $T$ and a test set $S$ of a subset $\Omega \subset \RR^d$. We assume that $S$ and $T$ are drawn from the same input space $X$. Furthermore, there exists output space $Y = \{ -1, +1 \} $ and a distribution $D$ on $X \times Y$.
+
+Now, suppose we have a labelling $m: T \cup S \rightarrow Y$.  Our goal is to use this information to find some approximation function $\tilde{f} : X \rightarrow Y$ that minimizes estimation error for function class $F$. In other words, let true risk for function $f$ be defined as
+
+\begin{align*}
+R^{true}(f) = P_{X, Y \sim D}(f(X) \neq Y)	
+\end{align*}
+
+Then, estimation error is the difference in true risk between $\tilde{f}$ and optimal choice $f^* = \inf_{f \in F}R^{true}(f)$.
+
+One classical method is using so-called Support Vector Machines (SVM), which construct a separating hyperplane such that the distance to the nearest training observation (minimum margin) is maximized. Much of the popularity of SVMs can be attributed to its association with the "kernel trick" which maps the data to a higher dimensional space so that it is separable or approximately separable.
+
+Here, we suppose that the data is given classically and we seek to show that, in some cases, we can obtain a quantum advantage by either generating the separating hyperplane in quantum feature space or simply estimating the kernel function.
+
 \section{Boolean Fourier Analysis}
 
 \section{Randomized Linear Algebra}
+
+\begin{definition} Total Variation Distance.
+\label{def:tve}
+
+Let $P$ and $Q$ be distinct probability measures on a $\sigma$-algebra $\mathcal{F}$ of subsets of the sample space $\Omega$. Then, the total variation distance is given by
+
+\begin{align*}
+\delta(P, Q) &= \sup_{A \in \mathcal{F}}\vert P(A) - Q(A)\vert
+\end{align*}
+\end{definition}
+
+\begin{lemma}Hoeffding--Chernoff Inequality
+\label{lem:chernoff}
+
+Let $X_1, X_2, \cdots, X_s$	be i.i.d real random variables. For any positive, real numbers $a, t$ we have that, from Markov's inequality,
+
+\begin{align*}
+\Pr(\sum_{i=1}^s X_i \geq a) &\leq e^{-ta} E\Bigg[\prod_{i=1}^s e^{tX_i}\Bigg]\\
+&= e^{-ta} \prod_{i=1}^s E\Bigg[e^{tX_i}\Bigg]
+\end{align*}
+by independence.
+\qed
+\end{lemma}
+
+\begin{theorem}Hoeffding--Chernoff Inequality for matrix-valued random variables \cite{kannan2017randomized}
+	
+	Let $X$ be a random variable taking values which are real symmetric $d \times d$ matrices. Suppose $X_1, X_2, \cdots , X_s$ are i.i.d. draws of $X$. For any positive real numbers $a$, $t$, we have
+	
+	\begin{align}
+		\label{thm:chern-mat-eigen}
+		\Pr(\lambda_{\max}\Big(\sum_{i=1}^s X_i\Big) \geq a ) &\leq de^{-ta} \Vert E[e^{tX}]\Vert_2^s \\
+		\label{thm:chern-mat-norm}
+		\Pr(\Big\Vert \Big(\sum_{i=1}^s X_i\Big)\Big\Vert_2 \geq a ) &\leq de^{-ta} (\Vert E[e^{tX}]\Vert_2^s + \Vert E[e^{-tX}]\Vert_2^s)
+	\end{align}
+	
+	where $\lambda_{\max}$ is the largest eigenvalue.
+	\begin{proof}
+		First, we can show that (\ref{thm:chern-mat-eigen}) $\implies$ (\ref{thm:chern-mat-norm}). By definition of the 2-norm of a matrix,
+		
+		\begin{align*}
+		\Vert \sum_i X_i \Vert_2 = \max\Big(\lambda_{\max} \Big(\sum_i X_i\Big), \lambda_{\max} \Big(\sum_i (-X_i)\Big)\Big)	
+		\end{align*}
+		
+		since it is the square root of the maximum eigenvalue of $(\sum_i X_i^T) \sum_i X_i = (\sum_i X_i) \sum_i X_i$ and hence, equivalently, the maximum absolute value of an eigenvalue of $X_i$. Therefore, we can simply apply (\ref{thm:chern-mat-eigen}) to both $X_i$ and $-X_i$ and we get (\ref{thm:chern-mat-norm}).
+		
+		So, we can focus our attention on (\ref{thm:chern-mat-norm}). Let $S = \sum_i^s X_i$. Hence,
+		
+		\begin{align*}
+		\lambda_{\max}(S) \geq a \iff 	\lambda_{\max}(tS) \geq ta
+		\intertext{Furthermore, by considering the power series definition of the exponential,}
+		\iff \lambda_{\max}(e^{tS}) \geq e^{ta}\\
+		\implies \Tr(e^{tS}) \geq e^{ta}
+		\end{align*}
+		
+since the trace is the sum of the matrix's eigenvalues. Since $\Tr(e^{tS}) \geq 0$, we can apply Markov's inequality
+
+\begin{align*}
+\Pr(\Tr(e^{tS}) \geq e^{ta}) \leq \frac{E[\Tr(e^{tS})]}{e^{ta}}
+\end{align*}
+
+Now, we use the following lemma
+
+\begin{lemma}
+Golden-Thompson Inequality
+
+If $A$ and $B$ are Hermitian matrices, then
+
+\begin{align*}
+\Tr(e^{A + B}) \leq \Tr(e^A e^B)
+\end{align*}
+\qed
+\end{lemma}
+
+Hence, we can let $A = t(\sum_i^{s-1} X_i)$ and $B = tX_s$. Then,
+
+\begin{align*}
+E_X\Big[\Tr(e^{tS})\Big] &\leq E_X\Big[\Tr(e^{t\big(\sum_i^{s-1} X_i\big)}e^{tX_s})\Big]\\
+\shortintertext{Since the expectation operator commutes with the summation of the trace by linearity of trace,}
+&= \Tr\Big(E_X\Big[e^{t\big(\sum_i^{s-1} X_i\big)}e^{tX_s}\Big]\Big)\\
+&= \Tr\Big(E_{X_1, X_2, \cdots, X_{s-1}}\Big[e^{t\big(\sum_i^{s-1} X_i\big)}\Big]E_{X_s}\Big[e^{tX_s}\Big]\Big) \tag{by independence}\\
+\end{align*}
+
+Now, we can apply Corollary (\ref{cor:psd-tr-norm-ineq}), which gives 
+
+\begin{align*}
+&\leq \Tr\Big(E_{X_1, X_2, \cdots, X_{s-1}}\Big[e^{t\big(\sum_i^{s-1} X_i\big)}\Big]\Big) \Big\Vert E_{X_s}\Big[e^{tX_s}\Big]\Big\Vert_2\\
+&= \Tr\Big(E_{X}\Big[e^{t\big(\sum_i^{s-1} X_i\big)}\Big]\Big) \Big\Vert E_{X}\Big[e^{tX}\Big]\Big\Vert_2 \\
+&= E_X\Big[\Tr\Big(e^{t\big(\sum_i^{s-1} X_i\big)}\Big)\Big] \Big\Vert E_{X}\Big[e^{tX}\Big]\Big\Vert_2  \intertext{So we can repeat this process iteratively, peeling an $X_i$ each time from the left term. For clarity, the next step gives,}
+E_X\Big[\Tr\Big(e^{t\big(\sum_i^{s-1} X_i\big)}\Big)\Big] &\leq E_X\Big[\Tr(e^{t\big(\sum_i^{s-2} X_i\big)}e^{tX_{s-1}})\Big]\\
+&\leq E_X\Big[\Tr\Big(e^{t\big(\sum_i^{s-2} X_i\big)}\Big)\Big] \Big\Vert E_{X}\Big[e^{tX}\Big]\Big\Vert_2 \tag{applying (\ref{cor:psd-tr-norm-ineq}) again}
+\intertext{Therefore, after peeling all terms but the last $X_i$, we have}
+E_X\Big[\Tr(e^{tS})\Big] &\leq E_X\Big[\Tr\Big(e^{tX}\Big)\Big] \Big\Vert E_{X}\Big[e^{tX}\Big]\Big\Vert_2^{s-1} \intertext{Hence, since the trace is the sum of eigenvalues, $\Tr(e^{tX}) \leq d \lambda_{\max}(e^{tX})$ i.e. the worst case of all $d$ eigenvalues being the max}
+&\leq d \Big\Vert E_{X}\Big[e^{tX}\Big]\Big\Vert_2^{s}
+\end{align*}
+
+as desired.
+\end{proof}
+\end{theorem}
+
+\begin{lemma}
+\label{lemma:exp-eigen-approx}
+If $B \in \CC^{d \times d}$ is a hermitian matrix for which $\Vert B \Vert_2 \leq 1$, then $e^{B} \leq I + B + B^2$
+
+\begin{proof}
+	We know that $e^{\lambda_i} \leq 1 + \lambda_i + \lambda_i^2$, $|\lambda_i|^2 \leq 1$. Hence,
+	
+	\begin{align*}
+	e^{\lambda_i} \ket{v_i}\bra{v_i} \leq (1 + \lambda_i + \lambda_i^2) 	\ket{v_i}\bra{v_i}
+	\end{align*}
+
+	where $\ket{v_i}$ is the corresponding eigenvector. This then implies
+	
+	\begin{align*}
+	e^B &= \sum_{i=1}^d e^{\lambda_i} \ket{v_i}\bra{v_i} \preceq \sum_{i=1}^d (1 + \lambda_i + \lambda_i^2) \ket{v_i}\bra{v_i} \\
+	&= I + B + B^2
+	\end{align*}
+\end{proof}
+\end{lemma}
 
 \chapter{A Review of Quantum Machine Learning}
 
@@ -201,21 +333,6 @@ Throughout this review, we've considered learning classical data which introduce
 \section{Supervised learning with quantum feature Hilbert spaces}
 \cite{havlicek2018supervised}
 
-\subsection{Prelude}
-
-We are given data from a training set $T$ and a test set $S$ of a subset $\Omega \subset \RR^d$. We assume that $S$ and $T$ are drawn from the same input space $X$. Furthermore, there exists output space $Y = \{ -1, +1 \} $ and a distribution $D$ on $X \times Y$.
-
-Now, suppose we have a labelling $m: T \cup S \rightarrow Y$.  Our goal is to use this information to find some approximation function $\tilde{f} : X \rightarrow Y$ that minimizes estimation error for function class $F$. In other words, let true risk for function $f$ be defined as
-
-\begin{align*}
-R^{true}(f) = P_{X, Y \sim D}(f(X) \neq Y)	
-\end{align*}
-
-Then, estimation error is the difference in true risk between $\tilde{f}$ and optimal choice $f^* = \inf_{f \in F}R^{true}(f)$.
-
-One classical method is using so-called Support Vector Machines (SVM), which construct a separating hyperplane such that the distance to the nearest training observation (minimum margin) is maximized. Much of the popularity of SVMs can be attributed to its association with the "kernel trick" which maps the data to a higher dimensional space so that it is separable or approximately separable.
-
-Here, we suppose that the data is given classically and we seek to show that, in some cases, we can obtain a quantum advantage by either generating the separating hyperplane in quantum feature space or simply estimating the kernel function.
 
 \subsection{Feature Map}
 
@@ -859,317 +976,6 @@ Because S is shattered by C , for each string a ∈ {0, 1}d , there exists a con
 Proof. Let random variable h(B) ∈ {0, 1}d be the hypothesis that the learner produces (given
 the examples in B) restricted to the elements s1,...,sd. Note that the error of the hypothesis
 \end{proof}
-
-\begin{subappendices}
-\subsection{Pretty Good Measurement (PGM)}
-\label{app:pgm}
-
-Given a density matrix ensemble $\mathcal{E} = \{p_i, \sigma_i\}$ and a quantum state $\rho$ we are promised that $\rho$ is in state $\sigma_i$ with probability $p_i$. In the general case we have $i \in [m]$ and of course $\sum_{i=1}^m p_i = 1$. Our goal is then to successfully identify which of the $\sigma_i$ that our state $\rho$ is actually in. This is known as Quantum Hypothesis Testing. 
-
-In some sense, thinking back to Holevo's Theorem (Theorem \ref{thm:holevo}), this is related to Bob attempting to access information transported from Alice that is given from the distribution above.
-
-Hence, we perform a maximization with respect to both the probabilities on each state as well as with respect to any randomness that our approach employs. We then must choose a Quantum POVM $\{E_i\}$ that carries put a measurement and maximizes our probability of getting the state right.
-
-So say we pick a POVM. Hence, we know that
-
-\begin{align*}
-\Pr(Success)= \sum_i p_i \Tr (\sigma_i E_i)
-\end{align*}
-
-
-So this is the quantity that we seek to maximize. 
-
-We've shown above that the trace distance provides the solution for $m=2$. As it turns out for $m>2$ this is not an easy problem. However, PGM provides a sound approximation:
-
-Intuitively, it might seem reasonable to simply choose 
-
-$$E_i = p_i \sigma_i$$
-
-Unfortunately, then, $\sum_i E_i \neq I$. Well, one case we may think about is if we can guarantee $\sigma_i$ is a the sum of pure states from an orthonormal basis. In which case, let $S = \sum_i \sigma_i$ and we choose 
-
-$$E_i = S^{1/2} \sigma_i S^{1/2} $$ 
-
-Then we have
-
-$$
-\tr(E_i \sigma_i) = \tr(\sigma_i) = 1
-$$
-
-by orthonormality. Inspired by this, define the PGM POVM to be 
-
-$$E_i = S^{-1/2}p_i \sigma_i S^{-1/2}$$ 
-
-for our original problem. Positive semidefiniteness is clear, so it remains to show that we have completeness
-
-\begin{align*}
-\sum_i E_i &= \sum_i S^{-1/2}p_i \sigma_i S^{-1/2}\\
-&=  S^{-1/2} \sum_i p_i \sigma_i S^{-1/2} \\
-&= S^{-1/2} S S^{-1/2} = I
-\end{align*}
-
-\begin{theorem}
-Let $\Pr_{opt}(\mathcal{E})$ by the optimal success probability for our 	quantum hypothesis testing problem. Define $\Pr_{PGM}(\mathcal{E})$ to be the average success probability using the PGM POVM. Then,
-
-\begin{align*}
-Pr_{opt}(\mathcal{E})^2 \leq Pr_{PGM}(\mathcal{E}) \leq 	Pr_{opt}(\mathcal{E})
-\end{align*}
-
-\end{theorem}
-
-\subsection{Trace Distance}
-
-\begin{definition}
-Trace Distance
-
-The trace distance $T(\cdot , \cdot)$ is a metric on the space of density operators and gives a measure of distinguishability between states. In particular, let $\rho, \sigma$ be density operators,
-
-\begin{align*}
-	T(\rho, \sigma) &= \frac{1}{2} \Tr [\sqrt{(\rho - \sigma)^2}] \\
-	&= \frac{1}{2} \sum_i |\lambda_i|
-\end{align*}
-
-where $\lambda_i$ are the eigenvalues of Hermitian $\rho - \sigma$.
-
-Hence, it is simply the trace norm of the positivization of the difference of matrices.
-
-\end{definition}
-
-\begin{lemma}
-For any states $\rho, \sigma$ one may write $\rho - \sigma = Q - S$ where $Q$ and $S$ are positive operators with support on orthogonal vector spaces	(Exercise 9.7 \cite{nielsen2010quantum})
-\end{lemma}
-
-\begin{proof}
-$\rho, \sigma$ are p.s.d operators. Hence, $\rho - \sigma$ is Hermitian, so we can write $\rho - \sigma = \sum_i \lambda_i \ket{u_i}\bra{u_i}$ where $\{ u_i \}$ is an orthonormal basis of the Hilbert space, by spectral theorem. Now, we can decompose the eigenbasis into positive and negative components. Then, $\rho - \sigma = \sum_i \lambda^+_i \ket{u_i}\bra{u_i} + \sum_j \lambda^-_j\ket{u_j}\bra{u_j}$ where $\lambda^+_i >0, \lambda^-_j < 0$. Since, each component partitions the vector space (other than at the additive identity) by the orthogonality condition, this is a direct sum.
-\end{proof}
-
-
-\begin{lemma}
-The maximum probability of distinguishing between two states with an optimal measurement is given by
-
-\begin{align*}
-	1/2[1 + T(\rho_1, \rho_2)]
-\end{align*}
-	
-\end{lemma}
-\begin{proof}
-Say that we have the ensemble $\{ (p_1, \rho_1), (p_2, \rho_2)\}$. We seek to define a POVM $\{E_1, E_2 \}$ where $E_1$ indicates $\rho_1$ and similarly for $\rho_2$. hence the probability of success is given by
-
-\begin{align*}
-\Pr_{\max} &= \max_{E_1, E_2}p_1\Tr[E_1\rho_1] + p_2\Tr[E_2\rho_2] \\
-&= \max_{E_1} p_1\Tr[E_1\rho_1] + p_2\Tr[(I - E_1)\rho_2] \tag{completeness of POVM} \\
-&= \max_{E_1}p_2\Tr[\rho_2] + \Tr[E_1(p_1\rho_1 - p_2\rho_2)] \tag{linearity of trace} \\
-&= \max_{E_1} \Big( p_2 + \Tr[E_1(p_1\rho_1 - p_2\rho_2)]\Big) \tag{$\Tr(\rho) = 1$ for any density operator}
-\end{align*}
-
-Therefore, the optimal projection $E_1$ is onto the positive eigenspace of $(p_1\rho_1 - p_2\rho_2)$. In which case, recalling that $\rho_i$ are p.s.d, $E_1(p_1\rho_1 - p_2\rho_2)] = p_1 \rho_1$ and so
-
-\begin{align*}
-&= 	\Big( p_2 + \Tr[p_1\rho_1]\Big)
-\end{align*}
- 
-	
-We did implicitly assume that $E_1 + E_2 = I$ where we could've had an additional indeterminate $E_3$. However, the proof would still follow in any case (\cite{nielsen2010quantum}).
-\end{proof}
-
-
-\begin{corollary}
-\label{cor:distinguish-two-pure-states}
-Consider attempting to distinguish two pure states $\ket{\psi_0}, \ket{\psi_1}$. Then, we will distinguish correctly with probability at most $1/2[1 + \sqrt{1 - |\bra{\psi_0}\ket{\psi_1}|^2}]$.
-
-Equivalently, if we can distinguish between the two states w.p. $1 - \delta$, then $|\bra{\psi_0}\ket{\psi_1}| \leq 2\sqrt{\delta(1-\delta)}$. 	
-\end{corollary}
-
-\begin{proof}
-Applying the previous Lemma, we have maximum probability
-
-\begin{align*}
-1/2[1 + T(\ket{\psi_0}\bra{\psi_0}, \ket{\psi_1}\bra{\psi_1}	)]
-\end{align*}
-
-So, write $\ket{\psi_1} = \cos(\theta) \ket{\psi_0} + e^{i\phi}\sin(\theta)\ket{\psi_0^\perp}$. Hence,
-
-\begin{align*}
-\ket{\psi_1}\bra{\psi_1}	 &= \cos^2(\theta) \ket{\psi_0}\bra{\psi_0} + \sin^2(\theta)\ket{\psi_0^\perp}\bra{\psi_0^\perp}\\ 
-+ e^{i\phi}\cos(\theta)\sin(\theta)\ket{\psi_0^\perp}\bra{\psi_0} + e^{-i\phi}\cos(\theta)\sin(\theta)\ket{\psi_0}\bra{\psi_0^\perp}
-\end{align*}
-
-Since trace is basis-independent, we can write $\ket{\psi_0}\bra{\psi_0} - \ket{\psi_1}\bra{\psi_1}$ in the above used orthogonal basis. This gives us characteristic polynomial
-
-\begin{align*}
-	0 &= (1-\cos^2(\theta) - \lambda)(-\sin^2(\theta) - \lambda) - \cos^2(\theta)\sin^2(\theta)\\
-	&= (\sin^2(\theta) - \lambda)(-\sin^2(\theta) - \lambda) - \cos^2(\theta)\sin^2(\theta) \\
-	&= -\sin^4(\theta) + \lambda^2 - \cos^2(\theta)\sin^2(\theta) \\
-	&= -\sin^2(\theta) + \lambda^2
-\end{align*}
-
- So, $\lambda = \pm |\sin(\theta)|$. Therefore, since the trace distance is the absolute sum of the eigenvalues of this difference, 
-
-\begin{align*}
-T(\ket{\psi_0}\bra{\psi_0}, \ket{\psi_1}\bra{\psi_1}	) &= 2|\sin(\theta)|sam
-\end{align*}
-
-and indeed 
-
-\begin{align*}
-|\bra{\psi_0}\ket{\psi_1}|^2 &= |\cos(\theta)|^2
-\implies \sqrt{1 - |\bra{\psi_0}\ket{\psi_1}|^2} &= |\sin(\theta)|
-\end{align*}
-
-as desired.
-\end{proof}
-
-
-\begin{lemma}
-\label{lem:psd-trace}
-Let $A, B, C$ by symmetric $d \times d$ matrices satisfying $A \succeq 0$ and $B \preceq C$. Hence, $\Tr(AB) \leq \Tr(AC)$
-
-\begin{proof}
-	Write $A$ in its spectral decomposition $A = \sum \lambda_i \ket{i}\bra{i}$, invoking Spectral Theorem (\ref{thm:spec}). Hence,
-	
-	\begin{align*}
-		\Tr(AB) &= \Tr(\sum \lambda_i \ket{i}\bra{i} B)\\
-		&= \sum \lambda_i \Tr(\ket{i}\bra{i} B) \tag{linearity of trace}\\
-		&= \sum \lambda_i \Tr(\bra{i} B \ket{i}) \tag{cyclic property of trace}\\
-		&\leq \sum \lambda_i \Tr(\bra{i} C \ket{i})\\
-		&= \sum \lambda_i \Tr(\ket{i}\bra{i} C) = \Tr(\sum \lambda_i \ket{i}\bra{i} C) = \Tr(AC)
-	\end{align*}
-\end{proof}
-\end{lemma}
-
-\begin{corollary}
-\label{cor:psd-tr-norm-ineq}
-If $A, B \succeq 0$, then $\Tr(AB) \leq \Vert B \Vert_2 \Tr(A)$
-
-\begin{proof}
-Note that the singular values of $B$ coincide with the eigenvalues of $B$ since $B^\dag B = B^2$ and $B \succeq 0$ $\implies$ $\lambda_i(B) \geq 0$, $\forall i$. So, let $C = \Vert B \Vert_2 I$ which then trivially satisfies $\lambda_i(C) = \lambda_{\max}(B)$, $\forall i$ since $C$ is the diagonal matrix with diagonal values all equal to $\lambda_{\max}(B)$. Therefore, $B \preceq C$. So, we can simply apply \ref{lem:psd-trace} above,
-
-\begin{align*}
-\Tr(AB) &\leq \Tr(AC) \\
-&= \Tr\big(A \Vert B \Vert_2 I\big)\\
-&= \Vert B \Vert_2 \Tr(A)
-\end{align*}
-\end{proof}
-\end{corollary}
-
-\begin{definition} Total Variation Distance.
-\label{def:tve}
-
-Let $P$ and $Q$ be distinct probability measures on a $\sigma$-algebra $\mathcal{F}$ of subsets of the sample space $\Omega$. Then, the total variation distance is given by
-
-\begin{align*}
-\delta(P, Q) &= \sup_{A \in \mathcal{F}}\vert P(A) - Q(A)\vert
-\end{align*}
-\end{definition}
-
-\begin{lemma}Hoeffding--Chernoff Inequality
-\label{lem:chernoff}
-
-Let $X_1, X_2, \cdots, X_s$	be i.i.d real random variables. For any positive, real numbers $a, t$ we have that, from Markov's inequality,
-
-\begin{align*}
-\Pr(\sum_{i=1}^s X_i \geq a) &\leq e^{-ta} E\Bigg[\prod_{i=1}^s e^{tX_i}\Bigg]\\
-&= e^{-ta} \prod_{i=1}^s E\Bigg[e^{tX_i}\Bigg]
-\end{align*}
-by independence.
-\qed
-\end{lemma}
-
-\begin{theorem}Hoeffding--Chernoff Inequality for matrix-valued random variables \cite{kannan2017randomized}
-	
-	Let $X$ be a random variable taking values which are real symmetric $d \times d$ matrices. Suppose $X_1, X_2, \cdots , X_s$ are i.i.d. draws of $X$. For any positive real numbers $a$, $t$, we have
-	
-	\begin{align}
-		\label{thm:chern-mat-eigen}
-		\Pr(\lambda_{\max}\Big(\sum_{i=1}^s X_i\Big) \geq a ) &\leq de^{-ta} \Vert E[e^{tX}]\Vert_2^s \\
-		\label{thm:chern-mat-norm}
-		\Pr(\Big\Vert \Big(\sum_{i=1}^s X_i\Big)\Big\Vert_2 \geq a ) &\leq de^{-ta} (\Vert E[e^{tX}]\Vert_2^s + \Vert E[e^{-tX}]\Vert_2^s)
-	\end{align}
-	
-	where $\lambda_{\max}$ is the largest eigenvalue.
-	\begin{proof}
-		First, we can show that (\ref{thm:chern-mat-eigen}) $\implies$ (\ref{thm:chern-mat-norm}). By definition of the 2-norm of a matrix,
-		
-		\begin{align*}
-		\Vert \sum_i X_i \Vert_2 = \max\Big(\lambda_{\max} \Big(\sum_i X_i\Big), \lambda_{\max} \Big(\sum_i (-X_i)\Big)\Big)	
-		\end{align*}
-		
-		since it is the square root of the maximum eigenvalue of $(\sum_i X_i^T) \sum_i X_i = (\sum_i X_i) \sum_i X_i$ and hence, equivalently, the maximum absolute value of an eigenvalue of $X_i$. Therefore, we can simply apply (\ref{thm:chern-mat-eigen}) to both $X_i$ and $-X_i$ and we get (\ref{thm:chern-mat-norm}).
-		
-		So, we can focus our attention on (\ref{thm:chern-mat-norm}). Let $S = \sum_i^s X_i$. Hence,
-		
-		\begin{align*}
-		\lambda_{\max}(S) \geq a \iff 	\lambda_{\max}(tS) \geq ta
-		\intertext{Furthermore, by considering the power series definition of the exponential,}
-		\iff \lambda_{\max}(e^{tS}) \geq e^{ta}\\
-		\implies \Tr(e^{tS}) \geq e^{ta}
-		\end{align*}
-		
-since the trace is the sum of the matrix's eigenvalues. Since $\Tr(e^{tS}) \geq 0$, we can apply Markov's inequality
-
-\begin{align*}
-\Pr(\Tr(e^{tS}) \geq e^{ta}) \leq \frac{E[\Tr(e^{tS})]}{e^{ta}}
-\end{align*}
-
-Now, we use the following lemma
-
-\begin{lemma}
-Golden-Thompson Inequality
-
-If $A$ and $B$ are Hermitian matrices, then
-
-\begin{align*}
-\Tr(e^{A + B}) \leq \Tr(e^A e^B)
-\end{align*}
-\qed
-\end{lemma}
-
-Hence, we can let $A = t(\sum_i^{s-1} X_i)$ and $B = tX_s$. Then,
-
-\begin{align*}
-E_X\Big[\Tr(e^{tS})\Big] &\leq E_X\Big[\Tr(e^{t\big(\sum_i^{s-1} X_i\big)}e^{tX_s})\Big]\\
-\shortintertext{Since the expectation operator commutes with the summation of the trace by linearity of trace,}
-&= \Tr\Big(E_X\Big[e^{t\big(\sum_i^{s-1} X_i\big)}e^{tX_s}\Big]\Big)\\
-&= \Tr\Big(E_{X_1, X_2, \cdots, X_{s-1}}\Big[e^{t\big(\sum_i^{s-1} X_i\big)}\Big]E_{X_s}\Big[e^{tX_s}\Big]\Big) \tag{by independence}\\
-\end{align*}
-
-Now, we can apply Corollary (\ref{cor:psd-tr-norm-ineq}), which gives 
-
-\begin{align*}
-&\leq \Tr\Big(E_{X_1, X_2, \cdots, X_{s-1}}\Big[e^{t\big(\sum_i^{s-1} X_i\big)}\Big]\Big) \Big\Vert E_{X_s}\Big[e^{tX_s}\Big]\Big\Vert_2\\
-&= \Tr\Big(E_{X}\Big[e^{t\big(\sum_i^{s-1} X_i\big)}\Big]\Big) \Big\Vert E_{X}\Big[e^{tX}\Big]\Big\Vert_2 \\
-&= E_X\Big[\Tr\Big(e^{t\big(\sum_i^{s-1} X_i\big)}\Big)\Big] \Big\Vert E_{X}\Big[e^{tX}\Big]\Big\Vert_2  \intertext{So we can repeat this process iteratively, peeling an $X_i$ each time from the left term. For clarity, the next step gives,}
-E_X\Big[\Tr\Big(e^{t\big(\sum_i^{s-1} X_i\big)}\Big)\Big] &\leq E_X\Big[\Tr(e^{t\big(\sum_i^{s-2} X_i\big)}e^{tX_{s-1}})\Big]\\
-&\leq E_X\Big[\Tr\Big(e^{t\big(\sum_i^{s-2} X_i\big)}\Big)\Big] \Big\Vert E_{X}\Big[e^{tX}\Big]\Big\Vert_2 \tag{applying (\ref{cor:psd-tr-norm-ineq}) again}
-\intertext{Therefore, after peeling all terms but the last $X_i$, we have}
-E_X\Big[\Tr(e^{tS})\Big] &\leq E_X\Big[\Tr\Big(e^{tX}\Big)\Big] \Big\Vert E_{X}\Big[e^{tX}\Big]\Big\Vert_2^{s-1} \intertext{Hence, since the trace is the sum of eigenvalues, $\Tr(e^{tX}) \leq d \lambda_{\max}(e^{tX})$ i.e. the worst case of all $d$ eigenvalues being the max}
-&\leq d \Big\Vert E_{X}\Big[e^{tX}\Big]\Big\Vert_2^{s}
-\end{align*}
-
-as desired.
-\end{proof}
-\end{theorem}
-
-\begin{lemma}
-\label{lemma:exp-eigen-approx}
-If $B \in \CC^{d \times d}$ is a hermitian matrix for which $\Vert B \Vert_2 \leq 1$, then $e^{B} \leq I + B + B^2$
-
-\begin{proof}
-	We know that $e^{\lambda_i} \leq 1 + \lambda_i + \lambda_i^2$, $|\lambda_i|^2 \leq 1$. Hence,
-	
-	\begin{align*}
-	e^{\lambda_i} \ket{v_i}\bra{v_i} \leq (1 + \lambda_i + \lambda_i^2) 	\ket{v_i}\bra{v_i}
-	\end{align*}
-
-	where $\ket{v_i}$ is the corresponding eigenvector. This then implies
-	
-	\begin{align*}
-	e^B &= \sum_{i=1}^d e^{\lambda_i} \ket{v_i}\bra{v_i} \preceq \sum_{i=1}^d (1 + \lambda_i + \lambda_i^2) \ket{v_i}\bra{v_i} \\
-	&= I + B + B^2
-	\end{align*}
-\end{proof}
-\end{lemma}
-
-\end{subappendices}
 
 \section{Online Learning of Quantum States}
 
