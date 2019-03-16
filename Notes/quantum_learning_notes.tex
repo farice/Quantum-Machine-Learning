@@ -870,7 +870,9 @@ Therefore, if we require that $s \geq (4 \ln \frac{2n}{\eta}) / \epsilon^2$ we t
 
 \section{Optimal Quantum Sample Complexity}
 
-This paper\cite{arunachalam2016optimal} provides an instructive example of how one can use quantum information theory to discuss the ability of a quantum learning algorithm to learn from a distribution of quantum states. Perhaps, this is unsurprising given the surface-level connection with quantum state discrimination which has been closely studied in quantum information theory.
+It is well known that one can tightly bound the number of samples from an unknown distribution required to "probably approximately correctly" (PAC) learn an unknown concept in terms of its VC dimension (Section \ref{}). Hence, a natural question to ask is whether "quantum samples" are more powerful in the sense of requiring less examples to achieve this goal.
+
+Here we will explore the techniques of Arunachalam and de Wolf \cite{arunachalam2016optimal} in order to address this question. The authors show that the ideas of quantum state discrimination discussed in Section \ref{} offer an intuitive analysis, despite resulting in a suboptimal lower bound. However, Boolean Fourier analysis (Section \ref{}) applied to the Pretty Good Measurement (Section \ref{}) gives an optimal bound showing that there is no quantum advantage in terms of sample complexity when restricting to PAC learning and quantum samples as specified in the model introduced by Bshouty and Jackson \cite{bshouty1998learning}.
 
 \subsection{Definitions}
 
