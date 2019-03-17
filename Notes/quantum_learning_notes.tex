@@ -4,7 +4,7 @@
 
 \chapter{Learning Theory and Mathematical Methods}
 
-Machine learning explores the study and construction of algorithms that are capable of finding patterns in data. Hence, this entails studying the ability of learning models to capture these patterns and generalize, as one would in statistical learning theory, in addition to studying model efficiency, enabled by computational complexity theory. In practice, many of the widely used supervised and unsupervised machine learning models can reasonably be described as linear algebraic data analysis techniques. For example, consider that ordinary least squares regression and ridge regression can be given in terms of a closed-form product of matrices and matrix inverses and that principal component analysis is essentially solving for the largest-eigenvalue eigenvectors of a particular covariance matrix. Furthermore, optimization problems, which are common in machine learning, can often be broken down into a set of basic linear algebraic subproblems.
+Machine learning explores the study and construction of algorithms that are capable of finding patterns in data. Hence, this entails studying the ability of learning models to capture these patterns and generalize, as one would in statistical learning theory, in addition to studying model efficiency, enabled by computational complexity theory.
 
 \section{Boolean Fourier Analysis}
 
@@ -17,37 +17,98 @@ f: \{ 0, 1\}^n \rightarrow \{ 0, 1\}
 or by relabeling 
 
 \begin{align*}
-f: \{ -1, +1 \} \rightarrow \{-1, +1\}	
+f: \{ -1, +1 \}^n \rightarrow \{-1, +1\}	
 \end{align*}
 
-The domain of a boolean function is the "Hamming cube". 
+The domain of a boolean function is the "Hamming cube", $\mathbb{B}^n$. 
 
 \begin{definition}
 Let $S \subseteq [n], n \in \ZZ$. Then,
 \begin{align*}
-\chi_S(x) &:= \sum_{i\in S} x_i \tag{with $x^{\emptyset} = 1$ by convention}
+\chi_S(x) &:= \prod_{i\in S} x_i \tag{with $x^{\emptyset} = 1$ by convention}
 \end{align*}	
 \end{definition}
 
 Hence, it is clear that we can view $\chi_S(x): \{-1, +1\}^n \rightarrow \{-1, +1\}$ as computing the parity of $x$ over the set $S$. 
 
 \begin{theorem}
+\label{thm:fourier-bool}
 Every function $f: \{ -1, +1 \} \rightarrow \RR$ can be uniquely expressed as a multilinear polynomial,
 
 \begin{align*}
-f(x) &= \sum_{S \subseteq [n]}	\hat{f}(S)x^S
+f(x) &= \sum_{S \subseteq [n]}	\hat{f}(S)\chi_S(x)
 \end{align*}
 \end{theorem}
 
 We denote this expansion as the Fourier expansion of $f$, and term the real coefficent $\hat{f}(S)$ the Fourier coefficient of $f$ on $S$.
 
+\begin{definition}
+Define an inner product $\< \cdot, \cdot \>$ on $f, g: \{-1, +1 \} \rightarrow \RR$ 	by 
+
+\begin{align*}
+\< f, g\> &= 2^{-n} \sum_{x \in \{-1, +1\}^n} f(x)g(x) &= E_{x \tilde \{-1, +1\}^n}[f(x)g(x)]	
+\end{align*}
+
+where $x \tilde \{-1, +1\}^n$ denotes that $x$ is chosen uniformly at random from $\{-1, +1\}^n$. 
+\end{definition}
+
+
+\begin{theorem}
+	The set of all functions $f: \{-1, +1\}^n \rightarrow \RR$ forms a vector space $V$ such that $\dim V = 2^n$. The $\{\chi_S \}, S \subseteq [n]$ form an orthonormal basis for $V$. 
+\end{theorem}
+
+\begin{proof}
+Let $f, g$ both map $\{-1, +1\}^n$ to $\RR$. Clearly, by Theorem \ref{thm:fourier-bool}, $h = \alpha f + g$ for $\alpha \in \RR$ is also a boolean function $h: \{-1, +1\}^n \rightarrow \RR$. Hence, we have a vector space $V$ of boolean functions and $\dim V = 2^n$ which we can canonically identify with $\RR^{2^n}$. Because the number of parity functions is $2^n$ and they are independent, we conclude that the $\chi_S$ form a basis of $V$.
+
+If this basis is indeed orthonormal, then the Definition above requires 
+
+\begin{align*}
+\< \chi_S, \chi_T \> &= \begin{cases}
+ 	1, S = T\\
+ 	0, S \neq T
+ \end{cases}
+\end{align*}
+
+So, observe that 
+
+\begin{align*}
+\chi_S(x) \chi_T(x)	&= \prod_{i\in S} \prod_{j\in T} x_ix_j \\
+&= \prod_{i\in S \cap T} x_i^2 \prod_{j\in S \Delta T} x_i \\
+&= \chi_{S \Delta T}(X) 
+\end{align*}
+
+where $S \Delta T$ is the symmetric difference $(S \cup T) \setminus (S\cap T)$. 
+
+Now, we claim that $E[\chi_{S \Delta T}] = 1$ iff $S \Delta T = \emptyset$ and $0$ otherwise. Indeed, we've defined that $\chi_{\emptyset} = 1$ so $E[\chi_{\emptyset}] = 1$. Otherwise,
+
+\begin{align*}
+E[\prod_{i \in S \Delta T} x_i ]	 &= \prod_{i \in S \Delta T} E[ x_i ]
+\end{align*}
+
+by independence of the $\{x_i\}$. But each $E[ x_i ] = (1/2) (+1) + (1/2) (-1) = 0$.
+\end{proof}
+
 \begin{proposition}
-	The set of all functions $f: \{-1, +1\}^n \rightarrow \RR$ forms a vector space $V$ s.t. $dim V = 2^n$. The $\{\chi_S(x)\}, S \subseteq [n]$ form an orthonormal basis for $V$. 
+For $f: \{ -1, +1\}^n \rightarrow \RR$ and $S \subseteq [n]$, the Fourier coefficient of $f$ on $S$ is given by
+
+\begin{align*}
+\hat{f}(S) &= \< f, \chi_S\> = E_{x \tilde \{-1, +1\}^n}[f(x) \chi_S(x)]	
+\end{align*}
 \end{proposition}
- 	
 
+\begin{theorem}
+For any $f, g: \{-1, +1\} \rightarrow \RR$,
 
+\begin{align*}
+\< f, g \> &= E_{x \tilde \{-1, +1\}^n}[f(x)g(x)] = \sum_{S \in [n]} \hat{f}(S) \hat{g}(S)	 \tag{Plancherel's Theorem}
+\end{align*}
 
+Hence,
+
+\begin{align*}
+\< f, f \> &= \sum_{S \in [n]} \hat{f}(S) \hat{f}(S) = 1	 \tag{Plancherel's Theorem}
+\end{align*}
+\end{theorem}
 
 \section{Classical Learning Theory}
 
@@ -61,11 +122,10 @@ R^{true}(f) = P_{X, Y \sim D}(f(X) \neq Y)
 
 Then, estimation error is the difference in true risk between $\tilde{f}$ and optimal choice $f^* = \inf_{f \in F}R^{true}(f)$.
 
-One classical method is using so-called Support Vector Machines (SVM), which construct a separating hyperplane such that the distance to the nearest training observation (minimum margin) is maximized. Much of the popularity of SVMs can be attributed to its association with the "kernel trick" which maps the data to a higher dimensional space so that it is separable or approximately separable.
-
-Here, we suppose that the data is given classically and we seek to show that, in some cases, we can obtain a quantum advantage by either generating the separating hyperplane in quantum feature space or simply estimating the kernel function.
-
 \section{Randomized Linear Algebra}
+
+In practice, many of the widely used supervised and unsupervised machine learning models can reasonably be described as linear algebraic data analysis techniques. For example, consider that ordinary least squares regression and ridge regression can be given in terms of a closed-form product of matrices and matrix inverses Similarly, principal component analysis on a feature matrix is essentially solving for the largest-eigenvalue eigenvectors of its singular matrix. For some machine learning algorithms, such as SVM, the most computationally expensive steps involve solving linear and nonlinear convex programs. Nevertheless, we find we often rely on linear algebraic subroutines to solve these optimization problems.
+
 
 \begin{definition} Total Variation Distance.
 \label{def:tve}
@@ -374,6 +434,10 @@ Throughout this review, we've considered learning classical data which introduce
 \section{Supervised learning with quantum feature Hilbert spaces}
 \cite{havlicek2018supervised}
 
+
+One classical method is using so-called Support Vector Machines (SVM), which construct a separating hyperplane such that the distance to the nearest training observation (minimum margin) is maximized. Much of the popularity of SVMs can be attributed to its association with the "kernel trick" which maps the data to a higher dimensional space so that it is separable or approximately separable.
+
+Here, we suppose that the data is given classically and we seek to show that, in some cases, we can obtain a quantum advantage by either generating the separating hyperplane in quantum feature space or simply estimating the kernel function.
 
 \subsection{Feature Map}
 
