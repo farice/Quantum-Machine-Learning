@@ -182,6 +182,8 @@ with probability $\geq 1-\delta$ in running time $poly(n, 1/\epsilon) \cdot \log
 
 \section{Randomized Linear Algebra}
 
+\subsection{Probability Bounds}
+
 \begin{definition} Total Variation Distance.
 \label{def:tve}
 
@@ -192,25 +194,50 @@ Let $P$ and $Q$ be distinct probability measures on a $\sigma$-algebra $\mathcal
 \end{align*}
 \end{definition}
 
-\begin{proposition}
-Chernoff Bounds	
+\begin{proposition}(Markov's Inequality)
+Let $X$ be a nonnegative random variable. Then, 
+
+\begin{align*}
+Pr(X \geq t) \leq \frac{1}{t} E[X]	
+\end{align*}
+for all $t \geq 0$.
 \end{proposition}
 
-\begin{lemma}Hoeffding--Chernoff Inequality
+\begin{proposition}(Chebyshev's Inequality)
+Let $X$ be a random variable with finite variance $Var(X)$. Then, 
+
+\begin{align*}
+	Pr(|X - E[X]| \geq t) \leq \frac{1}{t^2} Var[X]	
+\end{align*}
+for all $t \geq 0$.
+\end{proposition}
+
+\begin{proposition}(Hoeffding--Chernoff Inequality)
 \label{lem:chernoff}
 
 Let $X_1, X_2, \cdots, X_s$	be i.i.d real random variables. For any positive, real numbers $a, t$ we have that, from Markov's inequality,
 
 \begin{align*}
-\Pr(\sum_{i=1}^s X_i \geq a) &= Pr( a^{-1} )
+\Pr(\sum_{i=1}^s X_i \geq a)
 &\leq e^{-ta} E\Bigg[\prod_{i=1}^s e^{tX_i}\Bigg]\\
 &= e^{-ta} \prod_{i=1}^s E\Bigg[e^{tX_i}\Bigg]
 \end{align*}
 by independence.
-\qed
-\end{lemma}
 
-\begin{theorem}Hoeffding--Chernoff Inequality for matrix-valued random variables \cite{kannan2017randomized}
+\end{proposition}
+
+\begin{corollary}(Chernoff Bounds)
+\label{cor:chernoff}
+Let $X_1, X_2, \cdots, X_s$	be i.i.d real random variables such that $X_i \in [a_i, b_i]$ with probability 1. Define $X :=  \sum_{i=1}^s X_i$. Then, 
+
+\begin{align*}
+\Pr(X - E[X] \geq t) \leq 2e^{- \frac{2t^2}{\sum_{i=1}^n (b_i - a_i)^2}}
+\end{align*}
+
+\end{corollary}
+
+
+\begin{theorem}(Hoeffding--Chernoff Inequality for matrix-valued random variables) \cite{kannan2017randomized}
 	
 	Let $X$ be a random variable taking values which are real symmetric $d \times d$ matrices. Suppose $X_1, X_2, \cdots , X_s$ are i.i.d. draws of $X$. For any positive real numbers $a$, $t$, we have
 	
@@ -306,7 +333,7 @@ If $B \in \CC^{d \times d}$ is a hermitian matrix for which $\Vert B \Vert_2 \le
 \end{lemma}
 
 
-\subsubsection{Computing Approximate Singular Vectors}
+\subsection{Computing Approximate Singular Vectors}
 \label{sec:approx-sing-vec}
 
 \begin{definition}
@@ -316,11 +343,11 @@ We have "query access" to $x \in \CC^n$ if, given $i \in [n]$, we can efficientl
 
 \begin{enumerate}
 \item We have query access to $x$ i.e. $x\in \mathcal{Q}$ ($\implies$ $\mathcal{SQ} \subset \mathcal{Q}$)
-\item can produce independent random samples $i \in [n]$ where we sample $i$ with probability $|x_i|^2/\|x\|^2∣$ and can query for $\|x\|$.
+\item We can produce independent random samples $i \in [n]$ where we sample $i$ with probability $|x_i|^2/\|x\|^2∣$ and can query for $\|x\|$.
 \end{enumerate}
 We say that $x \in \mathcal{SQ}$. 
 \end{definition}
-\begin{definition} For $A \in \CC^{m\times n}$, $A \in \mathcal{SQ}$ (abuse) if
+\begin{definition} For $A \in \CC^{m\times n}$, $A \in \mathcal{SQ}$ (by abuse in notation) if
 
 \begin{enumerate}
 \item $A_i \in \mathcal{SQ}$ where $A_i$ is the $i$th row of $A$
@@ -536,7 +563,7 @@ Given $A \in \CC^{m\times n}$ such that $A \in \mathcal{SQ}$ and some threshold 
 Define 
 
 \begin{align*}
-	D := A(S^\dagger\hat{U})(S^\dagger\hat{U})^\dag \tag{rank $\leq k$}\\
+	D := A(S^\dagger\hat{U})(S^\dagger\hat{U})^\dag \tag{$\rank(D) \leq k$}\\
 	\sigma := \sqrt{2/k} \| A\|_F  \\
 	A_\sigma := \sum_{\sigma_i \geq \sigma} \sigma_i \ket{u_i}\bra{v_i} \tag{using SVD}
 \end{align*}
@@ -546,11 +573,31 @@ Then,
 \begin{align*}
 	\| A - D \|^2_F  \leq \| A - A_\sigma \|^2_F  + \epsilon^2 \|A\|^2_F
 \end{align*}
+
+with probability $\geq 1- \delta$.
 \end{theorem}
 
 \begin{proof}
-	Sketch. Theorem \ref{thm:lsq-approx} says that $\| S^\dag S - A^\dag A\| \leq \epsilon \|A\|^2_F$ with high probability ($\|A\|_2 \leq \|A\|_F$ in general). Similarly, by performing the sampling process on $S^\dag$ to get $T \in \CC^{\ell \times k}$, we have an analogous bound on $SS^\dag - TT^\dag$. Since $T$ is a constant-sized matrix, we can compute $\hat{U}$, the large left singular vectors of $T$, which approximate the large left singular vectors of $T$. Then, $S^T\hat{U}$ translates these large left singular vectors to their corresponding right singular vectors, which are the approximate singular vectors of $A$ as desired.
+	Sketch. Theorem \ref{thm:lsq-approx} says that $\| S^\dag S - A^\dag A\| \leq \epsilon \|A\|^2_F$ with high probability ($\|A\|_2 \leq \|A\|_F$ in general). Similarly, by performing the sampling process on $S^\dag$ to get $T \in \CC^{\ell \times k}$, we have an analogous bound on $SS^\dag - TT^\dag$. Since $T$ is a constant-sized matrix, we can compute $\hat{U}$, the large left singular vectors of $T$, which approximate the large left singular vectors of $T$. Then, $S^\dag \hat{U}$ translates these large left singular vectors to their corresponding right singular vectors, which are the approximate singular vectors of $A$ as desired.
 \end{proof}
+
+For more intuition, write SVDs
+
+\begin{align*}
+A &= \sum_i \ket{u_i} \bra{v_i} \\
+S &= \sum_i \ket{w_i} \bra{\tilde{v}_i} \\
+U &= \sum_i \ket{\tilde{w}_i}\bra{z_i}	
+\end{align*}
+
+where $\tilde{v_i}$ denotes that the right singular vectors of $S$ well-approximate the right singular vectors of $A$ and similarly for $\tilde{w}_i$. Hence,
+
+\begin{align*}
+UU^\dag &= \sum_i \ket{\tilde{w}_i}\bra{\tilde{w}_i}	 \\
+S^\dag(UU^\dag)S^\dag &\approx \sum_i \ket{\tilde{v}_i}\bra{\tilde{v}_i} \\
+A(S^\dag UU^\dag S^\dag) &\approx \sum_i \ket{u_i} \bra{\tilde{v}_i}
+\end{align*}
+
+To visualize the projection,
 
 $$
 \begin{bmatrix}
@@ -1237,6 +1284,9 @@ We will prove that
 
 
 \subsection{Online Learning and Regret}
+
+%TODO 
+In progress...
 
 
 \end{document}
