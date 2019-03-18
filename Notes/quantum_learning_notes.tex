@@ -6,6 +6,12 @@
 
 Machine learning explores the study and construction of algorithms that are capable of finding patterns in data. Hence, this entails studying the ability of learning models to capture these patterns and generalize, as one would in statistical learning theory, in addition to studying model efficiency, enabled by computational complexity theory.
 
+It is often natural to describe these patterns as unknown functions, as one does in computational learning theory. For example, if we are learning a classification function (say handwritten digit classification), then our function acts on some space of examples (say the handwriting in terms of pixels) and returns a label (the corresponding digit). Hence, the first two sections of this chapter are dedicated to tools and formalism for this view of machine learning.
+
+On the other hand, many of the widely used supervised and unsupervised machine learning algorithms amount to linear algebraic data analysis techniques. For example, consider that ordinary least squares regression and ridge regression can be given in terms of a closed-form product of matrices and matrix inverses. Similarly, principal component analysis on a feature matrix $A$ is essentially solving for the largest-eigenvalue eigenvectors of its singular matrix $A^\dag A$. For some machine learning algorithms, such as SVM, the most computationally expensive steps involve solving linear and nonlinear convex programs. Nevertheless, we often rely on linear algebraic subroutines to solve these optimization problems.
+
+We will show in Section \ref{sec:tang} that it is reasonable to compare quantum algorithms with quantum state preparation to classical algorithms with sample and query access to input. Hence, we survey ideas from randomized linear algebra that rely on this sort of sample and query access. Then, in Section \ref{sec:tang} we will use these concepts to show that many quantum machine-learning algorithms that solve linear algebra problems in low-dimensional spaces have a classical, randomized analog.
+
 \section{Boolean Fourier Analysis}
 
 A boolean function is a function
@@ -23,7 +29,7 @@ f: \{ -1, +1 \}^n \rightarrow \{-1, +1\}
 The domain of a boolean function is the "Hamming cube", $\mathbb{B}^n$. 
 
 \begin{definition}
-Let $S \subseteq [n], n \in \ZZ$. Then,
+Let $S \subseteq [n]$ with $n \in \ZZ$. Then,
 \begin{align*}
 \chi_S(x) &:= \prod_{i\in S} x_i \tag{with $x^{\emptyset} = 1$ by convention}
 \end{align*}	
@@ -46,10 +52,10 @@ We denote this expansion as the Fourier expansion of $f$, and term the real coef
 Define an inner product $\< \cdot, \cdot \>$ on $f, g: \{-1, +1 \} \rightarrow \RR$ 	by 
 
 \begin{align*}
-\< f, g\> &= 2^{-n} \sum_{x \in \{-1, +1\}^n} f(x)g(x) &= E_{x \tilde \{-1, +1\}^n}[f(x)g(x)]	
+\< f, g\> &= 2^{-n} \sum_{x \in \{-1, +1\}^n} f(x)g(x) \\&= E_{x \sim \{-1, +1\}^n}[f(x)g(x)]	
 \end{align*}
 
-where $x \tilde \{-1, +1\}^n$ denotes that $x$ is chosen uniformly at random from $\{-1, +1\}^n$. 
+where $x \sim \{-1, +1\}^n$ denotes that $x$ is chosen uniformly at random from $\{-1, +1\}^n$. 
 \end{definition}
 
 
@@ -58,7 +64,7 @@ where $x \tilde \{-1, +1\}^n$ denotes that $x$ is chosen uniformly at random fro
 \end{theorem}
 
 \begin{proof}
-Let $f, g$ both map $\{-1, +1\}^n$ to $\RR$. Clearly, by Theorem \ref{thm:fourier-bool}, $h = \alpha f + g$ for $\alpha \in \RR$ is also a boolean function $h: \{-1, +1\}^n \rightarrow \RR$. Hence, we have a vector space $V$ of boolean functions and $\dim V = 2^n$ which we can canonically identify with $\RR^{2^n}$. Because the number of parity functions is $2^n$ and they are independent, we conclude that the $\chi_S$ form a basis of $V$.
+Let $f, g$ both map $\{-1, +1\}^n$ to $\RR$. Clearly, by Theorem \ref{thm:fourier-bool}, $h = \alpha f + g$ for $\alpha \in \RR$ is also a boolean function $h: \{-1, +1\}^n \rightarrow \RR$. Hence, we have a vector space $V$ of boolean functions and $\dim V = 2^n$ because we can describe a function by how it acts on each point of the Hamming cube. So, we can canonically identify $V \cong \RR^{2^n}$. Because the number of parity functions is $2^n$ and they are independent, we conclude that the $\chi_S$ form a basis of $V$.
 
 If this basis is indeed orthonormal, then the Definition above requires 
 
@@ -92,7 +98,7 @@ by independence of the $\{x_i\}$. But each $E[ x_i ] = (1/2) (+1) + (1/2) (-1) =
 For $f: \{ -1, +1\}^n \rightarrow \RR$ and $S \subseteq [n]$, the Fourier coefficient of $f$ on $S$ is given by
 
 \begin{align*}
-\hat{f}(S) &= \< f, \chi_S\> = E_{x \tilde \{-1, +1\}^n}[f(x) \chi_S(x)]	
+\hat{f}(S) &= \< f, \chi_S\> = E_{x \sim \{-1, +1\}^n}[f(x) \chi_S(x)]	
 \end{align*}
 \end{proposition}
 
@@ -100,7 +106,7 @@ For $f: \{ -1, +1\}^n \rightarrow \RR$ and $S \subseteq [n]$, the Fourier coeffi
 For any $f, g: \{-1, +1\} \rightarrow \RR$,
 
 \begin{align*}
-\< f, g \> &= E_{x \tilde \{-1, +1\}^n}[f(x)g(x)] = \sum_{S \in [n]} \hat{f}(S) \hat{g}(S)	 \tag{Plancherel's Theorem}
+\< f, g \> &= E_{x \sim \{-1, +1\}^n}[f(x)g(x)] = \sum_{S \in [n]} \hat{f}(S) \hat{g}(S)	 \tag{Plancherel's Theorem}
 \end{align*}
 
 Hence,
@@ -110,22 +116,69 @@ Hence,
 \end{align*}
 \end{theorem}
 
-\section{Classical Learning Theory}
+\section{Computational Learning Theory}
 
-We are given data from a training set $T$ and a test set $S$ of a subset $\Omega \subset \RR^d$. We assume that $S$ and $T$ are drawn from the same input space $X$. Furthermore, there exists output space $Y = \{ -1, +1 \} $ and a distribution $D$ on $X \times Y$.
+Computational learning theory addresses the following task: Given a source of "examples" $(x, f(x))$ from an unknown function $f$, compute a "hypothesis" function $h$ that is good at predicting $f(y)$ on future inputs $y$. 
 
-Now, suppose we have a labelling $m: T \cup S \rightarrow Y$.  Our goal is to use this information to find some approximation function $\tilde{f} : X \rightarrow Y$ that minimizes estimation error for function class $F$. In other words, let true risk for function $f$ be defined as
+\begin{definition}
+In the PAC ("probably approximately correct") model learning under the uniform distribution on $\{-1, +1\}^n$, a learning problem is identified with a concept class $\mathcal{C}$, which is just a collection of functions $f: \{-1, +1\}^n \rightarrow \{-1, +1\}$. A learning algorithm $\mathcal{A}$ for $\mathcal{C}$ is a randomized algorithm which has limited access to an unknown target function $f \in \mathcal{C}$. These two access models, in increasing order of strength are:
+
+\begin{itemize}
+\item "random examples", meaning $\mathcal{A}$ can draw pairs $(x, f(x))$ where $x \in \{-1, +1\}^n$ is uniformly random
+\item "queries", meaning $\mathcal{A}$ can request the value $f(x)$ for any $x \in \{-1, +1\}^n$ of its choice. 
+\end{itemize}
+
+In addition $\mathcal{A}$ is given an accuracy parameter $\epsilon \in [0, 1/2]$ and failure parameter $\delta$. The output of $\mathcal{A}$ is required to be a hypothesis function $h : \{-1, +1\} \rightarrow \{ -1, +1 \}$. We say that $A$ learns $\mathcal{C}$ with error $\epsilon$ if for any $f \in \mathcal{C}$, $\mathcal{A}$ outputs an $h$ which is $\epsilon$-close to $f$, i.e.
 
 \begin{align*}
-R^{true}(f) = P_{X, Y \sim D}(f(X) \neq Y)	
+dist(f, h) \leq \epsilon	
 \end{align*}
 
-Then, estimation error is the difference in true risk between $\tilde{f}$ and optimal choice $f^* = \inf_{f \in F}R^{true}(f)$.
+with probability $\geq 1 - \delta$.
+\end{definition}
+
+Clearly, we can learn any such $f$ in $O(2^n)$ time for $\epsilon = 0$ (there are only $2^n$ hypotheses). If $\mathcal{C}$ is complex, then exponential running time may be the best we can do. Nevertheless, if $\mathcal{C}$ contains relatively "simple" functions then improved bounds are possible. A common way of doing so is discovering "most of" a function's Fourier spectrum.
+
+\begin{definition}
+Let $\mathfrak{F}$ be a collection of subsets $S \subseteq [n]$. We say that the Fourier spectrum of $f: \{ -1, +1 \}^n \rightarrow \RR$ is $\epsilon$-concentrated on $\mathfrak{F}$ if 
+
+\begin{align*}
+\sum_{S \subseteq [n], S \notin \mathfrak{F}} \hat{f}(S)^2 \leq \epsilon	
+\end{align*}
+	
+Using the notation of the previous section, we can equivalently write
+
+\begin{align*}
+Pr_{S \sim S_f}[S \notin \mathfrak{F}] \leq \epsilon	
+\end{align*}
+
+where $S \sim S_f$ implies sampling $S$ with probability $\hat{f}(S)^2$. 
+\end{definition}
+
+\begin{proposition}
+Given access to random examples from $f: \{ -1, +1\}^n \rightarrow \{-1, +1\}$, there is a randomized algorithm which takes as input $S \subseteq [n], 0 < \delta, \epsilon \leq 1/2$, and outputs an estimate $\tilde{f}(S)$ for $\tilde{f}(S)$ that satisfies
+
+\begin{align*}
+|\tilde{f}(S) - \hat{f}(S)| \leq \epsilon	
+\end{align*}
+with probability $\geq 1-\delta$ in running time $poly(n, 1/\epsilon) \cdot \log(1/ \delta)$.
+
+\begin{proof}
+	
+\end{proof}
+
+\end{proposition}
+
+
+\begin{theorem}Assume learning algorithm $\mathcal{A}$ has (at least) random sample access to target $f: \{ -1, +1\}^n \rightarrow \{-1, +1\}$. Suppose that $\mathcal{A}$ can identify a collection $\mathfrak{F}$ of subsets on which $f$'s Fourier spectrum is $\epsilon /2$-concentrated. Then using $poly(|\mathfrak{F}|, n, 1/\epsilon)$ additional time, $\mathcal{A}$ can with high probability output a hypothesis $h$ that is $\epsilon$-close to $f$
+\end{theorem}
+
+
+\begin{proof}
+	
+\end{proof}
 
 \section{Randomized Linear Algebra}
-
-In practice, many of the widely used supervised and unsupervised machine learning models can reasonably be described as linear algebraic data analysis techniques. For example, consider that ordinary least squares regression and ridge regression can be given in terms of a closed-form product of matrices and matrix inverses Similarly, principal component analysis on a feature matrix is essentially solving for the largest-eigenvalue eigenvectors of its singular matrix. For some machine learning algorithms, such as SVM, the most computationally expensive steps involve solving linear and nonlinear convex programs. Nevertheless, we find we often rely on linear algebraic subroutines to solve these optimization problems.
-
 
 \begin{definition} Total Variation Distance.
 \label{def:tve}
@@ -468,6 +521,7 @@ Consider the feature vector kernel $K(x, z) = | \bra{\Phi(x)}\ket{\Phi(z)} |^2$
 
 
 \section{Quantum-Inspired Length-Square Sampling}
+\label{sec:tang}
 
 As we've seen, most well-known QML algorithms convert input quantum states to a desired output state or value. Thus, they do not provide a routine to get necessary copies of these input states (a state preparation routine) and a strategy to extract information from an output state. Both are essential to making the algorithm useful.
 
