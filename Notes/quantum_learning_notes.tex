@@ -106,9 +106,10 @@ For $f: \{ -1, +1\}^n \rightarrow \RR$ and $S \subseteq [n]$, the Fourier coeffi
 \begin{theorem}
 For any $f, g: \{-1, +1\} \rightarrow \RR$,
 
-\begin{align*}
-\< f, g \> &= E_{x \sim \{-1, +1\}^n}[f(x)g(x)] = \sum_{S \in [n]} \hat{f}(S) \hat{g}(S)	 \tag{Plancherel's Theorem}
-\end{align*}
+\begin{align}
+\label{eq:parsev}
+\< f, g \> &= E_{x \sim \{-1, +1\}^n}[f(x)g(x)] = \sum_{S \in [n]} \hat{f}(S) \hat{g}(S)	 \tag{Parseval's Theorem}
+\end{align}
 
 Hence,
 
@@ -159,6 +160,7 @@ where $S \sim S_f$ implies sampling $S$ with probability $\hat{f}(S)^2$.
 \end{definition}
 
 \begin{proposition}
+\label{prop:odon-330}
 Given access to random examples from $f: \{ -1, +1\}^n \rightarrow \{-1, +1\}$, there is a randomized algorithm which takes as input $S \subseteq [n], 0 < \delta, \epsilon \leq 1/2$, and outputs an estimate $\tilde{f}(S)$ for $\tilde{f}(S)$ that satisfies
 
 \begin{align*}
@@ -167,23 +169,66 @@ Given access to random examples from $f: \{ -1, +1\}^n \rightarrow \{-1, +1\}$, 
 with probability $\geq 1-\delta$ in running time $poly(n, 1/\epsilon) \cdot \log(1/ \delta)$.
 
 \begin{proof}
+	First, we know that $\hat{f}(S) = \< f(x), \chi_S(x) \>$, recalling that this is an expectation across all $x \in \{-1, +1\}^n$ from the previous section. Hence, given an example $(x_1, f(x_1))$, we can compute $f(x_1)\chi_S(x_1) \in \{-1, +1\}$ to empirically estimate $\hat{f}(S)$. From here, we simply apply a Chernoff bound (Corollary \ref{cor:chernoff-bound}) to determine the number of samples required to satisfy our claim.
 	
+	Say we are given random samples $x_1, \cdots, x_s$. Then, write random variable $X_i = f(x_i)\chi_S(x_i)$ and $X := \sum_i X_i$. Then,
+	
+	\begin{align*}
+	\Pr(X - E[X] \geq \epsilon) \leq 2e^{- \frac{s\epsilon^2}{2}}	
+	\end{align*}
+	
+	Hence, in order to satisfy that this probability is $\leq \delta$, we require $s = O(\frac{1}{\epsilon^2} \log(1/\delta))$
 \end{proof}
-
 \end{proposition}
 
+\begin{proposition}
+\label{prop:odon-331}
+Suppose that $f: \{ -1, +1\}^n \rightarrow \{-1, +1\}$ and $g: \{ -1, +1\}^n \rightarrow \RR$ satisfy $\| f - g\|^2_2 \leq \epsilon$. Let $h : \{ -1, +1\}^n \rightarrow \{-1, +1\}$ be defined by $h(x) = sgn(g(x))$. Then,
+
+\begin{align*}
+dist(f, h) \leq \epsilon	
+\end{align*} 
+
+\begin{proof}
+Since $| f(x) - g(x)|^2 \geq 1$ whenever $f(x) \neq sgn(g(x))$, we conclude 
+
+\begin{align*}
+dist(f, h) &= Pr_x[f(x) \neq h(x)] \\
+&= E_x[1_{f(x) \neq sgn(g(x))}] \\
+&\leq E_x[|f(x) - g(x)|^2] = \| f - g\|_2^2	
+\end{align*}
+\end{proof}
+\end{proposition}
 
 \begin{theorem}Assume learning algorithm $\mathcal{A}$ has (at least) random sample access to target $f: \{ -1, +1\}^n \rightarrow \{-1, +1\}$. Suppose that $\mathcal{A}$ can identify a collection $\mathfrak{F}$ of subsets on which $f$'s Fourier spectrum is $\epsilon /2$-concentrated. Then using $poly(|\mathfrak{F}|, n, 1/\epsilon)$ additional time, $\mathcal{A}$ can with high probability output a hypothesis $h$ that is $\epsilon$-close to $f$
 \end{theorem}
 
 
 \begin{proof}
-	First, we know that $\hat{f}(S) = \< f(x), \chi_S(x) \>$ (recall that this is an expectation across all $x \in \{-1, +1\}^n$) from the previous section. Hence, given $(x_1, f(x_1))$, we can compute $f(x_1)\chi_S(x_1) \in \{-1, +1\}$ to empirically estimate $\hat{f}(S)$. From here, we simply apply a Chernoff bound (Corollary \ref{cor:chernoff-bound}) to determine the number of samples required to satisfy our claim.
-	
-	Say we are given random samples $x_1, \cdots, x_s$. Then, write random variable $X_i = f(x_i)\chi_S(x_i)$
-	
-	
+For each $S \in \mathfrak{F}$ the algorithm uses Proposition \ref{prop:odon-330} to produce an estimate $\tilde{f}(S)$ for $\hat{f}(S)$ which satisfies $|\hat{f}(S) - \tilde{f}(S) | \leq \frac{\sqrt{\epsilon}}{2 \sqrt{|\mathfrak{F}|}}$ except with probability at most $1/(10|\mathfrak{F}|)$. Overall this requires $poly(|\mathfrak{F}|, n, 1/\epsilon)$ time and all $|\mathfrak{F}|$ estimates have the desired accuracy with probability $\geq 9/10$. 
+
+Now, $\mathcal{A}$ forms the real-valued function $g = \sum_{S \in \mathfrak{F} \tilde{f}(S) \chi_S}$ and outputs hypothesis $h = sgn(g)$. By Proposition \ref{prop:odon-331}, it suffices to show that $\| f - g\|_2^2 \leq \epsilon$. Indeed,
+
+\begin{align*}
+	\| f - g\|_2^2 &= \sum_{S \subseteq [n]}\widehat{f - g}(S)^2 \tag{\ref{eq:parsev}} \\
+	&= \sum_{S \in \mathfrak{F}}(\hat{f}(S) - \tilde{f}(S))^2 + \sum_{S \notin \mathfrak{F}}\hat{f}(S)^2 \\
+	&\leq \sum_{S \in \mathfrak{F}} (\frac{\sqrt{\epsilon}}{2\sqrt{|\mathfrak{F}|}})^2 + \epsilon /2 \tag{concentration assumption} \\
+	&= \epsilon /4 + \epsilon/2 \leq \epsilon
+\end{align*}
+
+as desired. This theorem essentially reduces the algorithmic task of learning $f$ to the algorithmic task of identifying a collection $\mathfrak{F}$ on which $f$'s Fourier spectrum is concentrated. 
 \end{proof}
+
+We've seen that the Fourier spectrum concentration provides a useful notion of the complexity of a \textit{function}. In a more general sense, we can describe the complexity of a \textit{concept class} in terms of a combinatorial parameter known as the VC dimension.
+
+\begin{definition}
+(VC Dimension) The VC dimension of $\mathcal{C}$ is the size of the biggest $S \subseteq \{0, 1\}^n$ that can be labelled all $2^{|S|}$ ways by concepts from $\mathcal{C}$. In other words, for each sequence of $|S |$ binary labels for the elements of $S$, there is a $c \in \mathcal{C}$ that has that labeling (such an $S$ is said to be shattered by $\mathcal{C}$) 	
+\end{definition}
+
+
+\begin{example}
+The VC dimension of halfspaces in $p$ dimensions is $p+1$	
+\end{example}
 
 \section{Randomized Linear Algebra}
 
@@ -236,7 +281,7 @@ by independence.
 Let $X_1, X_2, \cdots, X_s$	be i.i.d real random variables such that $X_i \in [a_i, b_i]$ with probability 1. Define $X :=  \sum_{i=1}^s X_i$. Then, 
 
 \begin{align*}
-\Pr(X - E[X] \geq t) \leq 2e^{- \frac{2t^2}{\sum_{i=1}^n (b_i - a_i)^2}}
+\Pr(|X - E[X]| \geq t) \leq 2e^{- \frac{2t^2}{\sum_{i=1}^n (b_i - a_i)^2}}
 \end{align*}
 
 \end{corollary}
