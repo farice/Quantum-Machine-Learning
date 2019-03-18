@@ -912,15 +912,15 @@ We've also seen that that many of the initial "practical" quantum algorithms att
 
 Nevertheless, these low-rank quantum algorithms still have substantial help from an assumed input state preparation routine which has been shown to be at least $\Omega(\sqrt{n})$ in vector input size (\cite{tang2018quantum}). Hence, a natural question to ask is whether there's a similar classical data structure which takes time polynomial in quantum state preparation which can offer machine learning algorithms with similar guarantees. In particular, we compare quantum algorithms with quantum state preparation to classical algorithms with sample and query access to input.	
 
-\subsubsection{Definitions}
+\subsection{Definitions}
 
 We remain consistent with the definitions of Section \ref{sec:approx-sing-vec}.
 
-\subsubsection{Low-Rank Estimation}
+\subsection{Low-Rank Estimation}
 
 Low-rank estimation is given by the FKV algorithm detailed in Section \ref{sec:fkv}.
 
-\subsubsection{Trace Inner Product Estimation}
+\subsection{Trace Inner Product Estimation}
 
 \begin{itemize}
 	\item For $x, y \in \CC^n$, if we are given that $x \in \mathcal{SQ}$ and $y \in \mathcal{Q}$, then we can estimate $\< x, y\>$ with probability $\geq 1 - \delta$ and error $\epsilon \|x\|\|y\|$ 
@@ -950,7 +950,7 @@ Then $\vert Y - \mu\vert \leq \epsilon\sigma$ with probability $\geq 1-\delta$, 
 \begin{proof}Sample an \textbf{index} $s$ from $x$. Then, define $Z := x_s y_s\frac{\|y\|^2}{|y_s|^2}$. Apply the Fact with $X_{i,j}$ being independent samples $Z$.
 \end{proof}	
 
-\subsubsection{Least-Square Sample Generation}
+\subsection{Least-Square Sample Generation}
 
 \begin{itemize}
 	\item For $V \in \CC^{n\times k}, w \in \CC^k$, given $V^\dagger \in \mathcal{SQ}$ (\textit{column}-wise sampling of $V$) and $w \in \mathcal{Q}$, we can simulate $Vw \in \mathcal{SQ}$ with $\text{poly}(k)$ queries
@@ -1008,7 +1008,7 @@ $$r_i = \frac{\|w^T V_{\cdot, i}\|^2}{\|w\|^2\|V_{\cdot, i}\|^2}$$
 \item Through a Chernoff bound, we see that the average of $O(\|w\|^2(\frac{1}{\epsilon^2}\log\frac{1}{\delta}))$ "coin flips" is in $[(1-\epsilon)\|Vw\|,(1+\epsilon)\|Vw\|]$ with probability $\geq 1-\delta$.
 \end{itemize}
 
-\subsubsection{Application: Stochastic Regression}
+\subsection{Application: Stochastic Regression}
 
 For a low-rank matrix $A \in \RR^{m\times n}$
   and a vector $b \in \RR^n$, given $b, A \in \mathcal{SQ}$, (approximately) simulate $A^+b \in \mathcal{SQ}$.
@@ -1219,7 +1219,7 @@ In the agnostic case, the optimal sample complexity of such agnostic learners is
 \Theta(\frac{d}{\epsilon^2} + \frac{\log(1/\delta)}{\epsilon^2})
 \end{align*}
 
-The authors indeed show that, using the quantum learning models above, the bounds are the same in the quantum case. This requires a state identification argument which uses Fourier Analysis to analyze the performance of a Pretty Good Measurement \ref{app:pgm}. However, we can get close by instead using simple concepts from quantum information theory.xs
+The authors indeed show that, using the quantum learning models above, the bounds are the same in the quantum case. This requires a state identification argument which uses Fourier Analysis to analyze the performance of a Pretty Good Measurement \ref{app:pgm}. However, we can get close by instead using simple concepts from quantum information theory.
 
 Of course, we know that the upper bounds in sample complexity are the same as the classical case since we can always implement a classical algorithm on a quantum computer. Hence, we seek lower bounds instead. 
 
@@ -1302,7 +1302,7 @@ It suffices to show this for a specific distribution $D$, defined as follows. Le
 
 \begin{align}
 D(s_0) &= 1-4\epsilon\\
-D(s_i) = 4\epsilon/d 	
+D(s_i) &= 4\epsilon/d 	
 \end{align}
 
 for all $i \in [d]$.
@@ -1327,7 +1327,6 @@ the examples in B) restricted to the elements s1,...,sd. Note that the error of 
 
 \subsection{Optimal lower bounds by state identification}
 
-
 \section{Online Learning of Quantum States}
 
 \subsection{Goals}
@@ -1345,6 +1344,5 @@ We will prove that
 
 %TODO 
 In progress...
-
 
 \end{document}
