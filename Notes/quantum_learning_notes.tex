@@ -134,7 +134,9 @@ In addition $\mathcal{A}$ is given an accuracy parameter $\epsilon \in [0, 1/2]$
 dist(f, h) \leq \epsilon	
 \end{align*}
 
-with probability $\geq 1 - \delta$.
+with probability $\geq 1 - \delta$. 
+
+Note that $dist$ is the relative Hamming distance more generally defined as total variation distance \ref{def:tve}. 
 \end{definition}
 
 Clearly, we can learn any such $f$ in $O(2^n)$ time for $\epsilon = 0$ (there are only $2^n$ hypotheses). If $\mathcal{C}$ is complex, then exponential running time may be the best we can do. Nevertheless, if $\mathcal{C}$ contains relatively "simple" functions then improved bounds are possible. A common way of doing so is discovering "most of" a function's Fourier spectrum.
@@ -190,13 +192,18 @@ Let $P$ and $Q$ be distinct probability measures on a $\sigma$-algebra $\mathcal
 \end{align*}
 \end{definition}
 
+\begin{proposition}
+Chernoff Bounds	
+\end{proposition}
+
 \begin{lemma}Hoeffding--Chernoff Inequality
 \label{lem:chernoff}
 
 Let $X_1, X_2, \cdots, X_s$	be i.i.d real random variables. For any positive, real numbers $a, t$ we have that, from Markov's inequality,
 
 \begin{align*}
-\Pr(\sum_{i=1}^s X_i \geq a) &\leq e^{-ta} E\Bigg[\prod_{i=1}^s e^{tX_i}\Bigg]\\
+\Pr(\sum_{i=1}^s X_i \geq a) &= Pr( a^{-1} )
+&\leq e^{-ta} E\Bigg[\prod_{i=1}^s e^{tX_i}\Bigg]\\
 &= e^{-ta} \prod_{i=1}^s E\Bigg[e^{tX_i}\Bigg]
 \end{align*}
 by independence.
@@ -297,6 +304,277 @@ If $B \in \CC^{d \times d}$ is a hermitian matrix for which $\Vert B \Vert_2 \le
 	\end{align*}
 \end{proof}
 \end{lemma}
+
+
+\subsubsection{Computing Approximate Singular Vectors}
+\label{sec:approx-sing-vec}
+
+\begin{definition}
+We have "query access" to $x \in \CC^n$ if, given $i \in [n]$, we can efficiently compute $x_i$. We say that $x \in \mathcal{Q}$.
+\end{definition}
+\begin{definition} We have sample \textbf{and} query access to $x \in \CC^n$ if 
+
+\begin{enumerate}
+\item We have query access to $x$ i.e. $x\in \mathcal{Q}$ ($\implies$ $\mathcal{SQ} \subset \mathcal{Q}$)
+\item can produce independent random samples $i \in [n]$ where we sample $i$ with probability $|x_i|^2/\|x\|^2∣$ and can query for $\|x\|$.
+\end{enumerate}
+We say that $x \in \mathcal{SQ}$. 
+\end{definition}
+\begin{definition} For $A \in \CC^{m\times n}$, $A \in \mathcal{SQ}$ (abuse) if
+
+\begin{enumerate}
+\item $A_i \in \mathcal{SQ}$ where $A_i$ is the $i$th row of $A$
+\item $\tilde{A} \in \mathcal{SQ}$ for $\tilde{A}$ the vector of row norms (so $\tilde{A}_i = \|A_i\|$).	
+\end{enumerate}
+\end{definition}
+
+
+\begin{example}
+Say we have the vector $\vec{x} = (2, 0, 1, 3)$ and $\vec{x} \in \mathcal{SQ}$. Consider the following binary tree data structure.
+\end{example}
+
+\begin{tikzpicture}[level distance=1.5cm,
+  level 1/.style={sibling distance=5.5cm},
+  level 2/.style={sibling distance=3cm}, 
+  level 3/.style={sibling distance=3cm}]
+  \node (1){$\| x \|^2 = 14$}
+    child {node {$x_1^2 + x_2^2 = 4$}
+      child {node {$x_1^2 = 4$}
+      	child {node {$\text{sgn}(x_1) = +1$}}
+      	edge from parent node [left] {\tiny $1$}
+      }
+      child {node {$x_2^2 = 0$} 
+      	child {node {$\text{sgn}(x_2) = +1$}}
+      	edge from parent node [right] {\tiny $0$}
+      }
+      edge from parent node [left] {\tiny $4/14$}
+    }
+    child {node(2) {$x_3^2 + x_4^2 = 10$}
+    	child {node {$x_3^2 = 1$}
+    		child {node {$\text{sgn}(x_3) = +1$}}
+    		edge from parent node [left] {\tiny $1/10$}
+    	}
+      child {node(3) {$x_4^2 = 9$} 
+      		child {node {$\text{sgn}(x_4) = +1$}}
+      		edge from parent node [right] {\tiny $9/10$}
+      } 
+      edge from parent node [right] {\tiny $10/14$}
+    };
+\end{tikzpicture}
+
+So, consider if we have length-square sampling access to the original matrix $A \in \CC^{m \times n }$ i.e. $A \in \mathcal{SQ}$. Suppose we want to draw $s$ rows in $s$ i.i.d. trials. Then, pick row index $i$ of $A$ with probability
+
+\begin{align}
+\label{def:A-prob}
+p_i = \frac{\Vert A_{(i, \cdot)}\Vert^2}{\Vert A \Vert_F^2} 	
+\end{align}
+
+and output random row 
+
+\begin{align*}
+ 	Y &= \frac{1}{\sqrt{s p_i}} \bra{A_{(i, \cdot)}} \\\
+ 	&= \frac{1}{\sqrt{s}}\frac{\Vert A\Vert_F}{\Vert A_{(i, \cdot)}\Vert}\bra{A_{(i, \cdot)}}
+\end{align*}
+
+which is just a scaling of the $i$th row of $A$\footnote{The reason that we scale by $s$ is so that the expectations of $A^\dag A$ and $R^\dag R$ coincide in the theorem that follows. The reason that we scale by $p_i$ is so that the norms of all rows are equivalent---a fact which we'll utilize when we sample $R$ column-wise.}. In other words,
+
+\begin{align*}
+\Pr(Y = \frac{1}{\sqrt{s p_i}} \bra{A_{(i, \cdot)}}) = p_i
+\end{align*}
+
+
+After sampling $s$ rows, we implicitly define matrix $R$ to be the concatenation of the outputted random rows. Therefore,
+
+\begin{align}
+\label{def:R}
+R &= \begin{bmatrix}
+Y_1 \\
+Y_2 \\
+\vdots \\
+Y_s
+\end{bmatrix} \in \CC^{s \times n}
+\end{align}
+
+Note that $\bra{Y_k}$ denotes the random row outputted by the procedure on the $k$th i.i.d. draw.
+
+\begin{lemma}
+	Let $X = Y^\dag Y - E[Y^\dag Y]$ which evidently satisfies $E[X] = 0$. Then,
+	
+	\begin{align}
+	E[X^2] &\preceq E[(Y^\dag Y)^2] \\
+	&= A^\dag A \Vert A \Vert_F^2 \frac{1}{s^2}	
+	\end{align}
+	
+	and so 
+	
+	\begin{align}
+	\label{eq:expect-x-2}
+	\Vert E[X^2] \Vert_2 \leq \frac{1}{s^2} \Vert A \Vert_2^2 \Vert A \Vert_F^2	
+	\end{align}
+
+	
+	Furthermore,
+	
+	\begin{align}
+	\Vert X \Vert_2 = \frac{1}{s} \Vert A \Vert^2_F	
+	\end{align}
+\begin{proof}
+First, observe that $E[X^2]$ is the element-wise variance of $Y^\dag Y$ and $E[(Y^\dag Y)^2]$ is the corresponding second moment. Hence, the relation $E[X^2] \leq E[(Y^\dag Y)^2]$ holds element-wise which implies that the matrix relation $E[X^2] \preceq E[(Y^\dag Y)^2]$ holds as well.
+
+Furthermore, 
+
+\begin{align*}
+E[(Y^\dag Y)^2] &= \frac{1}{s^2} \sum_{i = 1}^m \frac{p_{i}}{p_{i}^2} \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}} \\
+&= \frac{1}{s^2} \sum_{i = 1}^m \frac{\Vert A \Vert_F^2}{\bra{A_{(i, \cdot)}}\ket{A_{(i, \cdot)}}} \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\tag{using (\ref{def:A-prob})}\\
+&= \frac{1}{s^2} \sum_{i = 1}^m \Vert A \Vert_F^2 \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}} = \frac{\Vert A \Vert_F^2}{s^2} \sum_{i = 1}^m  \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}} \\
+&= A^\dag A \Vert A \Vert_F^2 \frac{1}{s^2}	
+\end{align*}
+
+Recall that $E[R^\dag R] = \frac{1}{s} A^\dag A$. So, observe that
+
+\begin{align*}
+\Vert X \Vert_2 &= \Vert Y^\dag Y - E[Y^\dag Y] \Vert_2 \\
+&= \frac{1}{s}\Bigg\Vert\frac{1}{p_i}\ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}} - A^\dag A \Bigg\Vert_2 \\
+&\leq \frac{1}{s} \max\Big\{ \Big\Vert\frac{1}{p_i}\ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\Big\Vert_2 ,  \Big\Vert A^\dag A \Big\Vert_2\Big\}\\
+&\leq \frac{1}{s} \max\Big\{ \frac{\Vert A \Vert_F^2}{\Vert \ket{A_{(i, \cdot)}} \Vert_2^2}\Big \Vert \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\Big\Vert_2 ,  \Vert A^\dag A \Vert_F^2\Big\} \intertext{using $\Vert A^\dag A \Vert_2 = \Vert A \Vert_2^2 \leq \Vert A \Vert_F^2$ and plugging in (\ref{def:A-prob}).}\\
+&= \frac{1}{s} \Vert A \Vert^2_F	
+\end{align*}
+\end{proof}
+\end{lemma}
+
+
+\begin{proposition}
+\label{prop:expect-exp-mat-norm}
+	If $t > 0, t \in \CC$ satisfies $\Vert tX \Vert_2 \leq 1$ for all possible values of $X$, then 
+	
+	\begin{align}
+	\begin{split}
+	\Vert E[e^{\pm tX}] \Vert_2 &\leq 1 + \frac{t^2}{s^2} \Vert A \Vert_2^2 \Vert A \Vert_F^2 \\
+	&\leq e^{t^2 \Vert A\Vert_2^2 \Vert A \Vert_F^2 / s^2}	
+	\end{split}
+	\end{align}
+	
+	\begin{proof}
+		First, from (\ref{lemma:exp-eigen-approx}) we know that $E[e^{tX}] \preceq E[I + X + X^2] = I + E[X^2]$ since $E[X] = 0$. Hence, we have the proposition by (\ref{eq:expect-x-2}).
+	\end{proof}
+\end{proposition}
+
+\begin{theorem}
+\label{thm:lsq-approx}
+Let $A \in \CC^{m \times n}$ and $R \in \CC^{r \times n}$ be constructed by the length-square sampling and scaling so that $E[R^\dag R] = E[A^\dag A]$ (requirements that are met by $R$ defined in (\ref{def:R})). Then, for all $\epsilon \in [0, \Vert A \Vert / \Vert A \Vert_F]$\footnote{If $\epsilon \geq \Vert A \Vert / \Vert A \Vert_F$, then we can simply use $\hat{0}$ to approximate $A^\dag A$}, we have
+
+\begin{align*}
+\Pr(\Vert R^\dag R - A^\dag A \Vert \geq \Vert A \Vert \Vert A \Vert_F) \leq 2ne^{\frac{- \epsilon^2 s}{4}}	
+\end{align*}
+
+Hence, for $s \geq (4 \ln \frac{2n}{\eta}) / \epsilon^2$, with probability at least $(1 - \eta)$ we have
+
+\begin{align*}
+	\Vert R^\dag R - A^\dag A \Vert \leq \epsilon\Vert A \Vert \Vert A \Vert_F
+\end{align*}
+
+\begin{proof}
+	From our definition above, we have that 
+	
+	\begin{align*}
+		R^\dag R &= \begin{bmatrix}
+Y_1^\dag &
+Y_2^\dag &
+\hdots &
+Y_s^\dag
+\end{bmatrix}\begin{bmatrix}
+Y_1 \\
+Y_2 \\
+\vdots \\
+Y_s
+\end{bmatrix} \\
+&= \sum_{k=1}^s \ket{Y_k}\bra{Y_k} \intertext{Let $i_k$ give the index of the row sampled from $A$ on the $k$th draw. Hence, }\\
+&= \frac{1}{s} \sum_{k=1}^s \frac{1}{p_{i_k}} \ket{A_{(i_k, \cdot)}}\bra{A_{(i_k, \cdot)}}
+\end{align*}
+
+Furthermore,
+
+\begin{align*}
+E[R^\dag R] &= 	\frac{1}{s} \sum_{k=1}^s \sum_{i_k = 1}^m \frac{p_{i_k}}{p_{i_k}} \ket{A_{(i_k, \cdot)}}\bra{A_{(i_k, \cdot)}} \\
+&= \frac{1}{s} \sum_{k=1}^s A^\dag A \\
+&= A^\dag A
+\end{align*}
+
+Note that similarly $E[Y^\dag Y] = \frac{1}{s} A^\dag A$.
+
+So, we can define $X_i = \ket{Y_k}\bra{Y_k} - E\Big[\ket{Y_k}\bra{Y_k}\Big]$ which is evidently an i.i.d. copy of $X$ as we've defined previously. Hence,
+
+\begin{align*}
+\sum_{i=1}^s X_i &= R^\dag R - E[R^\dag R] \\
+&= R^\dag R - A^\dag A	
+\end{align*}
+
+Now, we can first apply Theorem \ref{thm:chern-mat-eigen} with $a = \epsilon \Vert A \Vert_2 \Vert A \Vert_F$,
+
+\begin{align*}
+\Pr(\Big\Vert \Big(\sum_{i=1}^s X_i\Big)\Big\Vert_2 \geq \epsilon \Vert A \Vert_2 \Vert A \Vert_F ) \\ &\leq ne^{-t \epsilon \Vert A \Vert_2 \Vert A \Vert_F} (\Vert E[e^{tX}]\Vert_2^s + \Vert E[e^{-tX}]\Vert_2^s)	
+\intertext{for any $t > 0$. Hence, we can apply Proposition \ref{prop:expect-exp-mat-norm} which then gives us}\\
+	&\leq 2ne^{-t \epsilon \Vert A \Vert_2 \Vert A \Vert_F} e^{t^2 \Vert A\Vert_2^2 \Vert A \Vert_F^2 / s^2}	
+	\intertext{for $t \leq s / \Vert A \Vert_F^2$. Hence, we can set $t = \frac{\epsilon s}{2 \Vert A \Vert_F \Vert A \Vert_2}$ (which is indeed less than $s / \Vert A \Vert_F^2$) and finally,}
+	&\leq 2ne^{- \epsilon^2 s / 4}
+\end{align*}
+
+Therefore, if we require that $s \geq (4 \ln \frac{2n}{\eta}) / \epsilon^2$ we then have
+
+\begin{align*}
+\Pr(\Big\Vert \Big(\sum_{i=1}^s X_i\Big)\Big\Vert_2 \geq \epsilon \Vert A \Vert_2 \Vert A \Vert_F ) &\leq 2ne^{- \frac{\epsilon^2}{4} \frac{4 \ln \frac{2n}{\eta}}{ \epsilon^2}} \\
+&= 2ne^{- \ln \frac{2n}{\eta}} = \eta
+\end{align*}
+\end{proof}
+\end{theorem}
+
+\subsubsection{FKV Algorithm}
+\label{sec:fkv}
+
+Given $A \in \CC^{m\times n}$ such that $A \in \mathcal{SQ}$ and some threshold $k$, we can output a description of a low-rank approximation of $A$ with $\text{poly}(k)$ queries. Specifically, we output two matrices $S,\hat{U}\in \mathcal{SQ}$ where $S \in \CC^{\ell \times n}$, $\hat{U} \in \CC^{\ell \times k}$ ($\ell = \text{poly}(k,\frac{1}{\epsilon}$)). This implicitly describes the low-rank approximation to $A$ by the following theorem
+\begin{theorem}
+Define 
+
+\begin{align*}
+	D := A(S^\dagger\hat{U})(S^\dagger\hat{U})^\dag \tag{rank $\leq k$}\\
+	\sigma := \sqrt{2/k} \| A\|_F  \\
+	A_\sigma := \sum_{\sigma_i \geq \sigma} \sigma_i \ket{u_i}\bra{v_i} \tag{using SVD}
+\end{align*}
+
+Then,
+
+\begin{align*}
+	\| A - D \|^2_F  \leq \| A - A_\sigma \|^2_F  + \epsilon^2 \|A\|^2_F
+\end{align*}
+\end{theorem}
+
+\begin{proof}
+	Sketch. Theorem \ref{thm:lsq-approx} says that $\| S^\dag S - A^\dag A\| \leq \epsilon \|A\|^2_F$ with high probability ($\|A\|_2 \leq \|A\|_F$ in general). Similarly, by performing the sampling process on $S^\dag$ to get $T \in \CC^{\ell \times k}$, we have an analogous bound on $SS^\dag - TT^\dag$. Since $T$ is a constant-sized matrix, we can compute $\hat{U}$, the large left singular vectors of $T$, which approximate the large left singular vectors of $T$. Then, $S^T\hat{U}$ translates these large left singular vectors to their corresponding right singular vectors, which are the approximate singular vectors of $A$ as desired.
+\end{proof}
+
+$$
+\begin{bmatrix}
+\\
+\cdots A \cdots 
+\\
+\\	
+\end{bmatrix}
+\begin{bmatrix}
+\\
+S^\dag
+\\
+\\	
+\end{bmatrix}
+\begin{bmatrix}
+\hat{U}
+\end{bmatrix}
+\begin{bmatrix}
+\hat{U^\dag}
+\end{bmatrix}
+\begin{bmatrix}
+\cdots S \cdots
+\end{bmatrix}
+$$
 
 \chapter{A Review of Quantum Machine Learning}
 
@@ -531,99 +809,11 @@ Nevertheless, these low-rank quantum algorithms still have substantial help from
 
 \subsubsection{Definitions}
 
-\begin{definition}
-We have "query access" to $x \in \CC^n$ if, given $i \in [n]$, we can efficiently compute $x_i$. We say that $x \in \mathcal{Q}$.
-\end{definition}
-\begin{definition} We have sample \textbf{and} query access to $x \in \CC^n$ if 
-
-\begin{enumerate}
-\item We have query access to $x$ i.e. $x\in \mathcal{Q}$ ($\implies$ $\mathcal{SQ} \subset \mathcal{Q}$)
-\item can produce independent random samples $i \in [n]$ where we sample $i$ with probability $|x_i|^2/\|x\|^2∣$ and can query for $\|x\|$.
-\end{enumerate}
-We say that $x \in \mathcal{SQ}$. 
-\end{definition}
-\begin{definition} For $A \in \CC^{m\times n}$, $A \in \mathcal{SQ}$ (abuse) if
-
-\begin{enumerate}
-\item $A_i \in \mathcal{SQ}$ where $A_i$ is the $i$th row of $A$
-\item $\tilde{A} \in \mathcal{SQ}$ for $\tilde{A}$ the vector of row norms (so $\tilde{A}_i = \|A_i\|$).	
-\end{enumerate}
-\end{definition}
-
-
-\begin{example}
-Say we have the vector $\vec{x} = (2, 0, 1, 3)$ and $\vec{x} \in \mathcal{SQ}$. Consider the following binary tree data structure.
-\end{example}
-
-\begin{tikzpicture}[level distance=1.5cm,
-  level 1/.style={sibling distance=5.5cm},
-  level 2/.style={sibling distance=3cm}, 
-  level 3/.style={sibling distance=3cm}]
-  \node (1){$\| x \|^2 = 14$}
-    child {node {$x_1^2 + x_2^2 = 4$}
-      child {node {$x_1^2 = 4$}
-      	child {node {$\text{sgn}(x_1) = +1$}}
-      	edge from parent node [left] {\tiny $1$}
-      }
-      child {node {$x_2^2 = 0$} 
-      	child {node {$\text{sgn}(x_2) = +1$}}
-      	edge from parent node [right] {\tiny $0$}
-      }
-      edge from parent node [left] {\tiny $4/14$}
-    }
-    child {node(2) {$x_3^2 + x_4^2 = 10$}
-    	child {node {$x_3^2 = 1$}
-    		child {node {$\text{sgn}(x_3) = +1$}}
-    		edge from parent node [left] {\tiny $1/10$}
-    	}
-      child {node(3) {$x_4^2 = 9$} 
-      		child {node {$\text{sgn}(x_4) = +1$}}
-      		edge from parent node [right] {\tiny $9/10$}
-      } 
-      edge from parent node [right] {\tiny $10/14$}
-    };
-\end{tikzpicture}
-
-
+We remain consistent with the definitions of Section \ref{sec:approx-sing-vec}.
 
 \subsubsection{Low-Rank Estimation}
 
-The first tool we can construct given these sampling assumptions is a classical analog to quantum phase estimation (Section \ref{phase_estimation}).
-
-\begin{itemize}
-\item For $A \in \CC^{m\times n}$, given $A \in \mathcal{SQ}$ and some threshold $k$, we can output a description of a low-rank approximation of $A$ with $\text{poly}(k)$ queries.
-\item Specifically, we output two matrices $S,\hat{U}\in \mathcal{SQ}$ where $S \in \CC^{\ell \times n}$, $\hat{U} \in \CC^{\ell \times k}$ ($\ell = \text{poly}(k,\frac{1}{\epsilon}$)), and this implicitly describes the low-rank approximation to $A$, $D := A(S^\dagger\hat{U})(S^\dagger\hat{U})^\dag$ ($\implies$ rank $D \leq k$).
-
-\item This matrix satisfies the following low-rank guarantee with probability $\geq 1-\delta$: for $\sigma := \sqrt{2/k}\|A\|_F$, and $A_{\sigma} := \sum_{\sigma_i \geq \sigma} \sigma_iu_iv_i^\dag$ (using SVD), 
-$$\|A - D\|_F^2 \leq \|A - A_\sigma\|_F^2 + \epsilon^2\|A\|_F^2$$
-\item Note the $\|A - A_\sigma\|_F^2$ term. This says that our guarantee is weak if $A$ has no large singular values. 
-\item Quantum analog: phase estimation
-\end{itemize}
-
-
-$$
-\begin{bmatrix}
-\\
-\cdots A \cdots 
-\\
-\\	
-\end{bmatrix}
-\begin{bmatrix}
-\\
-S^\dag
-\\
-\\	
-\end{bmatrix}
-\begin{bmatrix}
-\hat{U}
-\end{bmatrix}
-\begin{bmatrix}
-\hat{U^\dag}
-\end{bmatrix}
-\begin{bmatrix}
-\cdots S \cdots
-\end{bmatrix}
-$$
+Low-rank estimation is given by the FKV algorithm detailed in Section \ref{sec:fkv}.
 
 \subsubsection{Trace Inner Product Estimation}
 
@@ -849,173 +1039,6 @@ All in all, we've performed the chain of approximations,
 
 
 Now that we've sketched the steps of this process, we detail each approximation and show that we can achieve the claimed correctness and complexity bounds.
-
-\subsubsection{Computing Approximate Singular Vectors}
-
-As described above, we begin by length-square sampling the original matrix $A \in \CC^{m \times n }$. Suppose we want to draw $s$ rows in $s$ i.i.d. trials. Then, pick row index $i$ of $A$ with probability
-
-\begin{align}
-\label{def:A-prob}
-p_i = \frac{\Vert A_{(i, \cdot)}\Vert^2}{\Vert A \Vert_F^2} 	
-\end{align}
-
-and output random row 
-
-\begin{align*}
- 	Y &= \frac{1}{\sqrt{s p_i}} \bra{A_{(i, \cdot)}} \\\
- 	&= \frac{1}{\sqrt{s}}\frac{\Vert A\Vert_F}{\Vert A_{(i, \cdot)}\Vert}\bra{A_{(i, \cdot)}}
-\end{align*}
-
-which is just a scaling of the $i$th row of $A$\footnote{The reason that we scale by $s$ is so that the expectations of $A^\dag A$ and $R^\dag R$ coincide in the theorem that follows. The reason that we scale by $p_i$ is so that the norms of all rows are equivalent---a fact which we'll utilize when we sample $R$ column-wise.}. In other words,
-
-\begin{align*}
-\Pr(Y = \frac{1}{\sqrt{s p_i}} \bra{A_{(i, \cdot)}}) = p_i
-\end{align*}
-
-
-After sampling $s$ rows, we implicitly define matrix $R$ to be the concatenation of the outputted random rows. Therefore,
-
-\begin{align}
-\label{def:R}
-R &= \begin{bmatrix}
-Y_1 \\
-Y_2 \\
-\vdots \\
-Y_s
-\end{bmatrix} \in \CC^{s \times n}
-\end{align}
-
-Note that $\bra{Y_k}$ denotes the random row outputted by the procedure on the $k$th i.i.d. draw.
-
-\begin{lemma}
-	Let $X = Y^\dag Y - E[Y^\dag Y]$ which evidently satisfies $E[X] = 0$. Then,
-	
-	\begin{align}
-	E[X^2] &\preceq E[(Y^\dag Y)^2] \\
-	&= A^\dag A \Vert A \Vert_F^2 \frac{1}{s^2}	
-	\end{align}
-	
-	and so 
-	
-	\begin{align}
-	\label{eq:expect-x-2}
-	\Vert E[X^2] \Vert_2 \leq \frac{1}{s^2} \Vert A \Vert_2^2 \Vert A \Vert_F^2	
-	\end{align}
-
-	
-	Furthermore,
-	
-	\begin{align}
-	\Vert X \Vert_2 = \frac{1}{s} \Vert A \Vert^2_F	
-	\end{align}
-\begin{proof}
-First, observe that $E[X^2]$ is the element-wise variance of $Y^\dag Y$ and $E[(Y^\dag Y)^2]$ is the corresponding second moment. Hence, the relation $E[X^2] \leq E[(Y^\dag Y)^2]$ holds element-wise which implies that the matrix relation $E[X^2] \preceq E[(Y^\dag Y)^2]$ holds as well.
-
-Furthermore, 
-
-\begin{align*}
-E[(Y^\dag Y)^2] &= \frac{1}{s^2} \sum_{i = 1}^m \frac{p_{i}}{p_{i}^2} \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}} \\
-&= \frac{1}{s^2} \sum_{i = 1}^m \frac{\Vert A \Vert_F^2}{\bra{A_{(i, \cdot)}}\ket{A_{(i, \cdot)}}} \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\tag{using (\ref{def:A-prob})}\\
-&= \frac{1}{s^2} \sum_{i = 1}^m \Vert A \Vert_F^2 \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}} = \frac{\Vert A \Vert_F^2}{s^2} \sum_{i = 1}^m  \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}} \\
-&= A^\dag A \Vert A \Vert_F^2 \frac{1}{s^2}	
-\end{align*}
-
-Recall that $E[R^\dag R] = \frac{1}{s} A^\dag A$. So, observe that
-
-\begin{align*}
-\Vert X \Vert_2 &= \Vert Y^\dag Y - E[Y^\dag Y] \Vert_2 \\
-&= \frac{1}{s}\Bigg\Vert\frac{1}{p_i}\ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}} - A^\dag A \Bigg\Vert_2 \\
-&\leq \frac{1}{s} \max\Big\{ \Big\Vert\frac{1}{p_i}\ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\Big\Vert_2 ,  \Big\Vert A^\dag A \Big\Vert_2\Big\}\\
-&\leq \frac{1}{s} \max\Big\{ \frac{\Vert A \Vert_F^2}{\Vert \ket{A_{(i, \cdot)}} \Vert_2^2}\Big \Vert \ket{A_{(i, \cdot)}}\bra{A_{(i, \cdot)}}\Big\Vert_2 ,  \Vert A^\dag A \Vert_F^2\Big\} \intertext{using $\Vert A^\dag A \Vert_2 = \Vert A \Vert_2^2 \leq \Vert A \Vert_F^2$ and plugging in (\ref{def:A-prob}).}\\
-&= \frac{1}{s} \Vert A \Vert^2_F	
-\end{align*}
-\end{proof}
-\end{lemma}
-
-
-\begin{proposition}
-\label{prop:expect-exp-mat-norm}
-	If $t > 0, t \in \CC$ satisfies $\Vert tX \Vert_2 \leq 1$ for all possible values of $X$, then 
-	
-	\begin{align}
-	\begin{split}
-	\Vert E[e^{\pm tX}] \Vert_2 &\leq 1 + \frac{t^2}{s^2} \Vert A \Vert_2^2 \Vert A \Vert_F^2 \\
-	&\leq e^{t^2 \Vert A\Vert_2^2 \Vert A \Vert_F^2 / s^2}	
-	\end{split}
-	\end{align}
-	
-	\begin{proof}
-		First, from (\ref{lemma:exp-eigen-approx}) we know that $E[e^{tX}] \preceq E[I + X + X^2] = I + E[X^2]$ since $E[X] = 0$. Hence, we have the proposition by (\ref{eq:expect-x-2}).
-	\end{proof}
-\end{proposition}
-
-\begin{theorem}
-Let $A \in \CC^{m \times n}$ and $R \in \CC^{r \times n}$ be constructed by the length-square sampling and scaling so that $E[R^\dag R] = E[A^\dag A]$ (requirements that are met by $R$ defined in (\ref{def:R})). Then, for all $\epsilon \in [0, \Vert A \Vert / \Vert A \Vert_F]$\footnote{If $\epsilon \geq \Vert A \Vert / \Vert A \Vert_F$, then we can simply use $\hat{0}$ to approximate $A^\dag A$}, we have
-
-\begin{align*}
-\Pr(\Vert R^\dag R - A^\dag A \Vert \geq \Vert A \Vert \Vert A \Vert_F) \leq 2ne^{\frac{- \epsilon^2 s}{4}}	
-\end{align*}
-
-Hence, for $s \geq (4 \ln \frac{2n}{\eta}) / \epsilon^2$, with probability at least $(1 - \eta)$ we have
-
-\begin{align*}
-	\Vert R^\dag R - A^\dag A \Vert \leq \epsilon\Vert A \Vert \Vert A \Vert_F
-\end{align*}
-
-\begin{proof}
-	From our definition above, we have that 
-	
-	\begin{align*}
-		R^\dag R &= \begin{bmatrix}
-Y_1^\dag &
-Y_2^\dag &
-\hdots &
-Y_s^\dag
-\end{bmatrix}\begin{bmatrix}
-Y_1 \\
-Y_2 \\
-\vdots \\
-Y_s
-\end{bmatrix} \\
-&= \sum_{k=1}^s \ket{Y_k}\bra{Y_k} \intertext{Let $i_k$ give the index of the row sampled from $A$ on the $k$th draw. Hence, }\\
-&= \frac{1}{s} \sum_{k=1}^s \frac{1}{p_{i_k}} \ket{A_{(i_k, \cdot)}}\bra{A_{(i_k, \cdot)}}
-\end{align*}
-
-Furthermore,
-
-\begin{align*}
-E[R^\dag R] &= 	\frac{1}{s} \sum_{k=1}^s \sum_{i_k = 1}^m \frac{p_{i_k}}{p_{i_k}} \ket{A_{(i_k, \cdot)}}\bra{A_{(i_k, \cdot)}} \\
-&= \frac{1}{s} \sum_{k=1}^s A^\dag A \\
-&= A^\dag A
-\end{align*}
-
-Note that similarly $E[Y^\dag Y] = \frac{1}{s} A^\dag A$.
-
-So, we can define $X_i = \ket{Y_k}\bra{Y_k} - E\Big[\ket{Y_k}\bra{Y_k}\Big]$ which is evidently an i.i.d. copy of $X$ as we've defined previously. Hence,
-
-\begin{align*}
-\sum_{i=1}^s X_i &= R^\dag R - E[R^\dag R] \\
-&= R^\dag R - A^\dag A	
-\end{align*}
-
-Now, we can first apply Theorem \ref{thm:chern-mat-eigen} with $a = \epsilon \Vert A \Vert_2 \Vert A \Vert_F$,
-
-\begin{align*}
-\Pr(\Big\Vert \Big(\sum_{i=1}^s X_i\Big)\Big\Vert_2 \geq \epsilon \Vert A \Vert_2 \Vert A \Vert_F ) \\ &\leq ne^{-t \epsilon \Vert A \Vert_2 \Vert A \Vert_F} (\Vert E[e^{tX}]\Vert_2^s + \Vert E[e^{-tX}]\Vert_2^s)	
-\intertext{for any $t > 0$. Hence, we can apply Proposition \ref{prop:expect-exp-mat-norm} which then gives us}\\
-	&\leq 2ne^{-t \epsilon \Vert A \Vert_2 \Vert A \Vert_F} e^{t^2 \Vert A\Vert_2^2 \Vert A \Vert_F^2 / s^2}	
-	\intertext{for $t \leq s / \Vert A \Vert_F^2$. Hence, we can set $t = \frac{\epsilon s}{2 \Vert A \Vert_F \Vert A \Vert_2}$ (which is indeed less than $s / \Vert A \Vert_F^2$) and finally,}
-	&\leq 2ne^{- \epsilon^2 s / 4}
-\end{align*}
-
-Therefore, if we require that $s \geq (4 \ln \frac{2n}{\eta}) / \epsilon^2$ we then have
-
-\begin{align*}
-\Pr(\Big\Vert \Big(\sum_{i=1}^s X_i\Big)\Big\Vert_2 \geq \epsilon \Vert A \Vert_2 \Vert A \Vert_F ) &\leq 2ne^{- \frac{\epsilon^2}{4} \frac{4 \ln \frac{2n}{\eta}}{ \epsilon^2}} \\
-&= 2ne^{- \ln \frac{2n}{\eta}} = \eta
-\end{align*}
-\end{proof}
-\end{theorem}
 
 
 \subsection{Conclusions}
