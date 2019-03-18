@@ -13,6 +13,7 @@ On the other hand, many of the widely used supervised and unsupervised machine l
 We will show in Section \ref{sec:tang} that it is reasonable to compare quantum algorithms with quantum state preparation to classical algorithms with sample and query access to input. Hence, we survey ideas from randomized linear algebra that rely on this sort of sample and query access. Then, in Section \ref{sec:tang} we will use these concepts to show that many quantum machine-learning algorithms that solve linear algebra problems in low-dimensional spaces have a classical, randomized analog.
 
 \section{Boolean Fourier Analysis}
+\label{sec:bfa}
 
 A boolean function is a function
 
@@ -177,6 +178,10 @@ with probability $\geq 1-\delta$ in running time $poly(n, 1/\epsilon) \cdot \log
 
 
 \begin{proof}
+	First, we know that $\hat{f}(S) = \< f(x), \chi_S(x) \>$ (recall that this is an expectation across all $x \in \{-1, +1\}^n$) from the previous section. Hence, given $(x_1, f(x_1))$, we can compute $f(x_1)\chi_S(x_1) \in \{-1, +1\}$ to empirically estimate $\hat{f}(S)$. From here, we simply apply a Chernoff bound (Corollary \ref{cor:chernoff-bound}) to determine the number of samples required to satisfy our claim.
+	
+	Say we are given random samples $x_1, \cdots, x_s$. Then, write random variable $X_i = f(x_i)\chi_S(x_i)$
+	
 	
 \end{proof}
 
@@ -209,7 +214,7 @@ Let $X$ be a random variable with finite variance $Var(X)$. Then,
 \begin{align*}
 	Pr(|X - E[X]| \geq t) \leq \frac{1}{t^2} Var[X]	
 \end{align*}
-for all $t \geq 0$.
+for all $t \geq 0$.x
 \end{proposition}
 
 \begin{proposition}(Hoeffding--Chernoff Inequality)
@@ -227,7 +232,7 @@ by independence.
 \end{proposition}
 
 \begin{corollary}(Chernoff Bounds)
-\label{cor:chernoff}
+\label{cor:chernoff-bound}
 Let $X_1, X_2, \cdots, X_s$	be i.i.d real random variables such that $X_i \in [a_i, b_i]$ with probability 1. Define $X :=  \sum_{i=1}^s X_i$. Then, 
 
 \begin{align*}
@@ -593,8 +598,8 @@ where $\tilde{v_i}$ denotes that the right singular vectors of $S$ well-approxim
 
 \begin{align*}
 UU^\dag &= \sum_i \ket{\tilde{w}_i}\bra{\tilde{w}_i}	 \\
-S^\dag(UU^\dag)S^\dag &\approx \sum_i \ket{\tilde{v}_i}\bra{\tilde{v}_i} \\
-A(S^\dag UU^\dag S^\dag) &\approx \sum_i \ket{u_i} \bra{\tilde{v}_i}
+S^\dag(UU^\dag)S &\approx \sum_i \ket{\tilde{v}_i}\bra{\tilde{v}_i} \\
+A(S^\dag UU^\dag S) &\approx \sum_i \ket{u_i} \bra{\tilde{v}_i}
 \end{align*}
 
 To visualize the projection,
@@ -1099,9 +1104,9 @@ Now that we've sketched the steps of this process, we detail each approximation 
 
 \section{Optimal Quantum Sample Complexity}
 
-It is well known that one can tightly bound the number of samples from an unknown distribution required to "probably approximately correctly" (PAC) learn an unknown concept in terms of its VC dimension (Section \ref{}). Hence, a natural question to ask is whether "quantum samples" are more powerful in the sense of requiring less examples to achieve this goal.
+It is well known that one can tightly bound the number of samples from an unknown distribution required to PAC-learn (Section \ref{}) an unknown concept in terms of its VC dimension (Section \ref{}). Hence, a natural question to ask is whether "quantum samples" are more powerful in the sense of requiring less examples to achieve this goal.
 
-Here we will explore the techniques of Arunachalam and de Wolf \cite{arunachalam2016optimal} in order to address this question. The authors show that the ideas of quantum state discrimination discussed in Section \ref{} offer an intuitive analysis, despite resulting in a suboptimal lower bound. However, Boolean Fourier analysis (Section \ref{}) applied to the Pretty Good Measurement (Section \ref{}) gives an optimal bound showing that there is no quantum advantage in terms of sample complexity when restricting to PAC learning and quantum samples as specified in the model introduced by Bshouty and Jackson \cite{bshouty1998learning}.
+Here we will explore the techniques of Arunachalam and de Wolf \cite{arunachalam2016optimal} in order to address this question. The authors show that the ideas of quantum state discrimination discussed in Section \ref{} offer an intuitive analysis, despite resulting in a suboptimal lower bound. However, Boolean Fourier analysis (Section \ref{sec:bfa}) applied to the Pretty Good Measurement (Section \ref{app:pgm}) gives an optimal bound showing that there is no quantum advantage in terms of sample complexity when restricting to PAC learning and quantum samples as specified in the model introduced by Bshouty and Jackson \cite{bshouty1998learning}.
 
 \subsection{Definitions}
 
