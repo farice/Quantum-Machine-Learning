@@ -222,12 +222,20 @@ as desired. This theorem essentially reduces the algorithmic task of learning $f
 We've seen that the Fourier spectrum concentration provides a useful notion of the complexity of a \textit{function}. In a more general sense, we can describe the complexity of a \textit{concept class} in terms of a combinatorial parameter known as the VC dimension.
 
 \begin{definition}
-(VC Dimension) The VC dimension of $\mathcal{C}$ is the size of the biggest $S \subseteq \{0, 1\}^n$ that can be labelled all $2^{|S|}$ ways by concepts from $\mathcal{C}$. In other words, for each sequence of $|S |$ binary labels for the elements of $S$, there is a $c \in \mathcal{C}$ that has that labeling (such an $S$ is said to be shattered by $\mathcal{C}$) 	
+(VC Dimension) Let $S_1, \cdots, S_{2^n} \subseteq \{0, 1\}^n$ give all possible binary labelings of a dataset of size $n$. If for each $S_i$ there is a $c_i \in \mathcal{C}$ which assigns the dataset this labelling, then $S$ is said to be shattered by $\mathcal{C}$. The VC dimension of $\mathcal{C}$ is the size $n$ of the largest dataset which is shattered by $\mathcal{C}$.
 \end{definition}
 
 
 \begin{example}
-The VC dimension of halfspaces in $p$ dimensions is $p+1$	
+The VC dimension of halfspaces in $\RR^p$ is $p+1$. To see this, note that the definition of VC dimension asks us to find \textit{any} dataset in our domain with size $p + 1$. 	In which case, we can choose a dataset with points $\{ e_i \}_{1 \leq i \leq d}$ where $e_i$ is the standard basis vector with a 1 in the $i$th position and 0 elsewhere and $e_0 := 0$. 
+
+A halfspace is specified by a vector $w \in \RR^p$ and decision rule 
+
+\begin{align*}
+f(x) &= sgn(w \cdot x + b)
+\end{align*}
+ 
+Because $f$ is a boolean function, we can decompose it in the Fourier basis and simply give positive Fourier coefficient to each $e_i$ that $S_i$ specifies has label $+1$ and negative coefficient otherwise. The bias $b$ is determined by the label of $e_0 = 0$.
 \end{example}
 
 \section{Randomized Linear Algebra}
