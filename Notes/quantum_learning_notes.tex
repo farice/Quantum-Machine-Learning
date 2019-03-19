@@ -981,7 +981,29 @@ From this description it is clear that we needed one query to $g$ and one query 
  The feature map is similar to a quantum algorithm for estimating the hidden shift in boolean bent functions, as above. The circuit $\mathcal{U}_\Phi$ we consider is indeed very similar to the one discussed in \cite{rotteler2010quantum}. Let us make a minor modification, and ask the two diagonal layers in $\tilde{\mathcal{U}_\Phi} = U_{\Phi_1(x)} H^{\otimes n} U_{\Phi_2(x)} H^{\otimes n}$ to differ. We choose the phase gate layers so that $U_{\Phi_1}$ and $U_{\Phi_2}$ encode a shifted bent-function and the function’s dual, then the circuit $\mathcal{A}_1$ is given by $H^{\otimes n} \tilde{\mathcal{U}_\Phi}$. If the interaction graph $G$ is bi-partite, it is possible to encode Maiorana-McFarland bent-functions for $d = 2$ by choosing the corresponding $\phi_{k,l}(x),\phi_k(⃗x)$ to be either $\pi$ or $0$. In \cite{rotteler2010quantum}, the diagonal layer in $\mathcal{A}_1$, are queries to an oracle encoding the the shifted bent-function and its dual. It can be shown that with respect to this oracle there is an exponential separation in query complexity over classical query algorithms. The final circuit we implement to estimate the overlap $|\< \phi(x) \mid \phi(z) \>|^2$ is still larger. This circuit has four layers of Hadamard gates and 3 diagonal layers. 
  
  If the conjecture could be proven, it would establish a valuable step in rigorously establishing a quantum advantage on near-term devices. If, however, it ultimately turns out that this family can also be evaluated classically, we would need to improve the complexity of this circuit family.
+ 
 \section{Quantum Variational Classification}
+
+Quantum circuit learning is a hybrid quantum-classical method that allows one to "train" a quantum circuit by classically parameterizing some of its gates. Then, we may train these parameters classically to achieve a defined goal. 
+
+Suppose we have an $n$ qubit circuit and consider the following procedure
+
+\begin{enumerate}
+\item Encode classical input data $\{x_i \}$ as $\{\ket{\phi(x_i)} \}$ for some feature map $\phi$
+\item Apply a $\theta$-parameterized unitary $W(\theta)$ to the input state given
+
+\begin{align*}
+W(\theta)\ket{\phi(x_i)}
+\end{align*}
+
+\item Measure the expectation value of some chosen observables
+
+\item Minimize a chosen cost function with is a function of these expectation values
+
+\item Evaluate the performance and update $\theta$ accordingly
+\end{enumerate}
+
+A common choice of $W(\theta)$ (\cite{havlicek2018supervised}) is the following circuit: Let $W(\theta)$ have $l$ layers. Label the qubits $\{1, \cdots, n\}$ and consider the nearest-neighbor pairing $N = \{(1,2), (2, 3), \cdots, (n-1, n)\}$. Then, within each layer, first perform CNOT on each pair in $N$. Next, write $\theta = (\theta_1, \cdots, \theta_n)$ where each $\theta_i$ is a vector specified by Euler angles. Hence, we can perform rotation $R(\theta_i)$ on the $i$th qubit.
 
 %\section{Quantum Kernel Estimation}
 %
@@ -1000,10 +1022,10 @@ We generate data so that it can be perfectly separated. Choose coefficients
 \phi_{\{1,2\}}(x) &= (\pi - x_1)(\pi - x_2) 
 \end{align*}
 
-and draw a fixed random element $V \in SU(4)$. Then, generate data by drawing random $x \in (0, 2\pi]^2$ and labelling based on decision rule
+and draw a fixed random element $V \in SU(4)$. Define $\Pi = Z_1Z_2$ to be parity on 2 qubits. Then, generate data by drawing random $x \in (0, 2\pi]^2$ and labelling based on decision rule
 
 \begin{align*}
-f(x) = \bra{x} \mathcal{U}_{\Phi(x)}^\dag V^\dag Z_1 Z_2 V \mathcal{U}_{\Phi(x)}\ket{x}	 
+f(x) = \bra{x} \mathcal{U}_{\Phi(x)}^\dag V^\dag \Pi V \mathcal{U}_{\Phi(x)}\ket{x}	 
 \end{align*}
 
 In particular, define a threshold $\Delta$ and if $|f(x)| \leq \Delta$ then draw another $x$. Otherwise, label by $sgn(f(x))$. We draw 40 such $x$ and arbitrary partition the dataset into training and test subsets of size 20 each.
@@ -1011,7 +1033,7 @@ In particular, define a threshold $\Delta$ and if $|f(x)| \leq \Delta$ then draw
 We then use the variational circuit described in the previous section to train our classifier. In particular, the variational circuit trains some $W(\theta)$ parameterized by $\theta$ and then constructs decision rule
 
 \begin{align*}
-\tilde{f}(x) &= \bra{x} \mathcal{U}_{\Phi(x)}^\dag W(\theta)^\dag Z_1 Z_2 W(\theta) \mathcal{U}_{\Phi(x)}\ket{x})
+\tilde{f}(x) &= \bra{x} \mathcal{U}_{\Phi(x)}^\dag W(\theta)^\dag \Pi W(\theta) \mathcal{U}_{\Phi(x)}\ket{x})
 \end{align*}
  
 and classifies by $sgn(\tilde{f}(x))$. In principle, then, because $W(\theta)$ can learn any $SU(4)$ gate for appropriately chosen $\theta$, we should be able to classify to near perfect accuracy. We use the "Nesterov momentum optimizer" to train $\theta$, an improvement of the usual stochastic gradient descent.
@@ -1279,7 +1301,7 @@ In general, however, our discussion suggests that exponential quantum speedups a
 
 \chapter{Quantum Sample Complexity}
 
-\section{Bounds using VC Dimension and an arbitrary distribution}
+\section{PAC-learning bounds using VC Dimension for unspecified distribution}
 
 It is well known that one can tightly bound the number of samples from an unknown distribution required to PAC-learn (Section \ref{def:PAC}) an unknown concept in terms of its VC dimension (Section \ref{def:vc-dim}). Hence, a natural question to ask is whether "quantum samples" are more powerful in the sense of requiring less examples to achieve this goal.
 
@@ -1552,6 +1574,19 @@ which comes close to optimal bound $\Omega (d / \epsilon)$
 \subsection{Optimal lower bounds by state identification}
 
 TODO
+
+\section{Exact learning bounds with uniform examples}
+
+We claimed that the information-theoretic method used in the previous section is generalizable, so we provide an example lower bound.
+
+Consider the concept class of $k$-Fourier-sparse Boolean functions.
+
+\begin{proof}
+Sketch.
+
+Consider Grassmannian manifold over $\{0, 1\}^n$. We can carve out the distinct subspace in $\{0, 1\}^n$ with dimension $n - \log k$	
+\end{proof}
+
 
 %\section{Online Learning of Quantum States}
 %
