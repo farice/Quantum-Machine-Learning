@@ -123,6 +123,7 @@ Hence,
 Computational learning theory addresses the following task: Given a source of "examples" $(x, f(x))$ from an unknown function $f$, compute a "hypothesis" function $h$ that is good at predicting $f(y)$ on future inputs $y$. 
 
 \begin{definition}
+\label{def:PAC}
 In the PAC ("probably approximately correct") model learning under the uniform distribution on $\{-1, +1\}^n$, a learning problem is identified with a concept class $\mathcal{C}$, which is just a collection of functions $f: \{-1, +1\}^n \rightarrow \{-1, +1\}$. A learning algorithm $\mathcal{A}$ for $\mathcal{C}$ is a randomized algorithm which has limited access to an unknown target function $f \in \mathcal{C}$. These two access models, in increasing order of strength are:
 
 \begin{itemize}
@@ -138,7 +139,7 @@ dist(f, h) \leq \epsilon
 
 with probability $\geq 1 - \delta$. 
 
-Note that $dist$ is the relative Hamming distance more generally defined as total variation distance \ref{def:tve}. 
+Note that $dist$ is the relative Hamming distance more generally defined as total variation distance (\ref{def:tve}).  
 \end{definition}
 
 Clearly, we can learn any such $f$ in $O(2^n)$ time for $\epsilon = 0$ (there are only $2^n$ hypotheses). If $\mathcal{C}$ is complex, then exponential running time may be the best we can do. Nevertheless, if $\mathcal{C}$ contains relatively "simple" functions then improved bounds are possible. A common way of doing so is discovering "most of" a function's Fourier spectrum.
@@ -222,6 +223,7 @@ as desired. This theorem essentially reduces the algorithmic task of learning $f
 We've seen that the Fourier spectrum concentration provides a useful notion of the complexity of a \textit{function}. In a more general sense, we can describe the complexity of a \textit{concept class} in terms of a combinatorial parameter known as the VC dimension.
 
 \begin{definition}
+\label{def:vc-dim}
 (VC Dimension) Let $S_1, \cdots, S_{2^n} \subseteq \{0, 1\}^n$ give all possible binary labelings of a dataset of size $n$. If for each $S_i$ there is a $c_i \in \mathcal{C}$ which assigns the dataset this labelling, then $S$ is said to be shattered by $\mathcal{C}$. The VC dimension of $\mathcal{C}$ is the size $n$ of the largest dataset which is shattered by $\mathcal{C}$.
 \end{definition}
 
@@ -291,8 +293,27 @@ Let $X_1, X_2, \cdots, X_s$	be i.i.d real random variables such that $X_i \in [a
 \begin{align*}
 \Pr(|X - E[X]| \geq t) \leq 2e^{- \frac{2t^2}{\sum_{i=1}^n (b_i - a_i)^2}}
 \end{align*}
-
 \end{corollary}
+
+\begin{example}
+\label{ex:fact7-samplecomplexity}
+Define $H_x(p)$ to be an entropy function $p\log_x p + (1-p) \log_x (1-p)$. Similarly, define Then,
+
+\begin{align*}
+	\binom{n}{k} &\leq e^{nH_{e}(k/n)} \\
+	&= 2^{nH_2(e)(k/n)} 
+\end{align*}
+
+for all $k \leq n$. Furthermore,
+
+\begin{align*}
+\sum_{i = 1}^m \binom{n}{i} &\leq e^{nH_{e}(m/n)} \\
+	&= 2^{nH_2(e)(k/n)} 	
+\end{align*}
+
+for all $m \leq n /2$.
+\end{example}
+
 
 
 \begin{theorem}(Hoeffding--Chernoff Inequality for matrix-valued random variables) \cite{kannan2017randomized}
@@ -923,14 +944,11 @@ Low-rank estimation is given by the FKV algorithm detailed in Section \ref{sec:f
 
 \section{Trace Inner Product Estimation}
 
-\begin{itemize}
-	\item For $x, y \in \CC^n$, if we are given that $x \in \mathcal{SQ}$ and $y \in \mathcal{Q}$, then we can estimate $\< x, y\>$ with probability $\geq 1 - \delta$ and error $\epsilon \|x\|\|y\|$ 
-	\item Quantum analog: SWAP test
-\end{itemize}
+The first tool is a classical analog to the quantum SWAP test, which computes the inner product of two pure states. For $x, y \in \CC^n$, if we are given that $x \in \mathcal{SQ}$ and $y \in \mathcal{Q}$, then we can estimate $\< x, y\>$ with probability $\geq 1 - \delta$ and error $\epsilon \|x\|\|y\|$ 
 
 \begin{figure}
 \includegraphics[width= 0.5\linewidth]{images/swap_test.png}	
-\caption{Swap test}
+\caption{Quantum SWAP test}
 \end{figure}
 
 \begin{fact} For $\{X_{i,j}\}$ i.i.d random variables with mean $\mu$ and variance $\sigma^2$, let 
@@ -940,11 +958,7 @@ $$Y := \underset{j \in [\log 1/\delta]}{\operatorname{median}}\;\underset{i \in 
 Then $\vert Y - \mu\vert \leq \epsilon\sigma$ with probability $\geq 1-\delta$, using only $O(\frac{1}{\epsilon^2}\log\frac{1}{\delta})$ samples.
 \end{fact}
 
-\begin{itemize}
-	\item In words: We may create a mean estimator from $1/\epsilon^2$ samples of $X$. We compute the median of $\log 1/\delta$ such estimators
-	\item Catoni (2012) shows that Chebyshev's inequality is the best guarantee one can provide when considering pure empirical mean estimators for an unknown distribution (and finite $\mu, \sigma$)
-	\item "Median of means" provides an exponential improvement in probability of success ($1 - \delta$) guarantee
-\end{itemize}
+In words, we may create a mean estimator from $1/\epsilon^2$ samples of $X$. Hence, we can then compute the median of $\log 1/\delta$ such estimators. Naturally, one may ask why we do not simply take the empirical mean. Catoni (2012) shows that Chebyshev's inequality is the best guarantee one can provide when considering pure empirical mean estimators for an unknown distribution (and finite mean and variance). Hence, "median of means" provides an exponential improvement in probability of success ($1 - \delta$) guarantee
 
 \begin{corollary} For $x,y \in\CC^n$, given $x \in \mathcal{SQ}$ and $y \in \mathcal{Q}$, we can estimate $\langle x,y\rangle$ to $\epsilon\|x\|\|y\|$ error with probability $\geq 1-\delta$ with query complexity $O(\frac{1}{\epsilon^2}\log\frac{1}{\delta})$
 \end{corollary}
@@ -953,25 +967,23 @@ Then $\vert Y - \mu\vert \leq \epsilon\sigma$ with probability $\geq 1-\delta$, 
 
 \section{Least-Square Sample Generation}
 
-\begin{itemize}
-	\item For $V \in \CC^{n\times k}, w \in \CC^k$, given $V^\dagger \in \mathcal{SQ}$ (\textit{column}-wise sampling of $V$) and $w \in \mathcal{Q}$, we can simulate $Vw \in \mathcal{SQ}$ with $\text{poly}(k)$ queries
-	\item In words: if we can least-square sample the columns of matrix $V$ and query the entries of vector $w$, then
+For $V \in \CC^{n\times k}, w \in \CC^k$, given $V^\dagger \in \mathcal{SQ}$ (\textit{column}-wise sampling of $V$) and $w \in \mathcal{Q}$, we can simulate $Vw \in \mathcal{SQ}$ with $\text{poly}(k)$ queries. In words, if we can least-square sample the columns of matrix $V$ and query the entries of vector $w$, then: 
+
 \begin{enumerate}
 \item  We can query entries of their multiplication ($Vw$) 
 \item We can least-square sample from a distribution that emulates their multiplication	
 \end{enumerate}
 
-\item Hence, as long as $k \ll n$, we can perform  each using a number of steps polynomial in the number of columns of $V$. 
+Hence, as long as $k \ll n$, we can perform  each using a number of steps polynomial in the number of columns of $V$. 
 
-\end{itemize}
+\begin{algorithm}(Rejection sampling)
 
-\begin{definition}
-Rejection sampling
-\end{definition}
-\begin{algorithm}
 Input: Samples from distribution $P$
 
 Output: Samples from distribution $Q$
+
+The procedure is as follows:
+
 \begin{itemize}
 \item Sample $s$ from $P$
 \item Compute $r_s = \frac{1}{N}\frac{Q(s)}{P(s)}$, for fixed constant $N$
@@ -980,34 +992,23 @@ Output: Samples from distribution $Q$
 \end{algorithm}
 
 \begin{fact}
-Fact. If $r_i \leq 1, \forall i$, then the above procedure is well-defined and outputs a sample from $Q$ in $N$ iterations in expectation.	
+If $r_i \leq 1, \forall i$, then the above procedure is well-defined and outputs a sample from $Q$ in $N$ iterations in expectation.	
 \end{fact}
 
 
 \begin{proposition}
 	 For $V \in \RR^{n\times k}$ and $w \in \RR^k$, given $V^\dag \in \mathcal{SQ}$ and $w \in \mathcal{Q}$, we can simulate $Vw \in \mathcal{SQ}$ with expected query complexity $\tilde{O}((\frac{1}{\epsilon^2}\log\frac{1}{\delta}))$
 
-We can compute entries $(Vw)_i$ with $O(k)$ queries.
+\begin{proof}
+Clearly, we can compute entries $(Vw)_i$ with $O(k)$ queries.
 
-We can sample using rejection sampling:
-
-\begin{itemize}
-\item $P$ is the distribution formed by sampling from $V_{(\cdot, j)}$.
-  
-\item $Q$ is the target $Vw$.
-\item Hence, compute $r_s$ to be a constant factor of $Q / P$
-\end{itemize}
+Furthermore, we can sample using rejection sampling: Let $P$ be the distribution formed by sampling from $V_{(\cdot, j)}$ and $Q$ is the target $Vw$. Hence, compute $r_s$ to be a constant factor of $Q / P$
 
 $$r_i = \frac{\|w^T V_{\cdot, i}\|^2}{\|w\|^2\|V_{\cdot, i}\|^2}$$
+
+Notice that we can compute these $r_i$'s (in fact, despite that we cannot compute probabilities from the target distribution), and that the rejection sampling guarantee is satisfied (via Cauchy-Schwarz). Since the probability of success is $\|Vw\|^2/ \| w\|^2$, it suffices to estimate the probability of success of this rejection sampling process to estimate this norm. Through a Chernoff bound, we see that the average of $O(\|w\|^2(\frac{1}{\epsilon^2}\log\frac{1}{\delta}))$ "coin flips" is in $[(1-\epsilon)\|Vw\|,(1+\epsilon)\|Vw\|]$ with probability $\geq 1-\delta$.
+\end{proof}
 \end{proposition}
-
-\begin{itemize}
-\item Notice that we can compute these $r_i$'s (in fact, despite that we cannot compute probabilities from the target distribution), and that the rejection sampling guarantee is satisfied (via Cauchy-Schwarz).
-
-\item Since the probability of success is $\|Vw\|^2/ \| w\|^2$, it suffices to estimate the probability of success of this rejection sampling process to estimate this norm.
-
-\item Through a Chernoff bound, we see that the average of $O(\|w\|^2(\frac{1}{\epsilon^2}\log\frac{1}{\delta}))$ "coin flips" is in $[(1-\epsilon)\|Vw\|,(1+\epsilon)\|Vw\|]$ with probability $\geq 1-\delta$.
-\end{itemize}
 
 \section{Application: Stochastic Regression}
 
@@ -1015,6 +1016,7 @@ For a low-rank matrix $A \in \RR^{m\times n}$
   and a vector $b \in \RR^n$, given $b, A \in \mathcal{SQ}$, (approximately) simulate $A^+b \in \mathcal{SQ}$.
 
 \begin{algorithm}   	
+The procedure is as follows:
 \begin{itemize}
 \item Low-rank approximation (3) gives us $S,\hat{U} \in \mathcal{SQ}$.
 
@@ -1036,7 +1038,7 @@ $$A^+b = (A^TA)^+A^Tb \approx \sum_{i=1}^k \frac{1}{\hat{\sigma}_i^2}\hat{v}_i\h
 
 $$A^+b \approx \sum_{i=1}^k \frac{1}{\hat{\sigma}_i^2}\hat{v}_i\hat{\lambda}_i = S \sum_{i=1}^k \frac{1}{\hat{\sigma}_i^2}\hat{u}_i\hat{\lambda}_i$$
 
-\item Finally, using (2) to provide sample access to each $S \hat{u}_i$, we are done	! $\tilde{O}(\kappa^{16}k^6 \|A\|^6_F / \epsilon^6)$ complexity.
+\item Finally, using (2) to provide sample access to each $S \hat{u}_i$, we are done! $\tilde{O}(\kappa^{16}k^6 \|A\|^6_F / \epsilon^6)$ complexity.
 \end{itemize}
 
 
@@ -1149,18 +1151,17 @@ Now that we've sketched the steps of this process, we detail each approximation 
 
 \section{Conclusions}
 
-\begin{itemize}
-\item Claim (Tang): For machine learning problems, $\mathcal{SQ}$ assumptions are more reasonable than state preparation assumptions.
-\item We discussed pseudo-inverse which inverts singular values, but in principle we could have applied any function to the singular values
-\item Gilyen et. al (2018) show that many quantum machine learning algorithms indeed apply polynomial functions to singular values
-\item Our discussion suggests that exponential quantum speedups are tightly related to problems where high-rank matrices play a crucial role (e.g. Hamiltonian simulation or QFT)
-\end{itemize}
+It is Tang's belief that for machine learning problems, $\mathcal{SQ}$ assumptions are more reasonable than state preparation assumptions in practice. Indeed, it is likely that the (at best) polynomial speedup of quantum state preparation (as opposed to preparing classical $\ell^2$ sample access) will not be realizable with quantum hardware.
+
+Furthermore, we discussed pseudo-inverse which inverts singular values, but in principle we could have applied any function to the singular values. Indeed, Gilyen et. al (2018) show that many quantum machine learning algorithms indeed apply polynomial functions to singular values. 
+
+In general, however, our discussion suggests that exponential quantum speedups are tightly related to problems where high-rank matrices play a crucial role (e.g. Hamiltonian simulation or Quantum Fourier Transform).
 
 \chapter{Quantum Sample Complexity}
 
 \section{Bounds using VC Dimension and an arbitrary distribution}
 
-It is well known that one can tightly bound the number of samples from an unknown distribution required to PAC-learn (Section \ref{}) an unknown concept in terms of its VC dimension (Section \ref{}). Hence, a natural question to ask is whether "quantum samples" are more powerful in the sense of requiring less examples to achieve this goal.
+It is well known that one can tightly bound the number of samples from an unknown distribution required to PAC-learn (Section \ref{def:PAC}) an unknown concept in terms of its VC dimension (Section \ref{def:vc-dim}). Hence, a natural question to ask is whether "quantum samples" are more powerful in the sense of requiring less examples to achieve this goal.
 
 Here we will explore the techniques of Arunachalam and de Wolf \cite{arunachalam2016optimal} in order to address this question. The authors show that the ideas of quantum state discrimination discussed in Section \ref{} offer an intuitive analysis, despite resulting in a suboptimal lower bound. However, Boolean Fourier analysis (Section \ref{sec:bfa}) applied to the Pretty Good Measurement (Section \ref{app:pgm}) gives an optimal bound showing that there is no quantum advantage in terms of sample complexity when restricting to PAC learning and quantum samples as specified in the model introduced by Bshouty and Jackson \cite{bshouty1998learning}.
 
@@ -1176,7 +1177,7 @@ A quantum example oracle $QPEX(c,D)$ acts on $\ket{0}^{\otimes n}\ket{0}$ and pr
 
 A quantum learner is given access to some copies of the state generated by $QPEX(c,D)$ and performs a POVM where each outcome is associated with a hypothesis. 
 
-A learning algorithm $\mathcal{A}$ is an $(\epsilon, \delta)$-PAC quantum learner for $C$ if for every $c \in \mathcal{C}$ and distribution $D$, given access to the $QPEX(c,D)$ oracle, $\mathcal{A}$ outputs an $h$ such that 
+A learning algorithm $\mathcal{A}$ is an $(\epsilon, \delta)$-PAC quantum learner for $\mathcal{C}$ if for every $c \in \mathcal{C}$ and distribution $D$, given access to the $QPEX(c,D)$ oracle, $\mathcal{A}$ outputs an $h$ such that 
 
 \begin{align}
 err_D (h, c) \leq \epsilon	
@@ -1186,27 +1187,31 @@ with probability at least $1 - \delta$.
 
 The sample complexity of $\mathcal{A}$ is the maximum number invocations of the $QPEX(c,D)$ oracle, maximized over all $c \in \mathcal{C}$ , distributions $D$, and the learner’s internal randomness. The $(\epsilon, \delta)$-PAC quantum sample complexity of a concept class $\mathcal{C}$ is the minimum sample complexity over all $(\epsilon,\delta)$-PAC quantum learners for $\mathcal{C}$.
 
+
 \subsubsection{Quantum Learning Models: Agnostic Setting}
 
-For a joint distribution $D : \{0, 1\}^{n+1} \rightarrow [0, 1]$ over the set of examples, the learner has access to an $QAEX(D)$ oracle which acts on $\ket{0}^{\otimes n}\ket{0}$ and produces a quantum example 
-
-\begin{align}
-\sum_{(x, b)\in\{0,1\}^{n+1}} D(x,b)\ket{x,b}	
-\end{align} 
-
-A $\mathcal{A}$ is an $(\epsilon, \delta)$-agnostic quantum learner for $\mathcal{C}$ if for every distribution $D$, given access to the $QAEX(D)$ oracle, $\mathcal{A}$  outputs an $h \in \mathcal{C}$ such that 
-
-\begin{align}
-err_D (h) \leq opt_D(h) + \epsilon	
-\end{align}
-
-with probability at least $1 - \delta$.
-
-The sample complexity of $\mathcal{A}$ is the maximum number invocations of the $QAEX(D)$ oracle over all distributions $D$ and over the learner’s internal randomness. The $(\epsilon, \delta)$-agnostic quantum sample complexity of a concept class $\mathcal{C}$ is the minimum sample complexity over all $(\epsilon, \delta)$-agnostic quantum learners for $\mathcal{C}$.
-
+Notice that in the PAC setting we make an implicit assumption that the label of $x$ is given by some $c(x)$ i.e. the labelling can be specified by a function $c$ in our concept class $\mathcal{C}$ of consideration. It is not difficult to generalize to the "agnostic setting", as the authors do in \cite{arunachalam2016optimal} and show similar bounds. We refrain from discussing the agnostic setting given that our goal is understanding and generalized the methods used in this type of analysis.
+%\subsubsection{Quantum Learning Models: Agnostic Setting}
+%
+%For a joint distribution $D : \{0, 1\}^{n+1} \rightarrow [0, 1]$ over the set of examples, the learner has access to an $QAEX(D)$ oracle which acts on $\ket{0}^{\otimes n}\ket{0}$ and produces a quantum example 
+%
+%\begin{align}
+%\sum_{(x, b)\in\{0,1\}^{n+1}} D(x,b)\ket{x,b}	
+%\end{align} 
+%
+%A $\mathcal{A}$ is an $(\epsilon, \delta)$-agnostic quantum learner for $\mathcal{C}$ if for every distribution $D$, given access to the $QAEX(D)$ oracle, $\mathcal{A}$  outputs an $h \in \mathcal{C}$ such that 
+%
+%\begin{align}
+%err_D (h) \leq opt_D(h) + \epsilon	
+%\end{align}
+%
+%with probability at least $1 - \delta$.
+%
+%The sample complexity of $\mathcal{A}$ is the maximum number invocations of the $QAEX(D)$ oracle over all distributions $D$ and over the learner’s internal randomness. The $(\epsilon, \delta)$-agnostic quantum sample complexity of a concept class $\mathcal{C}$ is the minimum sample complexity over all $(\epsilon, \delta)$-agnostic quantum learners for $\mathcal{C}$.
+%
 \subsection{Goals}
 
-We seek to show that quantum examples are not actually more powerful than classical labeled examples in the PAC model and in the agnostic model when the underlying data distribution is arbitrary. We emphasize this point on the data distribution because we plan to later detail advantages that can be reaped if the example distribution is e.g. uniform (hint: think about the Bernstein-Vazirani algorithm and a linear classifier).
+We seek to show that quantum examples are not actually more powerful than classical labeled examples in the PAC model when the underlying data distribution is arbitrary. We emphasize this point on the data distribution because we plan to later detail advantages that can be reaped if the example distribution is e.g. uniform (hint: think about the Bernstein-Vazirani algorithm and a linear classifier).
 
 In the classical case, the sample complexity of concept class $\mathcal{C}$ with VC dimension $d$ in the PAC setting is
 
@@ -1215,12 +1220,12 @@ $$
 $$
 
 where $\epsilon$ is the approximation coefficient and $\delta$ is the probability of success, as usual.
-
-In the agnostic case, the optimal sample complexity of such agnostic learners is tightly determined by the VC dimension of $\mathcal{C}$
-
-\begin{align*}
-\Theta(\frac{d}{\epsilon^2} + \frac{\log(1/\delta)}{\epsilon^2})
-\end{align*}
+%
+%In the agnostic case, the optimal sample complexity of such agnostic learners is tightly determined by the VC dimension of $\mathcal{C}$
+%
+%\begin{align*}
+%\Theta(\frac{d}{\epsilon^2} + \frac{\log(1/\delta)}{\epsilon^2})
+%\end{align*}
 
 The authors indeed show that, using the quantum learning models above, the bounds are the same in the quantum case. This requires a state identification argument which uses Fourier Analysis to analyze the performance of a Pretty Good Measurement \ref{app:pgm}. However, we can get close by instead using simple concepts from quantum information theory.
 
@@ -1261,36 +1266,34 @@ For $i \in \{1,2\}$, the state of the algorithm after $T$ queries to $QPEX(c_i,D
  $\therefore T = \Omega(\frac{1}{\epsilon}\log \frac{1}{\delta})$
 \end{proof}
 
-\begin{lemma}
-\label{lem:vc-indep-agn}
-Let $\mathcal{C}$ be a non-trivial concept class. For every $\delta \in (0,1/2), \epsilon \in (0,1/4)$, a $(\epsilon,\delta)$-agnostic quantum learner for $\mathcal{C}$ has sample complexity $\Omega(\frac{1}{\epsilon^2}\log \frac{1}{\delta})$
-\end{lemma}
-
-\begin{proof}
-Since $\mathcal{C}$ is non-trivial, we may assume there are two concepts $c_1,c_2 \in C$ defined on two inputs $\{x_1,x_2\}$ such that $c_1(x) \neq c_2(x)$.
-
- Consider the two distributions $D_\pm$ s.t.
- 
- \begin{align*}
- 	D_\pm(x, c_1(x)) &= (1 \pm \epsilon)/2\\
- 	D_\pm(x, c_2(x)) &= (1 \mp \epsilon)/2\\
- \end{align*}
-
-The state of the algorithm after $T$ queries to $QAEX(D_\pm)$ is then
- 
-\begin{align*}
-\ket{\psi_\pm} = ((\sqrt{(1\pm\epsilon)/2})\ket{x, c_1(x)} + (\sqrt{(1\mp\epsilon)/2})\ket{x, c_2(x)})^{\otimes T}
-\end{align*}
- 
- Therefore, $\bra{\psi_+}\ket{\psi_-} = (1-\epsilon^2)^{T/2}$. Since the success probability of an $(\epsilon, \delta)$-agnostic quantum learner is $\geq 1 - \delta$, Corollary \ref{cor:distinguish-two-pure-states} implies $\bra{\psi_+}\ket{\psi_-} \leq 2\sqrt{\delta(1-\delta)}$. 
- 
- $\therefore T = \Omega(\frac{1}{\epsilon^2}\log \frac{1}{\delta})$
-\end{proof}
-
-\begin{corollary}
-	
-\end{corollary}
-
+%\begin{lemma}
+%\label{lem:vc-indep-agn}
+%Let $\mathcal{C}$ be a non-trivial concept class. For every $\delta \in (0,1/2), \epsilon \in (0,1/4)$, a $(\epsilon,\delta)$-agnostic quantum learner for $\mathcal{C}$ has sample complexity $\Omega(\frac{1}{\epsilon^2}\log \frac{1}{\delta})$
+%\end{lemma}
+%
+%\begin{proof}
+%Since $\mathcal{C}$ is non-trivial, we may assume there are two concepts $c_1,c_2 \in C$ defined on two inputs $\{x_1,x_2\}$ such that $c_1(x) \neq c_2(x)$.
+%
+% Consider the two distributions $D_\pm$ s.t.
+ %
+ %\begin{align*}
+ %	D_\pm(x, c_1(x)) &= (1 \pm \epsilon)/2\\
+ %	D_\pm(x, c_2(x)) &= (1 \mp \epsilon)/2\\
+ %\end{align*}
+%
+%The state of the algorithm after $T$ queries to $QAEX(D_\pm)$ is then
+ %
+%\begin{align*}
+%\ket{\psi_\pm} = ((\sqrt{(1\pm\epsilon)/2})\ket{x, c_1(x)} + (\sqrt{(1\mp\epsilon)/2})\ket{x, c_2(x)})^{\otimes T}
+%\end{align*}
+% 
+% Therefore, $\bra{\psi_+}\ket{\psi_-} = (1-\epsilon^2)^{T/2}$. Since the success probability of an $(\epsilon, \delta)$-agnostic quantum learner is $\geq 1 - \delta$, Corollary \ref{cor:distinguish-two-pure-states} implies $\bra{\psi_+}\ket{\psi_-} \leq 2\sqrt{\delta(1-\delta)}$. 
+ %
+ %$\therefore T = \Omega(\frac{1}{\epsilon^2}\log \frac{1}{\delta})$
+%\end{proof}
+%\begin{corollary}
+%	
+%\end{corollary}
 
 \subsubsection{VC-dependent lower bounds}
 
@@ -1311,9 +1314,21 @@ for all $i \in [d]$.
 
 Because $S$ is shattered by $\mathcal{C}$, for each string $a \in \{0, 1\}^d$, there exists a concept $c_a \in \mathcal{C}$ such that $c_a(s_0) = 0$ and $c_a(s_i) = a_i$ for all $i \in [d]$.
 
-We essentially have two distributions of interest: the distribution which describes sampling the $\{ s_i\}$ and the distribution which describes the uniform samples $a$. Hence, define $A$ to be a random variable uniformly distributed over $\{0, 1\}^d$. For fixed $a$, define $B = B_1 \cdots B_T$ as $T$ i.i.d. samples from $c_a$ distributed as $D$. 
+We essentially have two distributions of interest: the distribution which describes sampling the $\{ s_i\}$ and the distribution which describes the uniform samples $a$. Hence, define $A$ to be a random variable uniformly distributed over $\{0, 1\}^d$. For fixed $a$, define $B = B_1 \otimes \cdots \otimes B_T$ as $T$ i.i.d. quantum examples from $QPEX(c_a, D)$. 
 
-Hence, we use the following lemmas.
+Hence, each $B_i$ is the quantum sample
+
+\begin{align*}
+\sum_{i \in \{ 0,1\}^d} \sqrt{D(s_i)} \ket{i, c_a(s_i)}	
+\end{align*}
+
+and so the $AB$ bipartite system can be written as
+
+\begin{align*}
+	\frac{1}{2^d} \sum_{a \in \{0,1\}^d} \ket{a}\bra{a} \otimes \ket{\psi_a} \bra{\psi_a}^{\otimes T}
+\end{align*}
+
+To prove this theorem, we use the following lemmas.
 
 \begin{lemma}
 \begin{align*}
@@ -1321,8 +1336,38 @@ I(A:B)\geq (1-\delta)(1-H(1/4))d-H(\delta)= \Omega(d)
 \end{align*}
 
 \begin{proof}
-	Let random variable $h(B) \in \{0, 1\}^d$ be the hypothesis that the learner produces (given
-the examples in $B$) restricted to the elements $s_1,\cdots ,s_d$. Note that the error of the hypothesis
+The learner will output a hypothesis $h(B) \in \{0, 1\}^d$ based upon the observed samples $B$. Allow us to restrict our view to error on $s_1, \cdots, s_d$. In this case, the error of the hypothesis weighted by the distribution is simply the hamming distance $d_H(h(B), A)$ multiplied by $4 \epsilon / d$:
+
+\begin{align*}
+err_D(h(B), A) &= d_H(h(B), A)
+\end{align*}
+
+where we are comparing with $A$ because $c_a(A) = A$ on our restriction. 
+
+So, define indicator variable $Z$ as indicating whether our restricted error is $\leq \epsilon$. Then, this is equivalent to requiring that 
+
+\begin{align}
+\label{eq:req-learner}
+d_H(h(B), A) \leq d/4
+\end{align}
+
+Since we are in search of a PAC learner, we require that $P(Z) \geq 1 - \delta$ which implies that $Z$ has binary entropy 
+
+$$H_2(Z) \leq H_2(\delta)$$
+
+If $h(B)$ satisfies (\ref{eq:req-learner}), then $A$ ranges over only $\sum_{i=0}^{d/4} \binom{d}{i} \leq 2^{H_2(1/4)d}$ (\ref{ex:fact7-samplecomplexity}) bit-strings given $h(B)$. Therefore, 
+
+$$H_2(A \mid h(B), Z=1) \leq H_2(1/4)d$$ 
+
+Furthermore, because $h(B)$ is assumed close to $A$ we also have $H_2(A \mid B, Z=1) \leq H_2(A \mid h(B), Z=1)$. Now,
+
+\begin{align*}
+I(A : B) &= H(A) - H(A \mid B) \\
+&\geq H(A) - H(A \mid B, Z) - H(Z) \\
+&= H(A) - Pr(Z = 1) H(A \mid B, Z=1) -Pr(Z=0)H(A \mid B, Z = 0) - H(Z) \\
+&\geq d - d(1 - \delta) H(1/4) - d\delta - H(\delta)\\
+&= \Omega(d)
+\end{align*}
 \end{proof}
 \end{lemma}
 
@@ -1332,17 +1377,41 @@ I(A:B) \leq T \cdot I(A:B_1)
 \end{align*}
 
 \begin{proof}
-	
+\begin{align*}
+	I(A:B) &= H(B) - H(B \mid A) \\
+	&= H(B) - \sum_{i=1}^T H(B_i \mid A) \tag{independence} \\
+	&\leq \sum_{i=1}^T H(B_i) - \sum_{i=1}^T H(B_i \mid A) \tag{\ref{prop:subadd-entropy}} \\
+	&= \sum_{i=1}^T I(A :B_i) \\
+	&= \sum_{i=1}^T I(A:B_1) \tag{$I(A : B_i) = I(A : B_1), \forall i$}
+\end{align*}
 \end{proof}
 \end{lemma}
 
 \begin{lemma}
 \begin{align*}
-I(A:B_1) = 4 \epsilon 	
+I(A:B_1) = 4 \epsilon \log(2d)
 \end{align*}
 
 \begin{proof}
-	
+Since $AB$ is a classical-quantum state, we have $I(A : B_1) = H(A) + H(B_1) − H(AB_1) = H(B_1)$,
+where the first equality follows from definition and the second equality uses $S(A) = d$ since
+$A$ is uniformly distributed in $\{0,1\}^d$, and $S(AB_1) = d$ since the matrix $\sigma = \frac{1}{2^d} \sum_{a \in \{0,1\}^d} \ket{a}\bra{a} \otimes \ket{\psi_a} \bra{\psi_a}$ is block diagonal with $2^d$ rank-1 blocks on the diagonal. It thus suffices to bound the entropy of the singular values of the reduced state of $B_1$, which is
+
+\begin{align*}
+\rho &= \frac{1}{2^d} \sum_{a \in \{0, 1\}^d} \ket{\psi_a} \bra{\psi_a}	
+\end{align*}
+
+Let $\sigma_0 \geq \sigma_1 \geq \cdots \geq \sigma_{2d} \geq 0$ be its singular values. Since $\rho$ is a density matrix, these form a probability distribution. Note that the upper-left entry of the matrix $\ket{\psi_a}\bra{\psi_a}$ is $D(s_0) = 1-4\epsilon$, hence so is the upper-left entry of $\rho$. This implies $\sigma_0 \geq 1 − 4\epsilon$. 
+
+Consider sampling a number $N \in \{0,1,...,2d\}$ according to the $\sigma$-distribution. Let $Z$ be the indicator random variable for the event $N \neq 0$, which has probability $1 - \sigma_0 \leq 4 \epsilon$. Note that $H(N\mid Z=0)=0$, because $Z=0$ implies $N = 0$. Also, $H(N \mid Z = 1) \leq \log(2d)$, because if $Z = 1$ then $N$ ranges over $2d$ elements. 
+
+We now have
+\begin{align*}
+H(\rho) &= H(N) = H(N,Z) = H(Z) + H(N | Z)\\
+&= H(Z) + Pr[Z = 0] \cdot H(N | Z = 0) + Pr[Z = 1] \cdot H(N | Z = 1) \\
+&\leq H(4\epsilon)+4\epsilon \log(2d)\\
+&= O(\epsilon \log(d/\epsilon)) \tag{Using the Taylor series of the logarithm}
+\end{align*}
 \end{proof}
 \end{lemma}
 
@@ -1353,31 +1422,32 @@ Combining these three lemmas, we have that
 
 \begin{align*}
 I(A:B) &\leq T \cdot I(A:B_1) \\
-\Omega(d) &= T \cdot 4 \epsilon \\
-T &= \Omega (d / \epsilon)
+\Omega(\epsilon \log(d/\epsilon)) &= T \cdot 4 \epsilon \\
+T &= \Omega \Big(\frac{d}{\epsilon \log(d/\epsilon)}\Big)
 \end{align*}
-\end{proof}
 
-\subsubsection{VC-dependent bound for quantum agnostic learning}
+which comes close to optimal bound $\Omega (d / \epsilon)$
+\end{proof}
 
 \subsection{Optimal lower bounds by state identification}
 
-\section{Online Learning of Quantum States}
+TODO
 
-\subsection{Goals}
-
-We will prove that
-
-\begin{theorem}
-	Let $E_1, E_2, \cdots$ be a sequence of two-outcome measurements on an $n$-qubit state presented to the learner, and $l_1, l_2, \cdots$ be the corresponding loss functions revealed in successive iterations in the regret minimization model. Suppose $l_t$ is convex and $L$-lipschitz; in particular for every $x \in \RR$, there is a subderivative $l_t'(x)$ such that $| l_t'(x)| \leq L$. Then there is an explicit learning strategy that guarantees regret $R_T = O(L \sqrt{Tn})$ for all $T$. This is so even assuming the measurement $E_t$ and loss function $l_t$ are chosen adaptively, in response to the learner's previous behavior. 
-	
-	Specifically, the algorithm applies to $L_1$ loss and $L_2$ loss, and achieves regret $O(\sqrt{Tn})$ for both. 
-\end{theorem}
-
-
-\subsection{Online Learning and Regret}
-
+%\section{Online Learning of Quantum States}
+%
+%\subsection{Goals}
+%
+%We will prove that
+%
+%\begin{theorem}
+%	Let $E_1, E_2, \cdots$ be a sequence of two-outcome measurements on an $n$-qubit state presented to the learner, and $l_1, l_2, \cdots$ be the corresponding loss functions revealed in successive iterations in the regret minimization model. Suppose $l_t$ is convex and $L$-lipschitz; in particular for every $x \in \RR$, there is a subderivative $l_t'(x)$ such that $| l_t'(x)| \leq L$. Then there is an explicit learning strategy that guarantees regret $R_T = O(L \sqrt{Tn})$ for all $T$. This is so even assuming the measurement $E_t$ and loss function $l_t$ are chosen adaptively, in response to the learner's previous behavior. 
+%	
+%	Specifically, the algorithm applies to $L_1$ loss and $L_2$ loss, and achieves regret $O(\sqrt{Tn})$ for both. 
+%\end{theorem}
+%
+%\subsection{Online Learning and Regret}
+%
 %TODO 
-In progress...
-
+%In progress...
+%
 \end{document}
