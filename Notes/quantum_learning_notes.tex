@@ -1291,11 +1291,10 @@ The state of the algorithm after $T$ queries to $QAEX(D_\pm)$ is then
 
 \subsubsection{VC-dependent lower bounds}
 
-\begin{theorem}
-Let $C$ be a concept class with $VC-dim(\mathcal{C}) = d + 1$. Then for every $\delta \in (0,1/2)$ and $\epsilon \in (0,1/4)$, every $(\epsilon,\delta)$-PAC learner for $\mathcal{C}$ has sample complexity $\Omega(\frac{d}{\epsilon} + \frac{\log(1/\delta)}{\epsilon})$.
+\begin{theorem}\label{thm:vc-dep-it}
+Let $C$ be a concept class with $dim_{VC}(\mathcal{C}) = d + 1$. Then for every $\delta \in (0,1/2)$ and $\epsilon \in (0,1/4)$, every $(\epsilon,\delta)$-PAC learner for $\mathcal{C}$ has sample complexity $\Omega(\frac{d}{\epsilon} + \frac{\log(1/\delta)}{\epsilon})$.
 \end{theorem}
 
-\begin{proof} 
 Consider an $(\epsilon,\delta)$-PAC learner for $\mathcal{C}$ that uses $T$ examples. The $d$-independent part of the lower bound, $T = \Omega(\frac{1}{\epsilon^2}\log \frac{1}{\delta})$, was proven in Lemma \ref{lem:vc-indep-pac}. Hence it remains to prove $T = \Omega(d/\epsilon)$. 
 
 It suffices to show this for a specific distribution $D$, defined as follows. Let $S = \{s_0,s_1,\cdots,s_d\} \subseteq \{0,1\}^n$ be some $(d + 1)$-element set shattered by $\mathcal{C}$. Define 
@@ -1307,20 +1306,53 @@ D(s_i) &= 4\epsilon/d
 
 for all $i \in [d]$.
 
-Because $S$ is shattered by $\mathcal{C}$, for each string $a \in \{0, 1\}^d$, there exists a concept $c_a \mathcal{C}$ such that $c_a(s_0) = 0$ and $c_a(s_i) = a_i$ for all $i \in [d]$. We define two correlated random variables $A$ and $B$ corresponding to the concept and to the examples, respectively. Let $A$ be a random variable that is uniformly distributed over $\{0, 1\}^d$; if $A = a$, let $B = B_1 \cdots B_T$ correspond to $T$ i.i.d. samples from $c_a$ distributed as $D$. 
+Because $S$ is shattered by $\mathcal{C}$, for each string $a \in \{0, 1\}^d$, there exists a concept $c_a \in \mathcal{C}$ such that $c_a(s_0) = 0$ and $c_a(s_i) = a_i$ for all $i \in [d]$.
 
-We give the following three-step analysis of these random variables:
+We essentially have two distributions of interest: the distribution which describes sampling the $\{ s_i\}$ and the distribution which describes the uniform samples $a$. Hence, define $A$ to be a random variable uniformly distributed over $\{0, 1\}^d$. For fixed $a$, define $B = B_1 \cdots B_T$ as $T$ i.i.d. samples from $c_a$ distributed as $D$. 
 
-\begin{enumerate}
-\item $I(A:B)\geq (1-\delta)(1-H(1/4))d−H(\delta)= \Omega(d)$.
+Hence, we use the following lemmas.
+
+\begin{lemma}
+\begin{align*}
+I(A:B)\geq (1-\delta)(1-H(1/4))d-H(\delta)= \Omega(d)
+\end{align*}
 
 \begin{proof}
- Let random variable h(B) ∈ {0, 1}d be the hypothesis that the learner produces (given
-the examples in B) restricted to the elements s1,...,sd. Note that the error of the hypothesis
+	Let random variable $h(B) \in \{0, 1\}^d$ be the hypothesis that the learner produces (given
+the examples in $B$) restricted to the elements $s_1,\cdots ,s_d$. Note that the error of the hypothesis
 \end{proof}
-\end{enumerate}
+\end{lemma}
 
+\begin{lemma}
+\begin{align*}
+I(A:B) \leq T \cdot I(A:B_1)
+\end{align*}
 
+\begin{proof}
+	
+\end{proof}
+\end{lemma}
+
+\begin{lemma}
+\begin{align*}
+I(A:B_1) = 4 \epsilon 	
+\end{align*}
+
+\begin{proof}
+	
+\end{proof}
+\end{lemma}
+
+Now, we are prepared to prove the theorem.
+
+\begin{proof}(Theorem \ref{thm:vc-dep-it})
+Combining these three lemmas, we have that 
+
+\begin{align*}
+I(A:B) &\leq T \cdot I(A:B_1) \\
+\Omega(d) &= T \cdot 4 \epsilon \\
+T &= \Omega (d / \epsilon)
+\end{align*}
 \end{proof}
 
 \subsubsection{VC-dependent bound for quantum agnostic learning}

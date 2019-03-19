@@ -828,7 +828,7 @@ Therefore, the complexity of this algorithm is essentially that of the inverse F
 %
 \section{Quantum Search Algorithms}
 \label{sec:search}
-Reference: Chapter 6 of \cite{nielsen2010quantum}
+For more detail, we suggest Chapter 6 of \cite{nielsen2010quantum}.
 
 \subsection{Grover's Algorithm and Amplitude Amplification}
 
@@ -853,10 +853,62 @@ So, assuming that the number of solutions $M = 1$, Grover's algorithm essentiall
 However, if the number of solutions $M \geq 1$ is unknown, then a variant, known as amplitude amplification \cite{brassard2002quantum}, can be used to find a solution in the solution subspace with high probability using $O(\sqrt{N/M})$ queries. 
 
 \section{Quantum Information Theory}
-Reference: Chapter 12 of \cite{nielsen2010quantum}
+
+Standard references on this matter are \cite{nielsen2010quantum} (we particularly use Chapter 12) and \cite{wilde2013quantum} (particularly Chapters 9 and 11).
+
+
+\begin{definition}(Quantum Entropy)
+Suppose that Alice prepares some quantum system $A$ in state $\rho_A$ (a density matrix in Hilbert space $\mathcal{H}_A$, equivalently $\rho_A \in D(\mathcal{H}_A)$). Then, the entropy $H(A)_\rho$  of the state is defined as follows
+
+\begin{align}
+	H(A)_\rho := -Tr(\rho_A \log \rho_A)
+\end{align}
+\end{definition}
+
+\begin{definition}(Joint Quantum Entropy)
+The joint quantum entropy $H(AB)_\rho$ of the density operator $\rho_{AB} \in D(\mathcal{H}_A \otimes \mathcal{H}_B)$ for a bipartite system $AB$ follows naturally from the definition of quantum entropy
+
+\begin{align}
+H(AB)_\rho := −Tr\{\rho_{AB}log \rho_{AB}\}
+\end{align}
+\end{definition}
+
+
+\begin{definition}(Conditional Quantum Entropy)
+Let $\rho_{AB} \in D(\mathcal{H}_A\otimes \mathcal{H}_B)$. The conditional quantum entropy $H(A\mid B)_\rho$ of $\rho_{AB}$ is equal to the difference of the joint quantum entropy $H(AB)_\rho$ and the marginal entropy $H(B)_\rho$:
+
+
+\begin{align}
+H(A\mid B)_\rho := H(AB)_\rho - H(B)_\rho	
+\end{align}
+\end{definition}
+
+\begin{definition}
+(Quantum Mutual Information) The quantum mutual information of a bipartite state $\rho_{AB} \in D(\mathcal{H}_A\otimes \mathcal{H}_B)$ is defined as follows:
+
+\begin{align}
+I(A: B)_\rho := H(A)_\rho + H(B)_\rho - H(AB)_\rho \\
+= H(A)_\rho - H(A\mid B) \\
+= H(B)_\rho - H(B \mid A) 
+\end{align}
+
+\end{definition}
+
+\begin{proposition}
+\label{prop:subadd-entropy}
+(Subadditivity of Quantum Entropy)
+The quantum entropy is sub-additive for a bipartite state $\rho_{AB}$:
+
+\begin{align*}
+H(A)_\rho + H(B)_\rho \geq H(AB)_\rho	
+\end{align*}
+\begin{proof}
+Corollary 11.8.1 of \cite{wilde2013quantum}
+\end{proof}
+\end{proposition}
 
 \begin{theorem}\label{thm:holevo}
-Holevo's Theorem
+(Holevo's Theorem)
 
 Let $\{\rho_1, \rho_2, ..., \rho_n\}$ be a set of mixed states and let $\rho_X$ be one of these states drawn according to the probability distribution $P = \{p_1, p_2, \cdots , p_n\}$.
 
@@ -945,6 +997,7 @@ Hence, it is simply the trace norm of the positivization of the difference of ma
 \end{definition}
 
 \begin{lemma}
+\label{lem:nc97}
 For any states $\rho, \sigma$ one may write $\rho - \sigma = Q - S$ where $Q$ and $S$ are positive operators with support on orthogonal vector spaces	(Exercise 9.7 \cite{nielsen2010quantum})
 \end{lemma}
 
@@ -954,31 +1007,52 @@ $\rho, \sigma$ are p.s.d operators. Hence, $\rho - \sigma$ is Hermitian, so we c
 
 
 \begin{lemma}
+\label{lem:holder}
+	(Holder's Inequality for matrices)
+	
+	Given Hermitian $A, B$ and $p,q \in [1, \infty]$ such that $\frac{1}{p}+\frac{1}{q} = 1$,
+	
+	\begin{align*}
+	\tr(AB) \leq \|A\|_p\|B\|_q	
+	\end{align*}
+\end{lemma}
+
+
+\begin{proposition}
 The maximum probability of distinguishing between two states with an optimal measurement is given by
 
 \begin{align*}
 	1/2[1 + T(\rho_1, \rho_2)]
 \end{align*}
 	
-\end{lemma}
+\end{proposition}
 \begin{proof}
-Say that we have the ensemble $\{ (p_1, \rho_1), (p_2, \rho_2)\}$. We seek to define a POVM $\{E_1, E_2 \}$ where $E_1$ indicates $\rho_1$ and similarly for $\rho_2$. hence the probability of success is given by
+Say that we have the "worst-case" (equally mixed) ensemble $\{ (1/2, \rho_1), (1/2, \rho_2)\}$. We seek to define a POVM $\{E_1, E_2 \}$ where $E_1$ indicates $\rho_1$ and similarly for $\rho_2$. hence the probability of success is given by
 
 \begin{align*}
-\Pr_{\max} &= \max_{E_1, E_2}p_1\Tr[E_1\rho_1] + p_2\Tr[E_2\rho_2] \\
-&= \max_{E_1} p_1\Tr[E_1\rho_1] + p_2\Tr[(I - E_1)\rho_2] \tag{completeness of POVM} \\
-&= \max_{E_1}p_2\Tr[\rho_2] + \Tr[E_1(p_1\rho_1 - p_2\rho_2)] \tag{linearity of trace} \\
-&= \max_{E_1} \Big( p_2 + \Tr[E_1(p_1\rho_1 - p_2\rho_2)]\Big) \tag{$\Tr(\rho) = 1$ for any density operator}
+\Pr_{\max} &= \max_{E_1, E_2} 1/2 \Tr[E_1\rho_1] + 1/2 \Tr[E_2\rho_2] \\
+&= \max_{E_1, E_2} 1/2[1/2 \Tr[(E_1+E_2)(\rho_1 + \rho_2)] + 1/2 \Tr[(E_1 - E_2)(\rho_1 - \rho_2)]] \tag{linearity of trace}\\
+&= \max_{E_1, E_2} 1/2[1/2 \Tr[(\rho_1 + \rho_2)] + 1/2 \Tr[(E_1 - E_2)(\rho_1 - \rho_2)]] \tag{Completeness of POVM} \\
+&= \max_{E_1, E_2} 1/2[1 + 1/2 \Tr[(E_1 - E_2)(\rho_1 - \rho_2)]] \tag{trace of density operator is 1}
 \end{align*}
 
-Therefore, the optimal projection $E_1$ is onto the positive eigenspace of $(p_1\rho_1 - p_2\rho_2)$. In which case, recalling that $\rho_i$ are p.s.d, $E_1(p_1\rho_1 - p_2\rho_2)] = p_1 \rho_1$ and so
+Hence, Holder's inequality says that 
 
 \begin{align*}
-&= 	\Big( p_2 + \Tr[p_1\rho_1]\Big)
+\Tr[(E_1 - E_2)(\rho_1 - \rho_2)] &\leq \|E_1 - E_2 \|_\infty \|\rho_1 - \rho_2 \|_1 \\
+&\leq \|\rho_1 - \rho_2 \|_1
 \end{align*}
- 
-	
-We did implicitly assume that $E_1 + E_2 = I$ where we could've had an additional indeterminate $E_3$. However, the proof would still follow in any case (\cite{nielsen2010quantum}).
+
+as desired. The first inequality follows by choosing $p = \infty, q = 1$ in Lemma \ref{lem:holder}. The second inequality follows from $E_1, E_2$ being projector matrices and so the spectra of each satisfies $0 \leq \lambda(E_i) \leq 1$.
+
+We can achieve this upper bound by , the optimal projection $E_1 - E_2$ is choosing $E_1$ to orthogonally project onto the positive eigenspace $Q$ of $(p_1\rho_1 - p_2\rho_2)$ and $E_2$ the negative eigenspace $S$ (we can do so by Lemma \ref{lem:nc97}). Write that the eigenvectors which span $P$ have eigenvalues $\{ \lambda_i \}_{1 \leq i \leq m}$ and $Q$ with $\{\mu_i \}_{1 \leq i \leq m'}$. Then, 
+
+\begin{align*}
+1/2\Tr[(E_1 - E_2)(\rho_1 - \rho_2)] &= 1/2\Tr[E_1(\rho_1 - \rho_2)] - \Tr[E_2(\rho_1 - \rho_2)] \\
+&= 1/2 \sum_i \lambda_i - 1/2 \sum_i \mu_i = 1/2 \| \rho_1 - \rho_2 \|_1
+\end{align*}
+
+as desired\footnote{We did implicitly assume that $E_1 + E_2 = I$ where we could've had an additional indeterminate $E_3$. However, the proof would still follow in any case (\cite{nielsen2010quantum}).}.
 \end{proof}
 
 
@@ -999,7 +1073,7 @@ Applying the previous Lemma, we have maximum probability
 So, write $\ket{\psi_1} = \cos(\theta) \ket{\psi_0} + e^{i\phi}\sin(\theta)\ket{\psi_0^\perp}$. Hence,
 
 \begin{align*}
-\ket{\psi_1}\bra{\psi_1}	 &= \cos^2(\theta) \ket{\psi_0}\bra{\psi_0} + \sin^2(\theta)\ket{\psi_0^\perp}\bra{\psi_0^\perp}\\ 
+\ket{\psi_1}\bra{\psi_1}	 &= \cos^2(\theta) \ket{\psi_0}\bra{\psi_0} + \sin^2(\theta)\ket{\psi_0^\perp}\bra{\psi_0^\perp}
 + e^{i\phi}\cos(\theta)\sin(\theta)\ket{\psi_0^\perp}\bra{\psi_0} + e^{-i\phi}\cos(\theta)\sin(\theta)\ket{\psi_0}\bra{\psi_0^\perp}
 \end{align*}
 
@@ -1021,7 +1095,7 @@ T(\ket{\psi_0}\bra{\psi_0}, \ket{\psi_1}\bra{\psi_1}	) &= 2|\sin(\theta)|
 and indeed 
 
 \begin{align*}
-|\bra{\psi_0}\ket{\psi_1}|^2 &= |\cos(\theta)|^2
+|\bra{\psi_0}\ket{\psi_1}|^2 &= |\cos(\theta)|^2\\
 \implies \sqrt{1 - |\bra{\psi_0}\ket{\psi_1}|^2} &= |\sin(\theta)|
 \end{align*}
 
