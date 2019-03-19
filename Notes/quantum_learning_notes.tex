@@ -897,7 +897,7 @@ More explicitly, let $\{ x_i \}_{1 \leq i \leq n}$ be a set of observations wher
 
 It turns out that this maximization can be restated as choosing $w$ according to a convex program consisting of a linear combination of the all-pair Euclidean inner product $x_i \cdot x_j$. Hence, we may construct a feature map $\phi : \Omega \rightarrow \mathcal{H}$ which maps the data to a higher dimensional Hilbert space $\mathcal{H}$. Then, instead, we consider the inner product on $\mathcal{H}$ as part of the optimization procedure. This then results in a linear boundary in $\mathcal{H}$ which maps back to a nonlinear boundary in $\Omega$. Therefore, the boundary is essentially tied to the inner product $\< \phi (x_i), \phi(x_j) \> _{\mathcal{H}}$ which we term the "kernel".
 
-\begin{figure}
+\begin{figure}[H]
 \centering
 \includegraphics[width= 0.7\linewidth]{images/kernel}
 \caption{Nonlinear boundary created by kernel map. Data is mapped to a higher dimensional space where a linear boundary is created, and then this boundary is mapped back to the original space (creating the nonlinearity).}
@@ -929,6 +929,58 @@ with coefficients $\phi_S(x) \in \RR$. Then, the feature map is given by
 
 \subsubsection{Hardness Claim}
 
+We conjecture that it is hard to estimate this kernel up to an additive polynomially small error by classical means. The intuition for the conjecture stems from a connection of the feature map to a particular circuit family for the hidden shift problem for boolean functions:
+
+\begin{definition}(Bent functions) Let $f : \{0,1\}^n \rightarrow \{0, 1\}$ be a Boolean function. We say that $f$ is bent if the Fourier coefficients $\hat{f}(w) = \frac{1}{2^n}\sum_{x \in \{0, 1\}} (-1)^{wx^t + f(x)}$ satisfy $|\hat{f}(w)| = 2^{-n /2}$, i. e., if the spectrum of $f$ is flat.
+\end{definition}
+
+Recall the notion of $\epsilon$-concentration of Fourier spectra discussed in Section \ref{sec:bfa}. We described that this notion is useful in classical learning theory for describing a boolean function's complexity. Nevertheless, we'll find that bent functions which are in this sense the "most" complex, often are associated with problems with efficient quantum solutions.
+
+\begin{definition}
+(Hidden shift problem). Let $n \geq 1$ and let $O_f$ be an oracle which gives access to two Boolean functions $f, g : \{0, 1\}^n \rightarrow \{0, 1\}$ such that the following conditions hold: (i) $f$, and $g$ are bent functions, and (ii) there exist $s \in \{0, 1\}^n$ such that $g(x) = f(x + s)$ for all $x \in \{0, 1\}^n$. We then say that $O_f$ hides an instance of a shifted bent function problem for the bent function $f$ and the hidden shift $s \in \{0, 1\}^n$. If in addition to $f$ and $g$ the oracle also provides access to the dual bent function $\tilde{f}$, then we use the notation $O_{f,\tilde{f}}$ to indicate this potentially more powerful oracle.	
+\end{definition}
+
+\begin{theorem}
+Let $O_{f,\tilde{f}}$ be an oracle that hides an instance of a shifted bent function problem for a function $f$ and hidden shift $s$ and provides access to the dual bent function $\tilde{f}$. Then there exists a polynomial time quantum algorithm $\mathcal{A}_1$ that computes $s$ with zero error and makes two quantum queries to $O_{f,\tilde{f}}$
+
+\begin{proof}
+	Let $f: \{0,1\}^n \rightarrow \{0, 1\}$ be the bent function. We have oracle access to the shifted function $g(x) = f(x+s)$ via the oracle, i. e., we can apply the map $\ket{x}\ket{0} \mapsto \ket{0}\ket{f(x+s)}$ where $s \in \{0, 1\}^n$ is the unknown string. 
+	
+Recall that whenever we have a function implemented as $\ket{x}\ket{0} \mapsto \ket{x}\ket{f(x)}$, we can also compute $f$ into the phase as $U_f : \ket{x} \mapsto (-1)^{f(x)}\ket{x}$ by applying $f$ to a qubit initialized in $\ket{-}$. The hidden shift problem is solved by the following algorithm $\mathcal{A_1}$: 
+
+\begin{enumerate}
+\item Prepare the initial state $\ket{0}$
+\item Apply Hadamard $H^{\otimes n}$ to prepare an equal superposition of all inputs
+\item Compute the shifted function $g$ into the phase to get
+
+\begin{align*}
+\frac{1}{2^{n/2}}\sum_{x \in \{0, 1\}^n}	(-1)^{f(x+s)}\ket{x}
+\end{align*}
+
+\item Apply $H^{\otimes n}$ to get
+
+\begin{align*}
+\sum_w (-1)^{sw^t}\hat{f}(w) \ket{w} &= \frac{1}{2^{n/2}} \sum_w (-1)^{sw^t}(-1)^{\hat{f}(w)}\ket{w}	
+\end{align*}
+
+\item Compute the function $\ket{w} \mapsto (-1)^{\tilde{f}(w)}\ket{w}$ into the phase resulting in,
+
+\begin{align*}
+\frac{1}{2^{n/2}}\sum_w (-1)^{sw^t} \ket{w}	
+\end{align*}
+
+where we have used the fact that $f$ is a bent function
+
+\item Finally apply another $H^{\otimes n}$ to get the state $\ket{s}$ and measure $s$
+\end{enumerate}
+
+From this description it is clear that we needed one query to $g$ and one query to $\tilde{f}$ to solve the problem, that the algorithm is exact, and that the overall running time is given by $O(n)$ quantum operations.
+\end{proof}
+\end{theorem}
+
+ The feature map is similar to a quantum algorithm for estimating the hidden shift in boolean bent functions, as above. The circuit $\mathcal{U}_\Phi$ we consider is indeed very similar to the one discussed in \cite{rotteler2010quantum}. Let us make a minor modification, and ask the two diagonal layers in $\tilde{\mathcal{U}_\Phi} = U_{\Phi_1(x)} H^{\otimes n} U_{\Phi_2(x)} H^{\otimes n}$ to differ. We choose the phase gate layers so that $U_{\Phi_1}$ and $U_{\Phi_2}$ encode a shifted bent-function and the function’s dual, then the circuit $\mathcal{A}_1$ is given by $H^{\otimes n} \tilde{\mathcal{U}_\Phi}$. If the interaction graph $G$ is bi-partite, it is possible to encode Maiorana-McFarland bent-functions for $d = 2$ by choosing the corresponding $\phi_{k,l}(x),\phi_k(⃗x)$ to be either $\pi$ or $0$. In \cite{rotteler2010quantum}, the diagonal layer in $\mathcal{A}_1$, are queries to an oracle encoding the the shifted bent-function and its dual. It can be shown that with respect to this oracle there is an exponential separation in query complexity over classical query algorithms. The final circuit we implement to estimate the overlap $|\< \phi(x) \mid \phi(z) \>|^2$ is still larger. This circuit has four layers of Hadamard gates and 3 diagonal layers. 
+ 
+ If the conjecture could be proven, it would establish a valuable step in rigorously establishing a quantum advantage on near-term devices. If, however, it ultimately turns out that this family can also be evaluated classically, we would need to improve the complexity of this circuit family.
 \section{Quantum Variational Classification}
 
 %\section{Quantum Kernel Estimation}
@@ -941,17 +993,40 @@ with coefficients $\phi_S(x) \in \RR$. Then, the feature map is given by
 
 Here, we demonstrate an experimental construction of the feature map defined in (\ref{feat-map:hav}) considering 2 qubits for data input. We use the Strawberry Fields package for simulation \cite{killoran2019strawberry}.
 
-We generate data so that it can be perfectly separated 
+We generate data so that it can be perfectly separated. Choose coefficients
 
 \begin{align*}
-p	
+\phi_{i}(x) &= x_i, i \in \{1, 2\} \\
+\phi_{\{1,2\}}(x) &= (\pi - x_1)(\pi - x_2) 
 \end{align*}
 
-\begin{figure}
+and draw a fixed random element $V \in SU(4)$. Then, generate data by drawing random $x \in (0, 2\pi]^2$ and labelling based on decision rule
+
+\begin{align*}
+f(x) = \bra{x} \mathcal{U}_{\Phi(x)}^\dag V^\dag Z_1 Z_2 V \mathcal{U}_{\Phi(x)}\ket{x}	 
+\end{align*}
+
+In particular, define a threshold $\Delta$ and if $|f(x)| \leq \Delta$ then draw another $x$. Otherwise, label by $sgn(f(x))$. We draw 40 such $x$ and arbitrary partition the dataset into training and test subsets of size 20 each.
+ 
+We then use the variational circuit described in the previous section to train our classifier. In particular, the variational circuit trains some $W(\theta)$ parameterized by $\theta$ and then constructs decision rule
+
+\begin{align*}
+\tilde{f}(x) &= \bra{x} \mathcal{U}_{\Phi(x)}^\dag W(\theta)^\dag Z_1 Z_2 W(\theta) \mathcal{U}_{\Phi(x)}\ket{x})
+\end{align*}
+ 
+and classifies by $sgn(\tilde{f}(x))$. In principle, then, because $W(\theta)$ can learn any $SU(4)$ gate for appropriately chosen $\theta$, we should be able to classify to near perfect accuracy. We use the "Nesterov momentum optimizer" to train $\theta$, an improvement of the usual stochastic gradient descent.
+
+Below, we plot the results of a few sample trials exploring various values of $\Delta$.
+
+\begin{figure}[H]
 \includegraphics[width=\textwidth]{images/data_sep}
 \end{figure}
 
-\begin{figure}
+These results show that we converge to near-perfect classification for all of these positive separations. However, the greater the separation, the faster the convergence. We can interpret this as reflecting the fact that we are less likely to overfit or end up in a suboptimal equilibrium as part of gradient descent process if the data is well-separated.
+
+Furthermore, can view the convergence of the dual $\ell^2$ loss view below.
+
+\begin{figure}[H]
 \includegraphics[width=\textwidth]{images/l2_loss_conv}	
 \end{figure}
 
