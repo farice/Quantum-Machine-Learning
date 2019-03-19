@@ -108,13 +108,13 @@ For any $f, g: \{-1, +1\} \rightarrow \RR$,
 
 \begin{align}
 \label{eq:parsev}
-\< f, g \> &= E_{x \sim \{-1, +1\}^n}[f(x)g(x)] = \sum_{S \in [n]} \hat{f}(S) \hat{g}(S)	 \tag{Parseval's Theorem}
+\< f, g \> &= E_{x \sim \{-1, +1\}^n}[f(x)g(x)] = \sum_{S \in [n]} \hat{f}(S) \hat{g}(S)\tag{Parseval's Theorem}
 \end{align}
 
 Hence,
 
 \begin{align*}
-\< f, f \> &= \sum_{S \in [n]} \hat{f}(S) \hat{f}(S) = 1	 \tag{Plancherel's Theorem}
+\< f, f \> &= \sum_{S \in [n]} (\hat{f}(S))^2 = 1 \tag{Plancherel's Theorem}
 \end{align*}
 \end{theorem}
 
@@ -867,7 +867,8 @@ Aside from this, as we've seen by now, many of the quantum algorithms which are 
 
 Throughout this review, we've considered learning classical data which introduces problems (1) and (2), given that we have to interface between classical and quantum states. Hence, we may consider the case of applying quantum algorithms to quantum data. This is covered in detail in \cite{aaronson2007learnability}.
 
-\section{Supervised learning with quantum feature Hilbert spaces}
+\chapter{Quantum Kernel Maps and Quantum Circuit Learning}
+
 \cite{havlicek2018supervised}
 
 
@@ -875,19 +876,19 @@ One classical method is using so-called Support Vector Machines (SVM), which con
 
 Here, we suppose that the data is given classically and we seek to show that, in some cases, we can obtain a quantum advantage by either generating the separating hyperplane in quantum feature space or simply estimating the kernel function.
 
-\subsection{Feature Map}
+\section{Feature Map}
 
 Consider the feature vector kernel $K(x, z) = | \bra{\Phi(x)}\ket{\Phi(z)} |^2$
 
-\subsection{Quantum Variational Classification}
+\section{Quantum Variational Classification}
 
-\subsection{Quantum Kernel Estimation}
+\section{Quantum Kernel Estimation}
 
-\subsection{Non-Trivial Feature Map with Entanglement}
+\section{Non-Trivial Feature Map with Entanglement}
 
-\subsection{Geometric Analysis of Candidate Feature Maps}
+\section{Geometric Analysis of Candidate Feature Maps}
 
-\subsection{Experimental Simulation of Candidate Feature Maps}
+\section{Experimental Simulation of Candidate Feature Maps}
 
 %\section{Density Matrix Exponentiation Algorithms}
 %\url{https://www.nature.com/articles/nphys3029}
@@ -903,7 +904,7 @@ Consider the feature vector kernel $K(x, z) = | \bra{\Phi(x)}\ket{\Phi(z)} |^2$
 %\end{enumerate}
 
 
-\section{Quantum-Inspired Length-Square Sampling}
+\chapter{Quantum-Inspired Length-Square Sampling}
 \label{sec:tang}
 
 As we've seen, most well-known QML algorithms convert input quantum states to a desired output state or value. Thus, they do not provide a routine to get necessary copies of these input states (a state preparation routine) and a strategy to extract information from an output state. Both are essential to making the algorithm useful.
@@ -912,15 +913,15 @@ We've also seen that that many of the initial "practical" quantum algorithms att
 
 Nevertheless, these low-rank quantum algorithms still have substantial help from an assumed input state preparation routine which has been shown to be at least $\Omega(\sqrt{n})$ in vector input size (\cite{tang2018quantum}). Hence, a natural question to ask is whether there's a similar classical data structure which takes time polynomial in quantum state preparation which can offer machine learning algorithms with similar guarantees. In particular, we compare quantum algorithms with quantum state preparation to classical algorithms with sample and query access to input.	
 
-\subsection{Definitions}
+\section{Definitions}
 
 We remain consistent with the definitions of Section \ref{sec:approx-sing-vec}.
 
-\subsection{Low-Rank Estimation}
+\section{Low-Rank Estimation}
 
 Low-rank estimation is given by the FKV algorithm detailed in Section \ref{sec:fkv}.
 
-\subsection{Trace Inner Product Estimation}
+\section{Trace Inner Product Estimation}
 
 \begin{itemize}
 	\item For $x, y \in \CC^n$, if we are given that $x \in \mathcal{SQ}$ and $y \in \mathcal{Q}$, then we can estimate $\< x, y\>$ with probability $\geq 1 - \delta$ and error $\epsilon \|x\|\|y\|$ 
@@ -950,7 +951,7 @@ Then $\vert Y - \mu\vert \leq \epsilon\sigma$ with probability $\geq 1-\delta$, 
 \begin{proof}Sample an \textbf{index} $s$ from $x$. Then, define $Z := x_s y_s\frac{\|y\|^2}{|y_s|^2}$. Apply the Fact with $X_{i,j}$ being independent samples $Z$.
 \end{proof}	
 
-\subsection{Least-Square Sample Generation}
+\section{Least-Square Sample Generation}
 
 \begin{itemize}
 	\item For $V \in \CC^{n\times k}, w \in \CC^k$, given $V^\dagger \in \mathcal{SQ}$ (\textit{column}-wise sampling of $V$) and $w \in \mathcal{Q}$, we can simulate $Vw \in \mathcal{SQ}$ with $\text{poly}(k)$ queries
@@ -1008,7 +1009,7 @@ $$r_i = \frac{\|w^T V_{\cdot, i}\|^2}{\|w\|^2\|V_{\cdot, i}\|^2}$$
 \item Through a Chernoff bound, we see that the average of $O(\|w\|^2(\frac{1}{\epsilon^2}\log\frac{1}{\delta}))$ "coin flips" is in $[(1-\epsilon)\|Vw\|,(1+\epsilon)\|Vw\|]$ with probability $\geq 1-\delta$.
 \end{itemize}
 
-\subsection{Application: Stochastic Regression}
+\section{Application: Stochastic Regression}
 
 For a low-rank matrix $A \in \RR^{m\times n}$
   and a vector $b \in \RR^n$, given $b, A \in \mathcal{SQ}$, (approximately) simulate $A^+b \in \mathcal{SQ}$.
@@ -1039,7 +1040,7 @@ $$A^+b \approx \sum_{i=1}^k \frac{1}{\hat{\sigma}_i^2}\hat{v}_i\hat{\lambda}_i =
 \end{itemize}
 
 
-\subsubsection{Definitions and Assumptions}
+\subsection{Definitions and Assumptions}
 
 Let $b \in \CC^m$ and $A \in \CC^{m \times n}$ s.t. $\Vert A \Vert \leq 1$ where $\Vert \cdot \Vert$ signifies the operator norm (or spectral norm). Furthermore, require that $\rank(A) = k$ and $\Vert A^+ \Vert \leq \kappa$ where $A^+$ is the pseudoinverse of $A$. Hence, observe that $\Vert A \Vert \leq 1$ is equivalent to $A$ having maximum singular value $1$\footnote{To see this, simply consider Spectral Theorem applied to Hermitian matrix $A^\dag A$}. Similarly, $A^+$ has inverted singular values from $A$ and so $\Vert A^+ \Vert$ is equal to the reciprocal of the minimum nonzero singular value. Therefore, the condition number of $A$ is given by $\Vert A \Vert \Vert A^+ \Vert \leq \kappa$.
 
@@ -1052,7 +1053,7 @@ So, define $x$ to be the least-squares solution to the linear system $Ax = b$ i.
 
 In order to do this, we simply assume that we have length-square sampling access to $A$. In other words, we are able to sample row indices of $A$ from the distribution $\frac{\Vert A_{(i, \cdot)}\Vert^2}{\Vert A \Vert^2_F}$
 
-\subsubsection{Sequence of Approximations}
+\subsection{Sequence of Approximations}
 
 First, we'll summarize the sequence of approximations that we'll perform using length-squared sampling techniques. We'll describe these steps in depth in the following sections.
 
@@ -1146,7 +1147,7 @@ All in all, we've performed the chain of approximations,
 Now that we've sketched the steps of this process, we detail each approximation and show that we can achieve the claimed correctness and complexity bounds.
 
 
-\subsection{Conclusions}
+\section{Conclusions}
 
 \begin{itemize}
 \item Claim (Tang): For machine learning problems, $\mathcal{SQ}$ assumptions are more reasonable than state preparation assumptions.
@@ -1155,7 +1156,9 @@ Now that we've sketched the steps of this process, we detail each approximation 
 \item Our discussion suggests that exponential quantum speedups are tightly related to problems where high-rank matrices play a crucial role (e.g. Hamiltonian simulation or QFT)
 \end{itemize}
 
-\section{Optimal Quantum Sample Complexity}
+\chapter{Quantum Sample Complexity}
+
+\section{Bounds using VC Dimension and an arbitrary distribution}
 
 It is well known that one can tightly bound the number of samples from an unknown distribution required to PAC-learn (Section \ref{}) an unknown concept in terms of its VC dimension (Section \ref{}). Hence, a natural question to ask is whether "quantum samples" are more powerful in the sense of requiring less examples to achieve this goal.
 
