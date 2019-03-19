@@ -833,8 +833,9 @@ The algorithm works best when a small number of principal components have signif
 Hence, this gives a limitation: if the eigenvalues of the covariance are roughly equal and of size $O(1/d)$, then the algorithm reduces to scaling in time $O(d)$ (as does the classical algorithm). Furthermore, we evidently inherit the limitations of qRAM, if we use it for the state preparation above.  
 
 \subsection{Support Vector Machines}
+\label{sec:svm}
 
-Support vector machines seek to find an optimal (maximum margin) separating hyperplane between two classes of data in a dataset. Hence, if the training data is linearly separable, each class can be found on only one side of the hyperplane. In particular, let $\{ x_1 , \cdots , x_n \}$ be a set of observations where $x_i$ is a $d$-dimensional vector with associated labels $y_i \in \{ 0 , 1\}$. Hence, we seek a linear function $f(x) = \vec{w} \cdot \vec{x} - \vec{b}$ where $\vec{w}$ is a weight vector and $\vec{b}$ is a bias vector s.t. $y_if(x_i) > 0, \forall i$. Furthermore, we seek to maximize the minimum $y_i f(x_i)$, across all $i$. 
+Support vector machines seek to find an optimal (maximum margin) separating hyperplane between two classes of data in a dataset. Hence, if the training data is linearly separable, each class can be found on only one side of the hyperplane. In particular, let $\{ x_1 , \cdots , x_n \}$ be a set of observations where $x_i$ is a $d$-dimensional vector with associated labels $y_i \in \{ 0 , 1\}$. Hence, we seek a linear function $f(x) = \vec{w} \cdot \vec{x} - \vec{b}$ where $\vec{w}$ is a weight vector and $\vec{b}$ is a bias vector s.t. $y_if(x_i) > 0, \forall i$. Furthermore, we seek to maximize the minimum $y_i f(x_i) > 0$, across all $i$. 
 
 \begin{figure}[H]
 \centering
@@ -890,27 +891,54 @@ Throughout this review, we've considered learning classical data which introduce
 
 \chapter{Quantum Kernel Maps and Quantum Circuit Learning}
 
-\cite{havlicek2018supervised}
+We've discussed the classical machine learning algorithm known as Support Vector Machines (SVM) in Section \ref{sec:svm}. To reiterate, the goal is to construct a separating hyperplane such that the distance to the nearest training observation (minimum margin) is maximized. Much of the popularity of SVMs can be attributed to its association with the "kernel trick" which maps the data to a higher dimensional space so that it is separable or approximately separable. 
+
+More explicitly, let $\{ x_i \}_{1 \leq i \leq n}$ be a set of observations where $x_j$ is a $d$-dimensional vector in some inner product space $\Omega$. These $x_j$ have associated labels $y_i \in \{ 0 , 1\}$. We seek a linear function $f(x) = \vec{w} \cdot \vec{x}$ where $\vec{w}$ is a weight vector s.t. $y_if(x_i) > 0$ for all (or many) $i$. Furthermore, we seek to maximize the minimum $y_i f(x_i)$, across all $i$.
+
+It turns out that this maximization can be restated as choosing $w$ according to a convex program consisting of a linear combination of the all-pair Euclidean inner product $x_i \cdot x_j$. Hence, we may construct a feature map $\phi : \Omega \rightarrow \mathcal{H}$ which maps the data to a higher dimensional Hilbert space $\mathcal{H}$. Then, instead, we consider the inner product on $\mathcal{H}$ as part of the optimization procedure. This then results in a linear boundary in $\mathcal{H}$ which maps back to a nonlinear boundary in $\Omega$. Therefore, the boundary is essentially tied to the inner product $\< \phi (x_i), \phi(x_j) \> _{\mathcal{H}}$ which we term the "kernel".
+
+\begin{figure}
+\centering
+\includegraphics[width= 0.7\linewidth]{images/kernel}
+\caption{Nonlinear boundary created by kernel map. Data is mapped to a higher dimensional space where a linear boundary is created, and then this boundary is mapped back to the original space (creating the nonlinearity).}
+\end{figure}
 
 
-One classical method is using so-called Support Vector Machines (SVM), which construct a separating hyperplane such that the distance to the nearest training observation (minimum margin) is maximized. Much of the popularity of SVMs can be attributed to its association with the "kernel trick" which maps the data to a higher dimensional space so that it is separable or approximately separable.
+In our review of quantum machine learning, we discussed that input state preparation is a major challenge for practically achieving a quantum advantage with existing quantum machine learning algorithms. Well, one way to work around this problem is to tie input state preparation to a feature map that is difficult to evaluate classically. In other words, if we are interested in SVM (or any other machine learning algorithm) which leverages the "kernel" trick, then input data $\{ x_i \}$ is only considered in terms of its feature map $\{ \phi(x_i) \}$ as part of the optimization process. If we can directly evaluate the feature map on classical inputs $\{ x_i \}$ and if this feature map reaps a quantum advantage, then we've worked around the input state preparation problem.
 
-Here, we suppose that the data is given classically and we seek to show that, in some cases, we can obtain a quantum advantage by either generating the separating hyperplane in quantum feature space or simply estimating the kernel function.
+\section{Quantum Feature Maps}
 
-\section{Feature Map}
+\subsection{The Shifted Bent Map}
 
-Consider the feature vector kernel $K(x, z) = | \bra{\Phi(x)}\ket{\Phi(z)} |^2$
+Consider the feature map defined in \cite{havlicek2018supervised}.
+
+First define,
+
+\begin{align*}
+U_{\Phi(x)} &= \exp\Big(i \sum_{S \subseteq [n]} \phi_S(x) \prod_{i \in S} Z_i \Big)	
+\end{align*}
+
+with coefficients $\phi_S(x) \in \RR$. Then, the feature map is given by 
+
+
+\begin{align}
+\label{feat-map:hav}
+\mathcal{U}_{\Phi(x)} &= U_{\Phi(x)} H^{\otimes n} U_{\Phi(x)} H^{\otimes n}
+\end{align}
+
+
+\subsubsection{Hardness Claim}
 
 \section{Quantum Variational Classification}
 
-\section{Quantum Kernel Estimation}
-
-\section{Non-Trivial Feature Map with Entanglement}
-
-\section{Geometric Analysis of Candidate Feature Maps}
-
+%\section{Quantum Kernel Estimation}
+%
+%\section{Non-Trivial Feature Map with Entanglement}
+%
+%\section{Geometric Analysis of Candidate Feature Maps}
+%
 \section{Experimental Simulation of Candidate Feature Maps}
-
+%
 %\section{Density Matrix Exponentiation Algorithms}
 %\url{https://www.nature.com/articles/nphys3029}
 %
@@ -924,6 +952,9 @@ Consider the feature vector kernel $K(x, z) = | \bra{\Phi(x)}\ket{\Phi(z)} |^2$
 %\item \url{https://arxiv.org/abs/1801.05721}
 %\end{enumerate}
 
+Here, we demonstrate an experimental construction of the feature map defined in (\ref{feat-map:hav}) considering 2 qubits for data input. We use the 
+
+We generate data so that it can be perfectly separated 
 
 \chapter{Quantum-Inspired Length-Square Sampling}
 \label{sec:tang}
