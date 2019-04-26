@@ -820,7 +820,7 @@ Hence, let $v_j \in V$ where $V$ is a $d$-dimensional vector space such that $d=
 
 Then, as Lloyd, Mohseni and Rebentrost describe \cite{lloyd2014quantum}, one way to perform quantum PCA use that given $n$ copies of $\rho$ we have the ability to apply the unitary operator $e^{-i\rho t}$ to any state $\sigma$ with accuracy $O(t^2 / n)$. This can be done by using repeated infinitesmal applications of the SWAP operator on $\rho \otimes \sigma$. 
 
-Hence, using $e^{-i \rho t}$, we can perform phase estimation on $rho$. So, let $\ket{\psi_i}$ be the eigenvectors of $\rho$ with associated eigenvalues $\lambda_i$ and so $\rho = \sum_j \lambda_j \ket{\psi_j}\bra{\psi_j}$. Therefore, phase estimation gives u
+Hence, using $e^{-i \rho t}$, we can perform phase estimation on $rho$. So, let $\ket{\psi_i}$ be the eigenvectors of $\rho$ with associated eigenvalues $\lambda_i$ and so $\rho = \sum_j \lambda_j \ket{\psi_j}\bra{\psi_j}$. Therefore, phase estimation gives us
 
 \begin{align*}
 \sum_j \lambda_j \ket{\psi_j}\bra{\psi_j} \otimes \ket{\tilde{\lambda_j}} \bra{\tilde{\lambda_j}}
@@ -895,7 +895,7 @@ We've discussed the classical machine learning algorithm known as Support Vector
 
 More explicitly, let $\{ x_i \}_{1 \leq i \leq n}$ be a set of observations where $x_j$ is a $d$-dimensional vector in some inner product space $\Omega$. These $x_j$ have associated labels $y_i \in \{ 0 , 1\}$. We seek a linear function $f(x) = \vec{w} \cdot \vec{x}$ where $\vec{w}$ is a weight vector s.t. $y_if(x_i) > 0$ for all (or many) $i$. Furthermore, we seek to maximize the minimum $y_i f(x_i)$, across all $i$.
 
-It turns out that this maximization can be restated as choosing $w$ according to a convex program consisting of a linear combination of the all-pair Euclidean inner product $x_i \cdot x_j$. Hence, we may construct a feature map $\phi : \Omega \rightarrow \mathcal{H}$ which maps the data to a higher dimensional Hilbert space $\mathcal{H}$. Then, instead, we consider the inner product on $\mathcal{H}$ as part of the optimization procedure. This then results in a linear boundary in $\mathcal{H}$ which maps back to a nonlinear boundary in $\Omega$. Therefore, the boundary is essentially tied to the inner product $\< \phi (x_i), \phi(x_j) \> _{\mathcal{H}}$ which we term the "kernel".
+It turns out that this maximization can be restated as choosing $w$ according to a convex program consisting of a linear combination of the all-pair Euclidean inner product $x_i \cdot x_j$. Hence, we may construct a feature map $\phi : \Omega \rightarrow \mathcal{H}$ which maps the data to a higher dimensional Hilbert space $\mathcal{H}$. Then, instead, we consider the inner product $\< x_i, x_j\>$ of $\mathcal{H}$ as part of the optimization procedure. This then results in a linear boundary in $\mathcal{H}$ which maps back to a nonlinear boundary in $\Omega$. Therefore, the boundary is essentially tied to the inner product $\< \phi (x_i), \phi(x_j) \> _{\mathcal{H}}$ which we term the "kernel".
 
 \begin{figure}[H]
 \centering
@@ -914,11 +914,12 @@ Consider the feature map defined in \cite{havlicek2018supervised}.
 
 First define,
 
-\begin{align*}
+\begin{align}
+\label{eq:diagonal-feat}
 U_{\Phi(x)} &= \exp\Big(i \sum_{S \subseteq [n]} \phi_S(x) \prod_{i \in S} Z_i \Big)	
-\end{align*}
+\end{align}
 
-with coefficients $\phi_S(x) \in \RR$. Then, the feature map is given by 
+with nonlinear coefficients $\phi_S(x) \in \RR$. Then, the feature map is given by 
 
 
 \begin{align}
@@ -926,10 +927,16 @@ with coefficients $\phi_S(x) \in \RR$. Then, the feature map is given by
 \mathcal{U}_{\Phi(x)} &= U_{\Phi(x)} H^{\otimes n} U_{\Phi(x)} H^{\otimes n}
 \end{align}
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{images/feature_map_circuit}
+\caption{Figure from \cite{havlicek2018supervised} of the feature map encoding circuit}
+\end{figure}
+
 
 \subsubsection{Hardness Claim}
 
-We conjecture that it is hard to estimate this kernel up to an additive polynomially small error by classical means. The intuition for the conjecture stems from a connection of the feature map to a particular circuit family for the hidden shift problem for boolean functions:
+The authors conjecture that it is hard to estimate this kernel up to an additive polynomially small error by classical means. The intuition for the conjecture is based in athe connection of this kernel map to a circuit family which solves the hidden shift problem for Maiorana-McFarland bent functions:
 
 \begin{definition}(Bent functions) Let $f : \{0,1\}^n \rightarrow \{0, 1\}$ be a Boolean function. We say that $f$ is bent if the Fourier coefficients $\hat{f}(w) = \frac{1}{2^n}\sum_{x \in \{0, 1\}} (-1)^{wx^t + f(x)}$ satisfy $|\hat{f}(w)| = 2^{-n /2}$, i. e., if the spectrum of $f$ is flat.
 \end{definition}
@@ -946,7 +953,7 @@ Let $O_{f,\tilde{f}}$ be an oracle that hides an instance of a shifted bent func
 \begin{proof}
 	Let $f: \{0,1\}^n \rightarrow \{0, 1\}$ be the bent function. We have oracle access to the shifted function $g(x) = f(x+s)$ via the oracle, i. e., we can apply the map $\ket{x}\ket{0} \mapsto \ket{0}\ket{f(x+s)}$ where $s \in \{0, 1\}^n$ is the unknown string. 
 	
-Recall that whenever we have a function implemented as $\ket{x}\ket{0} \mapsto \ket{x}\ket{f(x)}$, we can also compute $f$ into the phase as $U_f : \ket{x} \mapsto (-1)^{f(x)}\ket{x}$ by applying $f$ to a qubit initialized in $\ket{-}$. The hidden shift problem is solved by the following algorithm $\mathcal{A_1}$: 
+Recall that whenever we have a function implemented as $\ket{x}\ket{0} \mapsto \ket{x}\ket{f(x)}$, we can also compute $f$ into the phase as $U_f : \ket{x} \mapsto (-1)^{f(x)}\ket{x}$ by applying $f$ to a qubit initialized in $\ket{-}$. The hidden shift problem is solved by the following algorithm $\mathcal{A}_1$: 
 
 \begin{enumerate}
 \item Prepare the initial state $\ket{0}$
@@ -978,32 +985,50 @@ From this description it is clear that we needed one query to $g$ and one query 
 \end{proof}
 \end{theorem}
 
- The feature map is similar to a quantum algorithm for estimating the hidden shift in boolean bent functions, as above. The circuit $\mathcal{U}_\Phi$ we consider is indeed very similar to the one discussed in \cite{rotteler2010quantum}. Let us make a minor modification, and ask the two diagonal layers in $\tilde{\mathcal{U}_\Phi} = U_{\Phi_1(x)} H^{\otimes n} U_{\Phi_2(x)} H^{\otimes n}$ to differ. We choose the phase gate layers so that $U_{\Phi_1}$ and $U_{\Phi_2}$ encode a shifted bent-function and the function’s dual, then the circuit $\mathcal{A}_1$ is given by $H^{\otimes n} \tilde{\mathcal{U}_\Phi}$. If the interaction graph $G$ is bi-partite, it is possible to encode Maiorana-McFarland bent-functions for $d = 2$ by choosing the corresponding $\phi_{k,l}(x),\phi_k(⃗x)$ to be either $\pi$ or $0$. In \cite{rotteler2010quantum}, the diagonal layer in $\mathcal{A}_1$, are queries to an oracle encoding the the shifted bent-function and its dual. It can be shown that with respect to this oracle there is an exponential separation in query complexity over classical query algorithms. The final circuit we implement to estimate the overlap $|\< \phi(x) \mid \phi(z) \>|^2$ is still larger. This circuit has four layers of Hadamard gates and 3 diagonal layers. 
+ The feature map is similar to a quantum algorithm for estimating the hidden shift in boolean bent functions, as above. The circuit $\mathcal{U}_\Phi$ we consider is indeed very similar to the one discussed in \cite{rotteler2010quantum}. Whereas the diagonal layers are equivalent in this algorithm, consider if we allow them to differ: $\tilde{\mathcal{U}_\Phi} = U_{\Phi_1(x)} H^{\otimes n} U_{\Phi_2(x)} H^{\otimes n}$. 
  
- If the conjecture could be proven, it would establish a valuable step in rigorously establishing a quantum advantage on near-term devices. If, however, it ultimately turns out that this family can also be evaluated classically, we would need to improve the complexity of this circuit family.
+In particular, the phase gate layers so that $U_{\Phi_1}$ and $U_{\Phi_2}$ encode a shifted bent-function and the function’s dual, then the circuit $\mathcal{A}_1$ is given by $H^{\otimes n} \tilde{\mathcal{U}_\Phi}$. If the interaction graph $G$ is bi-partite, it is possible to encode Maiorana-McFarland bent-functions for $d = 2$ by choosing the corresponding $\phi_{k,l}(x),\phi_k(⃗x)$ to be either $\pi$ or $0$. In \cite{rotteler2010quantum}, the diagonal layer in $\mathcal{A}_1$, are queries to an oracle encoding the the shifted bent-function and its dual. It can be shown that with respect to this oracle there is an exponential separation in query complexity over classical query algorithms.
+ 
+If this conjecture is proven, then an important step is taken for quantum machine learning.
  
 \section{Quantum Variational Classification}
 
 Quantum circuit learning is a hybrid quantum-classical method that allows one to "train" a quantum circuit by classically parameterizing some of its gates. Then, we may train these parameters classically to achieve a defined goal. 
 
-Suppose we have an $n$ qubit circuit and consider the following procedure
+Suppose we have an $n$ qubit circuit and labelled data $\{(\vec{x}_i, y_i) \}, \vec{x}_i \in \RR^n, y_i \in \{0, 1\}$ and consider the following procedure
 
 \begin{enumerate}
-\item Encode classical input data $\{x_i \}$ as $\{\ket{\phi(x_i)} \}$ for some feature map $\phi$
-\item Apply a $\theta$-parameterized unitary $W(\theta)$ to the input state given
+\item Encode classical input data $\{\vec{x}_i \}$ as $\{\ket{\Phi(x_i)} \}$ ($\equiv \{\Phi(x_i)\ket{0} \}$) for some unitary feature map $\phi$
+
+\item Apply a $\theta$-parameterized unitary $W(\theta)$ to the input state giving
 
 \begin{align*}
-W(\theta)\ket{\phi(x_i)}
+W(\theta)\ket{\Phi(x_i)}
 \end{align*}
 
-\item Measure the expectation value of some chosen observables
+\item Measure multiple shots of some observables $\{M\}$. The expectation value of these observables is utilized to output a real-valued prediction function $f : \{x_i\} \rightarrow \RR$. Furthermore $sgn(f(x_i))$ indicates the learned label $\hat{y}_i$ which approximates $y_i$.
 
-\item Minimize a chosen cost function with is a function of these expectation values
+\item Minimize a chosen cost function with is a function of $f(x_i)$. For example, the $\ell_2$ loss
 
-\item Evaluate the performance and update $\theta$ accordingly
+\begin{align*}
+\sum_i (y_i - f(x_i))^2	
+\end{align*}
+
+\item Evaluate the performance and update $\theta$ accordingly (e.g. using gradient descent). Return to step 2, or exit if done iterating.
+
 \end{enumerate}
 
-A common choice of $W(\theta)$ (\cite{havlicek2018supervised}) is the following circuit: Let $W(\theta)$ have $l$ layers. Label the qubits $\{1, \cdots, n\}$ and consider the nearest-neighbor pairing $N = \{(1,2), (2, 3), \cdots, (n-1, n)\}$. Then, within each layer, first perform CNOT on each pair in $N$. Next, write $\theta = (\theta_1, \cdots, \theta_n)$ where each $\theta_i$ is a vector specified by Euler angles. Hence, we can perform rotation $R(\theta_i)$ on the $i$th qubit.
+A common choice of $W(\theta)$ (Figure \ref{fig:var}) is the following circuit: Let $W(\theta)$ have $l$ layers i.e. $W(\theta) = W_1(\theta) \cdots W_l(\theta)$. 
+
+Now, for each $W_i(\theta)$ we construct the following circuit: label the qubits $\{1, \cdots, n\}$ and consider the nearest-neighbor pairing $N = \{(1,2), (2, 3), \cdots, (n-1, n)\}$. Then, perform Control-Z on each pair in $N$. Next, write $\theta = (\theta_1, \cdots, \theta_n)$ where each $\theta_i$ is a vector specified by Euler angles. Hence, we can perform rotation $R(\theta_i)$ on the $i$th qubit.
+
+\begin{figure}
+\label{fig:var}
+\centering
+\includegraphics[width=0.5 \textwidth]{images/variational.png}	
+\caption{Variational circuit diagrammed in \cite{havlicek2018supervised}}
+\end{figure}
+
 
 %\section{Quantum Kernel Estimation}
 %
@@ -1011,7 +1036,9 @@ A common choice of $W(\theta)$ (\cite{havlicek2018supervised}) is the following 
 %
 %\section{Geometric Analysis of Candidate Feature Maps}
 %
-\section{Experimental Simulation of Candidate Feature Maps}
+\section{Experimental Simulation of the Shifted Bent Feature Map}
+
+\subsection{Separable Data}
 
 Here, we demonstrate an experimental construction of the feature map defined in (\ref{feat-map:hav}) considering 2 qubits for data input. We use the Strawberry Fields package for simulation \cite{killoran2019strawberry}.
 
@@ -1022,10 +1049,10 @@ We generate data so that it can be perfectly separated. Choose coefficients
 \phi_{\{1,2\}}(x) &= (\pi - x_1)(\pi - x_2) 
 \end{align*}
 
-and draw a fixed random element $V \in SU(4)$. Define $\Pi = Z_1Z_2$ to be parity on 2 qubits. Then, generate data by drawing random $x \in (0, 2\pi]^2$ and labelling based on decision rule
+and draw a fixed random element $V \in SU(4)$. Define $\Pi = Z_1Z_2$ to be parity on 2 qubits. Then, generate data by drawing (uniform) random $x \in (0, 2\pi]^2$ and labelling based on decision rule
 
 \begin{align*}
-f(x) = \bra{x} \mathcal{U}_{\Phi(x)}^\dag V^\dag \Pi V \mathcal{U}_{\Phi(x)}\ket{x}	 
+f(x) = \bra{0} \mathcal{U}_{\Phi(x)}^\dag V^\dag \Pi V \mathcal{U}_{\Phi(x)}\ket{0}	 
 \end{align*}
 
 In particular, define a threshold $\Delta$ and if $|f(x)| \leq \Delta$ then draw another $x$. Otherwise, label by $sgn(f(x))$. We draw 40 such $x$ and arbitrary partition the dataset into training and test subsets of size 20 each.
@@ -1033,15 +1060,16 @@ In particular, define a threshold $\Delta$ and if $|f(x)| \leq \Delta$ then draw
 We then use the variational circuit described in the previous section to train our classifier. In particular, the variational circuit trains some $W(\theta)$ parameterized by $\theta$ and then constructs decision rule
 
 \begin{align*}
-\tilde{f}(x) &= \bra{x} \mathcal{U}_{\Phi(x)}^\dag W(\theta)^\dag \Pi W(\theta) \mathcal{U}_{\Phi(x)}\ket{x})
+\tilde{f}(x) &= \bra{0} \mathcal{U}_{\Phi(x)}^\dag W(\theta)^\dag \Pi W(\theta) \mathcal{U}_{\Phi(x)}\ket{0})
 \end{align*}
  
 and classifies by $sgn(\tilde{f}(x))$. In principle, then, because $W(\theta)$ can learn any $SU(4)$ gate for appropriately chosen $\theta$, we should be able to classify to near perfect accuracy. We use the "Nesterov momentum optimizer" to train $\theta$, an improvement of the usual stochastic gradient descent.
 
-Below, we plot the results of a few sample trials exploring various values of $\Delta$.
+Below, we plot the results of a few representative sample trials exploring various values of $\Delta$.
 
 \begin{figure}[H]
 \includegraphics[width=\textwidth]{images/data_sep}
+\caption{A comparison of training and test convergence across varying data separations.}
 \end{figure}
 
 These results show that we converge to near-perfect classification for all of these positive separations. However, the greater the separation, the faster the convergence. We can interpret this as reflecting the fact that we are less likely to overfit or end up in a suboptimal equilibrium as part of gradient descent process if the data is well-separated.
@@ -1049,9 +1077,66 @@ These results show that we converge to near-perfect classification for all of th
 Furthermore, can view the convergence of the dual $\ell^2$ loss view below.
 
 \begin{figure}[H]
+\centering
 \includegraphics[width=\textwidth]{images/l2_loss_conv}	
+\caption{A similar comparison of $\ell^2$ loss convergence across varying data separations.}
 \end{figure}
 
+Visually, generated data may look as below for some $V \in SU(4)$. We can visualize the decision boundary of the kernel by shading the regions in a color indicating the label which the classifier would output at each point.
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{images/separable_data}
+\caption{Sample output of the classifier. The colors of the regions indicate the label for which the classifier has learned for each point. The circles indicate data points in the generated set, colored by true label.}
+\end{figure}
+
+One important question we wished to resolve is the relationship between the convergence in training accuracy and the number of layers utilized by the variational circuit. Hence, we checked convergence for two separable datasets across the range of 1-5 layers, performing 20 trials per layer depth. Based on the preceding results, data separation of 0.3 was utilized in order to speed up convergence.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{images/train_accs_layer_sep.png}	
+\caption{Training accuracy over repeated trials of 200 epochs varying over layer depth}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{images/costs_layer_sep.png}	
+\caption{$\ell^2$ loss over repeated trials of 200 epochs varying over layer depth}
+\end{figure}
+
+Here, we can see that 3 layers is sufficient to regularly achieve convergence of the classifier to $>90\%$ training accuracy. 
+
+\subsection{Practical Data}
+
+Furthermore, we contribute an analysis of the performance of the quantum variational to practical data. In particular, consider the UCI ML Breast Cancer Dataset which contains 30 features and 569 samples. The labels correspond to whether a cell mass is malignant or benign. We apply PCA to reduce the dimensionality of the dataset to 2 and standardize to a centered Gaussian about $[0, \pi]$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{images/breast_cancer_data}	
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{images/breast_cancer_linear_svm}	
+\end{figure}
+
+Here, we see that the data is roughly linearly separable. In fact, a linear classifier, such as SVM with the standard Euclidean kernel map, is able to classify this dataset with 0.95 accuracy. Hence, neither the kernel trick nor regularization are necessary to perform well. Nevertheless, it is instructive to check that the quantum bent kernel with a variational circuit can achieve reasonable accuracy.
+
+Hence, below we provide an analogous plot to the previous subsection showing the range of training accuracies and $\ell^2$ loss outcomes for varying variational circuit depths.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{images/breast_cancer_layers}	
+\caption{The pattern in convergence in cost on the UCI Breast Cancer dataset is similar to the one for the separable dataset.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{images/practical_data_landscape}
+\caption{Sample output of the classifier for the UCI Breast Cancer dataset}
+\end{figure}
+
+
+% similar plot for costs
 
 %
 %\section{Density Matrix Exponentiation Algorithms}
@@ -1066,6 +1151,101 @@ Furthermore, can view the convergence of the dual $\ell^2$ loss view below.
 %\item \url{https://arxiv.org/abs/1711.01053}
 %\item \url{https://arxiv.org/abs/1801.05721}
 %\end{enumerate}
+
+\subsection{Moons Data}
+\label{sec:moon}
+
+We generate the data of this section by using the scikit-learn Python package and add random Gaussian noise to the $\{x_i\}$ for each trial.
+
+The data appears similarly to below and one can see that the data is no longer nearly linearly separable. Hence, it is certainly appropriate to consider the kernel trick in this context.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{images/moons_data}
+\caption{Sample Moons data for some perturbation in Gaussian noise}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{images/moons_linear_svm}
+\caption{Performance of SVM with a linear kernel on the Moons dataset}
+\end{figure}
+
+To see how the quantum feature map performs, we direct your attention to the next section.
+
+\section{Theoretical Extensions of the Shifted Bent Feature Map}
+
+\subsection{A Connection Between State Tomography and Hyper-parameter Tuning}
+
+One method to improve the performance of a kernel map is to tune some set of hyper-parameters which adjust the embedding in the higher-dimensional feature space. Hence, we consider introducing a set of hyper-parameters which tunes the extent to which nonlinearity enters the phase of the $U_{\Phi(x)}$ (Equation \ref{eq:diagonal-feat}). In particular, consider a $d$-dimensional classification problem. Hence, the phase of Equation \ref{eq:diagonal-feat} can be decomposed as $d$ summations which increase in the subset size of $S$. For each the $d-1$ terms where $|S| \geq 2$, we may add an $\gamma_i$ real coefficient. Hence, this gives us a revised diagonal (in the $Z$ basis) unitary within the feature map (Equation \ref{feat-map:hav}):
+
+\begin{align*}
+U_{\Phi(x; \vec{\gamma})} &= \exp\Big(i \Big[\sum_{i} \phi_i(x) Z_i + \gamma_1 \sum_{i,j} \phi_{i,j}(x) Z_i Z_j + \cdots +  \gamma_{d-1} \sum_{S \subseteq [d], |S| = d} \phi_S(x) \prod_{i \in S} Z_i \Big]\Big)	
+\end{align*}
+
+Figure \ref{fig:breast_cancer_gammas} offers a representative view of how adjusting the single $\gamma$ hyper-parameter for the 2-qubit map adjusts the classification circuit to which the variational algorithm converges after 200 epochs when considering the UCI Breast Cancer dataset.
+
+\begin{figure}[H]
+\label{fig:breast_cancer_gammas}
+\centering
+\includegraphics[width=\textwidth]{images/breast_cancer_gammas}	
+\caption{Performance of the variational classification circuit (for 200 epochs) on a random sample of the UCI Breast Cancer dataset for varying 2-point nonlinearity parameter $\gamma$. The classification accuracy (bottom-right corner) is seen to increase as $\gamma$ increases for this trial. Note that the number of $+1$ vs. $-1$ data points is unbalanced in this case.}
+\end{figure}
+
+We contribute a novel method of thinking about tuning hyper-parameters for a quantum feature map and additionally demonstrate that the method works well in practice by returning to the "moons" binary classification problem of Section \ref{sec:moon}.
+
+First, we make the straightforward observation that the goal of the variational classifier can be restated as solving a state identification problem:
+
+Write that a data point $x$ is encoded as
+
+\begin{align*}
+\ket{\Phi(x; \vec{\gamma})} \equiv \mathcal{U}_{\Phi(x; \vec{\gamma})}\ket{0}
+\end{align*}
+
+Then, consider the density matrices
+
+\begin{align*}
+\rho_+ &= \frac{1}{N_+} \sum_{x_i : y_i = +1} \ket{\Phi(x_i; \vec{\gamma})}\bra{\Phi(x_i; \vec{\gamma})}	\\
+\rho_- &= \frac{1}{N_-} \sum_{x_i : y_i = -1} \ket{\Phi(x_i; \vec{\gamma})}\bra{\Phi(x_i; \vec{\gamma})}	
+\end{align*}
+
+Therefore, the goal of binary classification can be restated as finding the optimal pair of POVMs so as to maximize the probability of correctly distinguishing these two density matrices. As we've discussed in Section \ref{sec:trace-distance}, the trace distance provides an achievable (by the Helstrom measurement) upper bound for solving this state identification problem. Hence, our method of hyperparameter tuning can be stated as follows: (1) compute the density matrices $\rho_+, \rho_-$ above for a set of candidate $\{ \vec{\gamma_i} \}$ (2) computing the trace distance $T(\rho_+, \rho_-)$ across the set of $\{ \vec{\gamma_i} \}$, and (3) choose the $\vec{\gamma_i}$ which maximizes trace distance. 
+
+For the dataset of Figure \ref{fig:breast_cancer_gammas}, we indeed see that trace distance increases with gamma within the range $[0.0, 2.0]$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{images/linear_trace_distance}	
+\caption{Trace distance as a function of $\gamma$ for a random sample of the UCI Breast Cancer dataset}
+\end{figure}
+
+Do note that the trace distance can be computed efficiently on a quantum computer using the method of Quantum Phase Estimation \ref{phase_estimation} with Hamiltonian $e^{-i (\rho_+ - \rho_-)t}$. In the following section, we will extensively evaluate the classification performance of this method.
+
+\subsection{Empirical Evaluation of Tuning by Trace Distance}
+
+To see that the hypothesized relationship between trace distance and the optimal choice of $\vec{\gamma}$ holds for the roughly linearly separable practical data of the previous section, we performed 20 trials of 200 epochs for linearly spaced $\gamma$ on two sets of 20 random samples of the practical dataset, now requiring that the ratio between $+1$ and $-1$ labelled data points is balanced. As a result for $\gamma = \{0.0, 0.25, 0.5, 1.0, 1.5, 2.0\}$ we found that the optimal training accuracy was given by $\{ 0.55, 0.55, 0.60, 0.80, 0.85, 0.85 \}$.
+
+Now, we consider the Moons dataset over varying $\gamma$
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/moons_gammas}	
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{images/moons_trace_distance}
+\caption{The structure of the moons dataset empirically requires a $V$ shaped curve with the trough roughly near $\gamma = 1.0$. Note that such a $\gamma$ is the default value used with no hyper-parameter tuning.}
+\end{figure}
+
+From the figures above, we expect the classifier to perform relatively poorly for $\gamma=1.0$ and increase towards the extremities. Again, we performed 20 trials of 200 epochs for linearly spaced $\gamma$ on two sets of 20 random samples of the Moons dataset with noise, now requiring that the ratio between $+1$ and $-1$ labelled data points is balanced. The figure below captures our results.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/moons_gammas_training}	
+\end{figure}
+
+This clearly matches with the expected results. Hence, we hope that future works can extend these results and identify additional datasets that have a particular structure for which $\gamma$ ought to be tuned and leave it to these works to verify that trace distance serves a useful purpose to this end.
 
 \chapter{Quantum-Inspired Length-Square Sampling}
 \label{sec:tang}
@@ -1090,7 +1270,7 @@ The first tool is a classical analog to the quantum SWAP test, which computes th
 
 \begin{figure}
 \includegraphics[width= 0.5\linewidth]{images/swap_test.png}	
-\caption{Quantum SWAP test}
+\caption{Quantum SWAP test (from \cite{walter})}
 \end{figure}
 
 \begin{fact} For $\{X_{i,j}\}$ i.i.d random variables with mean $\mu$ and variance $\sigma^2$, let 
@@ -1305,7 +1485,9 @@ In general, however, our discussion suggests that exponential quantum speedups a
 
 It is well known that one can tightly bound the number of samples from an unknown distribution required to PAC-learn (Section \ref{def:PAC}) an unknown concept in terms of its VC dimension (Section \ref{def:vc-dim}). Hence, a natural question to ask is whether "quantum samples" are more powerful in the sense of requiring less examples to achieve this goal.
 
-Here we will explore the techniques of Arunachalam and de Wolf \cite{arunachalam2016optimal} in order to address this question. The authors show that the ideas of quantum state discrimination discussed in Section \ref{} offer an intuitive analysis, despite resulting in a suboptimal lower bound. However, Boolean Fourier analysis (Section \ref{sec:bfa}) applied to the Pretty Good Measurement (Section \ref{app:pgm}) gives an optimal bound showing that there is no quantum advantage in terms of sample complexity when restricting to PAC learning and quantum samples as specified in the model introduced by Bshouty and Jackson \cite{bshouty1998learning}.
+Here we will explore the techniques of Arunachalam and de Wolf \cite{arunachalam2016optimal} in order to address this question. The authors show that the ideas of quantum state discrimination discussed in Section \ref{sec:trace-distance} offer an intuitive analysis, despite resulting in a suboptimal lower bound. However, Boolean Fourier analysis (Section \ref{sec:bfa}) applied to the Pretty Good Measurement (Section \ref{app:pgm}) gives an optimal bound showing that there is no quantum advantage in terms of sample complexity when restricting to PAC learning and quantum samples as specified in the model introduced by Bshouty and Jackson \cite{bshouty1998learning}.
+
+In this section, we will elaborate on the former information theoretic method and demonstrate its generalizability.
 
 \subsection{Definitions}
 
@@ -1535,7 +1717,7 @@ I(A:B_1) = 4 \epsilon \log(2d)
 \end{align*}
 
 \begin{proof}
-Since $AB$ is a classical-quantum state, we have $I(A : B_1) = H(A) + H(B_1) − H(AB_1) = H(B_1)$,
+Since $AB$ is a classical-quantum state, we have $I(A : B_1) = H(A) + H(B_1) - H(AB_1) = H(B_1)$,
 where the first equality follows from definition and the second equality uses $S(A) = d$ since
 $A$ is uniformly distributed in $\{0,1\}^d$, and $S(AB_1) = d$ since the matrix $\sigma = \frac{1}{2^d} \sum_{a \in \{0,1\}^d} \ket{a}\bra{a} \otimes \ket{\psi_a} \bra{\psi_a}$ is block diagonal with $2^d$ rank-1 blocks on the diagonal. It thus suffices to bound the entropy of the singular values of the reduced state of $B_1$, which is
 
@@ -1571,23 +1753,88 @@ T &= \Omega \Big(\frac{d}{\epsilon \log(d/\epsilon)}\Big)
 which comes close to optimal bound $\Omega (d / \epsilon)$
 \end{proof}
 
-\subsection{Optimal lower bounds by state identification}
-
-TODO
-
 \section{Exact learning bounds with uniform examples}
 
-We claimed that the information-theoretic method used in the previous section is generalizable, so we provide an example lower bound.
+We claimed that the information-theoretic method used in the previous section is generalizable, so we provide an example lower bound as in \cite{arunachalam2018two}.
 
-Consider the concept class of $k$-Fourier-sparse Boolean functions.
+Consider the concept class of $k$-Fourier-sparse Boolean functions:
+
+\begin{align*}
+\mathcal{C} &= \{ f: \{0, 1\}^n \rightarrow \{-1, 1\} 	: \|supp(\hat{f})\| \leq k\}
+\end{align*}
+
+\begin{definition}
+We term $(\epsilon=0, \delta)$-PAC learning as exact learning.	
+\end{definition}
+
+\begin{definition}
+Uniform examples are those produced by $QPEX(c,D)$ where $D$ is uniform.
+\end{definition}
+
+
+\begin{theorem}
+$\Omega(k \log k)$ uniform quantum examples are necessary to learn the concept class of $k$-Fourier-sparse Boolean functions	
+\end{theorem}
 
 \begin{proof}
 Sketch.
 
-Consider Grassmannian manifold over $\{0, 1\}^n$. We can carve out the distinct subspace in $\{0, 1\}^n$ with dimension $n - \log k$	
+Assume for simplicity that $k$ is a power of $2$, so $\log k$ is an integer. Consider Grassmannian manifold over $\{0, 1\}^n$. We can carve out the distinct subspace in $\{0, 1\}^n$ with dimension $n - \log k$ and term this $\mathcal{V}$. Hence,
+
+$$
+\mathcal{C}=\{c_V :\{0,1\}^n \rightarrow \{-1,1\}: c_V(x)= -1\text{ iff }x \in V,\text{ where }V \in \mathcal{V} \}
+$$
+
+Note that $|\mathcal{C}| = |\mathcal{V}|$, and each $c_V \in \mathcal{C}$ evaluates to 1 on a $(1-1/k)$-fraction of its domain.
+
+We can use a similar approach to before. Let $A$ be a random variable that is uniformly distributed over $\mathcal{C}$. Suppose $A = c_V$ , then let $B = B_1 \cdots B_T$ be $T$ copies of the quantum example 
+
+$$\ket{\psi_V} = \frac{1}{2^{n/2}}\sum_{x \in \{0,1\}^n} \ket{x, c_V(x)} $$
+
+for $c_V$ . The random variable $B$ is a function of the random variable $A$. The following upper and lower bounds on $I(A : B)$ are similar to previous proof and we omit the details of the first two steps here. 
+  
+\begin{enumerate}
+\item $I(A:B) \geq \Omega(\log|\mathcal{V}|)$ because $B$ allows one to recover $A$ with high probability.	
+\item $I(A:B)\leq T\cdot I(A:B_1)$ using a chain rule for mutual information.
+\end{enumerate}
+
+\begin{lemma}
+$I(A : B_1) \leq O(n/k)$	
+\end{lemma}
+
+\begin{proof} 
+Since $AB$ is a classical-quantum state, we have
+
+\begin{align*}
+I(A : B_1) = S(A) + S(B_1) − S(AB_1) = S(B_1),	
+\end{align*}
+
+where the first equality is by definition and the second equality uses $S(A) = \log|V|$ since $A$ is uniformly distributed over $\mathcal{C}$, and $S(AB_1) = \log|V|$ since the matrix 
+
+$$
+\sigma = \frac{1}{\|\mathcal{V}\|}\sum_{V \in \mathcal{V}}\ket{V}\bra{V} \otimes \ket{\psi_V}\bra{\psi_V}
+$$
+
+is block-diagonal with $|V|$ rank-1 blocks on the diagonal. It thus suffices to bound the entropy
+of the (vector of singular values of) the reduced state of $B_1$, which is 
+$$
+\rho = \frac{1}{\|\mathcal{V}\|}\ket{\psi_V}\bra{\psi_V}
+$$
+ 
+Let $\sigma_0 \geq \sigma_1 \geq \cdots \geq \sigma_{2^{n+1}-1}\geq 0$ be the singular values of $\rho$. Since $\rho$ is density matrix, these form a probability distribution. Now observe that $\sigma_0 \geq 1 - 1/k$ since the inner product between $\frac{1}{\sqrt{2^n}} \sum_{x \in \{0, 1\}^n} \ket{x,1}$ and every $\ket{\psi_V}$ is $1 - 1/k$. Let $N \in {0,1,\cdots ,2^{n+1} − 1}$ be a random variable with probabilities $\sigma_0, \sigma_1, \cdots, \sigma_{2^{n+1}-1}$, and $Z$ an indicator for the event $N \neq 0$ (note that $Z = 0$ with probability $\sigma_0 \geq 1 - 1/k$). By a similar argument as in before, we have 
+
+\begin{align*}
+S (\rho) &= H (N) = H (N, Z) = H (Z) + H (N \mid Z)\\
+&= H(\sigma_0)+\sigma_0\cdot H(N \mid Z=0)+(1- \sigma_0)\cdot H(N\mid Z=1)\leq H (1/k) + \frac{n+1}{k} \leq O(\frac{n + \log k}{k}) 
+\end{align*}
+
+using $H(N \mid Z = 0) = 0$ in the first inequality, $H(\alpha) \leq O(\alpha \log(1/\alpha))$ in the second.
+
+Combining these three steps implies $T = \Omega(k(\log|\mathcal{V}|)/n)$. It remains to lower bound $\mathcal{V}$ (not hard).
+
 \end{proof}
 
-
+\end{proof}
 %\section{Online Learning of Quantum States}
 %
 %\subsection{Goals}

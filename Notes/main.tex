@@ -99,20 +99,15 @@
 
 \chapter{Introduction}
 
-Abstract: 
+In this document, we provide a presentation of the latest results in quantum learning theory alongside theoretical and empirical extensions. 
 
-In this document, we provide a presentation of the latest results in quantum learning theory alongside theoretical extensions. We also provide experimental analyses of quantum feature maps which can be used for supervised learning. 
+The first part of our paper is a review: First, we present an overview of learning theory and the mathematical methods necessary for our analyses (whereas the Appendix provides the necessary tools of quantum information theory for the unfamiliar reader). Next, we present a review of the brief history of quantum machine learning. The subsequent part of our paper consists of analyses and extensions of recent results in quantum learning theory: (1) supervised learning using hybrid quantum-classical circuits, (2) Tang's \cite{tang2018quantum} idea of least-square sampling providing parallel classical algorithms for quantum machine learning algorithms that solve singular value transformation problems, and (3) information theoretic bounds on quantum computational learning.
 
-The first part of our paper is a review: First, we present an overview of quantum computation and information. Next, we present a review of the brief history of quantum machine learning. The subsequent part of our paper is an analysis of recent results in quantum learning theory: (1) information theoretic bounds on quantum computation learning, (2) supervised learning using hybrid quantum-classical circuits, and (3) Tang's \cite{tang2018quantum} idea of least-square sampling providing parallel classical algorithms for quantum machine learning algorithms that solve singular value transformation problems.
+In the first part of our paper, we extend quantum feature maps which seek to solve the quantum encoding problem by encoding data inputs into a quantum state that implicitly performs the feature map given by a kernel function. Therefore, if the kernel is sufficiently difficult to evaluate classically, then there may exist a quantum advantage. Our contribution comes in two parts: (1) we offer a theoretical extension which identifies binary classification with state identification for $m=2$ density matrices. Hence, we propose using the trace distance as a measure to tune hyper-parameters which determine the non-linearity of our feature map, and (2) we evaluate the performance of quantum feature maps using variational circuits on practical datasets, in addition to reproducing the results of \cite{havlicek2018supervised} where they considered kernel-separable data.
 
-The last part of our paper provides new results on quantum feature maps which seek to solve the quantum encoding problem by encoding data inputs into a quantum state that implicitly performs the feature map given by a kernel function. Therefore, if the kernel is sufficiently difficult to evaluate classically, then there may exist a quantum advantage. Hence, we provide a geometric analysis of the properties of a kernel that may provide quantum advantage, and provide experimental results to demonstrate the robustness of particular candidate maps.
+In the next part, we apply the methods of Tang to an analysis of a polynomial singular value transformation. In other words, given a low-rank matrix $A \in \RR^{m\times n}$ with SVD $\sum_i \sigma_i \ket{u_i} \bra{v_i}$ and a vector $b \in \RR^n$, assume that we have $\ell^2$ sample and query access to $b$. Then, we can approximately simulate sample and query access to $\sum_i (\sigma_i)^m \ket{u_i} \bra{v_i} b$ for any $m \in \ZZ$.
 
-
-Rough draft readers:
-
-The "Introduction" and "Preliminaries" chapters are in progress. I plan a standard review of the necessary background from quantum information theory (see \cite{nielsen2010quantum} and \cite{wilde2013quantum}) to make the essential chapters of this thesis interpretable to a general Physics audience. Of course, I will primarily restate theorems and provide references in order to keep this portion succinct. For the time being, I've included my personal notes that I've kept since I began working on this project.
-
-\subfile{nielsen_chuang_notes.tex}
+In the final part, we present the bounds due to \cite{arunachalam2016optimal, arunachalam2018two} by exposing a general method introduced in these works which utilizes principles of quantum information theory to derive sample complexity bounds on various concept classes, oracle access, and learning settings.
 
 %\subfile{crypto_notes.tex}
 
@@ -120,14 +115,11 @@ The "Introduction" and "Preliminaries" chapters are in progress. I plan a standa
 
 \chapter{Acknowledgements} 
 
-%TODO
-TODO
+First and foremost, a special thank you to my advisor Dr. Marvian for graciously setting aside time to facilitate this journey within quantum information theory. I thank him for the pleasant and insightful conversations, endless inspiration, and impactful lessons on Physics---but also patience, communication, and perspective. I also thank the defense committee members Dr. Sun and Dr. Younes for courteously and enthusiastically participating in the thesis process.
 
-\begin{enumerate}
-\item Advisor: Dr. Marvian
-\item Committee: Dr. Brown and Dr. Kim	
-\item DUS: Dr. Scholberg
-\end{enumerate}
+I am grateful to the Department of Physics at Duke University and Dr. Scholberg for facilitating the opportunity to write and present this work in addition to the coursework and instruction that shaped my view of the field. I am appreciative of my academic advisor Dr. Greenside for providing my first introduction to the beauty of Quantum Physics and offering his endless support throughout my Undergraduate career.
+
+Finally and importantly, I thank my family for their never-ending support of my endeavors. 
 
 \appendix
 \chapter{Appendix}
@@ -195,6 +187,8 @@ by orthonormality.
 
 Suppose $A$ is a compact\footnote{the image under $A$ acting on any bounded subset of $\mathcal{H}$ is a compact subset of $\mathcal{H}$} hermitian operator (compactness ensures $A$ has eigenvectors) on complex Hilbert space $\mathcal{H}$. Hence, there is an orthonormal basis of $\mathcal{H}$ consisting of eigenvectors of $A$. Each eigenvalue is in $\RR$.	
 \end{theorem}
+
+\subfile{nielsen_chuang_notes.tex}
 
 \nocite{*}
 \printbibliography
